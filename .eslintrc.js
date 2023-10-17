@@ -1,7 +1,6 @@
 const plugins = ['@typescript-eslint', 'import', 'prettier'];
 const extend = [
   'prettier',
-  'eslint:recommended',
   'plugin:@typescript-eslint/recommended',
   'plugin:import/typescript',
 ];
