@@ -15,7 +15,7 @@ const rules = {
       singleQuote: true,
     },
   ],
-
+  '@typescript-eslint/no-var-requires': 'off',
   'import/prefer-default-export': 0,
 };
 
