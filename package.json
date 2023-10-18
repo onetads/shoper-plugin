@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "eslint": "eslint --ext .js,.ts ./src",
-    "build": "webpack --config webpack.config.js --mode=production"
+    "build": "webpack --config webpack.config.js --mode=production",
+    "prepare": "rimraf .husky/ && husky install && npx husky add .husky/pre-push \"yarn eslint\""
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
