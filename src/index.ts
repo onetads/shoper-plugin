@@ -1,7 +1,9 @@
+import test from 'templates/index';
+
 function component() {
   const element = document.createElement('div');
 
-  element.innerHTML = 'test';
+  element.innerHTML = test;
 
   return element;
 }
