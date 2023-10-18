@@ -9,8 +9,6 @@
     "allowJs": true,
     "checkJs": true,
     "moduleResolution": "node",
-    "jsx": "react",
-    "jsxFactory": "createElement",
     "paths": {
       "templates/*": ["./src/templates/*"],
       "types/*": ["./src/types/*"],

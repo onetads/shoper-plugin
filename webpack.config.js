@@ -6,14 +6,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx)?$/,
+        test: /\.(js|ts)?$/,
         use: 'babel-loader',
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js', '.tsx', '.jsx'],
+    extensions: ['.ts', '.js'],
     alias: {
       templates: path.resolve(__dirname, './src/templates/'),
       types: path.resolve(__dirname, './src/types'),
