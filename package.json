@@ -1,0 +1,34 @@
+{
+  "name": "ras-shoper-front",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "repository": "git@git.fingoweb.com:ringier-axel-springer/ras-shoper-front.git",
+  "author": "Przemysław Czachor <przemyslaw.czachor@fingoweb.com>",
+  "license": "MIT",
+  "scripts": {
+    "eslint": "eslint --ext .js,.ts ./src",
+    "build": "webpack --config webpack.config.js --mode=production",
+    "prepare": "rimraf .husky/ && husky install && npx husky add .husky/pre-push \"yarn eslint\""
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-typescript": "^7.23.2",
+    "@types/node": "^20.8.6",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "babel-loader": "^9.1.3",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-prettier": "^5.0.1",
+    "husky": "^8.0.3",
+    "prettier": "3.0.3",
+    "rimraf": "^5.0.5",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {}
+}

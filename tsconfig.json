@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "module": "es6",
+    "target": "es5",
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "node",
+    "paths": {
+      "templates/*": ["./src/templates/*"],
+      "types/*": ["./src/types/*"],
+    }
+  },
+  "include": ["**/*.js", "**/*.ts"],
+  "exclude": ["dist", "node_modules"],
+}
