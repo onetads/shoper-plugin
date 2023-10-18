@@ -9,5 +9,5 @@ Yarn: v1.22.19
 
 # Scripts
 
-yarn build - builds minified js (code is bundled to dist/bundle.js file)
+yarn build - builds minified js (code is bundled to dist/bundle.js file) <br/>
 yarn eslint - checks for eslint errors
