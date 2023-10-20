@@ -6,9 +6,9 @@ const WEBSITE_ID = 17200; // TODO: MAKE IT DYNAMIC IN FUTURE!!!
 
 const mapPageToArea = (page: TPages) => {
   const areas: Record<TPages, EAreas> = {
-    category: EAreas.LISTING,
-    index: EAreas.MAIN_PAGE,
-    product: EAreas.PRODUCT_CARD,
+    shop_product_list: EAreas.LISTING,
+    shop_index: EAreas.MAIN_PAGE,
+    shop_product: EAreas.PRODUCT_CARD,
   };
 
   return areas[page];

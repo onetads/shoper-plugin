@@ -7,9 +7,9 @@ import {
 import { TPages } from 'types/pages';
 
 const productsContainers: Record<TPages, string> = {
-  category: MAIN_PRODUCTS_CONTAINER_ID,
-  index: MAIN_PRODUCTS_CONTAINER_ID,
-  product: RELATED_PRODUCTS_CONTAINER_ID,
+  shop_product_list: MAIN_PRODUCTS_CONTAINER_ID,
+  shop_index: MAIN_PRODUCTS_CONTAINER_ID,
+  shop_product: RELATED_PRODUCTS_CONTAINER_ID,
 };
 
 const getProductsIds = (page: TPages) => {

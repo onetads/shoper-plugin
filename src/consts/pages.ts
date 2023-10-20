@@ -1,7 +1,7 @@
-const PRODUCT_PAGE = 'product';
-const CATEGORY_PAGE = 'category';
-const INDEX_PAGE = 'index';
+const PRODUCT_PAGE = 'shop_product';
+const LISTING_PAGE = 'shop_product_list';
+const INDEX_PAGE = 'shop_index';
 
-const PAGES = [PRODUCT_PAGE, CATEGORY_PAGE, INDEX_PAGE] as const;
+const PAGES = [PRODUCT_PAGE, LISTING_PAGE, INDEX_PAGE] as const;
 
-export { PAGES, PRODUCT_PAGE, CATEGORY_PAGE, INDEX_PAGE };
+export { PAGES, PRODUCT_PAGE, LISTING_PAGE, INDEX_PAGE };

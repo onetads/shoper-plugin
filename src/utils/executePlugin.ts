@@ -1,13 +1,13 @@
 import { getProductsIds } from 'utils/getProductsIds';
-import { detectCurrentPageType } from './detectCurrentPageType';
+import { getCurrentPageInfo } from './getCurrentPageInfo';
 import { injectAdScript } from './injectAdScript';
 
 const executePlugin = () => {
-  const { type } = detectCurrentPageType() || {};
+  const { type } = getCurrentPageInfo() || {};
 
   let products;
 
-  if (type === 'category' || type === 'product') {
+  if (type) {
     products = getProductsIds(type);
   }
 

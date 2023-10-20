@@ -1,3 +1,5 @@
 import { executePlugin } from 'utils/executePlugin';
 
-executePlugin();
+window.addEventListener('DOMContentLoaded', () => {
+  executePlugin();
+});
