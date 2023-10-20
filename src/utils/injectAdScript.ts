@@ -20,16 +20,16 @@ const injectAdScript = (
 ) => {
   const area = page ? mapPageToArea(page) : null;
 
-  const firstScript = document.createElement('script');
-  const secondScript = document.createElement('script');
+  const dynamicScript = document.createElement('script');
+  const externalScript = document.createElement('script');
 
   const areaContent = area ? 'area: "' + area + '",' : '';
   const offerIdsContent =
     offerIds !== undefined ? 'offer_ids: [' + offerIds + '],' : '';
 
-  firstScript.type = 'text/javascript';
+  dynamicScript.type = 'text/javascript';
 
-  firstScript.innerHTML =
+  dynamicScript.innerHTML =
     'dlApi={' +
     areaContent +
     'cmd: [],keyvalues: {website_id: ' +
@@ -38,11 +38,12 @@ const injectAdScript = (
     offerIdsContent +
     'autoslot: 1,}};';
 
-  secondScript.src = 'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
-  secondScript.async = true;
+  externalScript.src =
+    'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
+  externalScript.async = true;
 
-  document.head.appendChild(firstScript);
-  document.head.appendChild(secondScript);
+  document.head.appendChild(dynamicScript);
+  document.head.appendChild(externalScript);
 };
 
 export { injectAdScript };
