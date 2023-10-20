@@ -17,6 +17,8 @@ module.exports = {
     alias: {
       templates: path.resolve(__dirname, './src/templates/'),
       types: path.resolve(__dirname, './src/types'),
+      utils: path.resolve(__dirname, './src/utils'),
+      consts: path.resolve(__dirname, './src/consts'),
     },
   },
   output: {

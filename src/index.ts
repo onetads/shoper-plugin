@@ -1,11 +1,3 @@
-import test from 'templates/index';
+import { executePlugin } from 'utils/executePlugin';
 
-function component() {
-  const element = document.createElement('div');
-
-  element.innerHTML = test;
-
-  return element;
-}
-
-document.body.appendChild(component());
+executePlugin();

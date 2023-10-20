@@ -9,9 +9,12 @@
     "allowJs": true,
     "checkJs": true,
     "moduleResolution": "node",
+    "strictNullChecks": true,
     "paths": {
       "templates/*": ["./src/templates/*"],
       "types/*": ["./src/types/*"],
+      "utils/*": ["./src/utils/*"],
+      "consts/*": ["./src/consts/*"],
     }
   },
   "include": ["**/*.js", "**/*.ts"],
