@@ -41,4 +41,4 @@ const getProductsIds = (page: TPages) => {
   return productsIds;
 };
 
-export { getProductsIds };
+export default getProductsIds;

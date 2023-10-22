@@ -1,6 +1,7 @@
-interface Window {
-  Shop: {
-    pageType: string;
-    pageId: string;
-  };
+declare global {
+  namespace Shop {
+    const pageType: string;
+  }
 }
+
+export {};

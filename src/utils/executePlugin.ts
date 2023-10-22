@@ -1,9 +1,9 @@
-import { getProductsIds } from 'utils/getProductsIds';
-import { getCurrentPageInfo } from './getCurrentPageInfo';
-import { injectAdScript } from './injectAdScript';
+import getCurrentPageInfo from 'utils/getCurrentPageInfo';
+import getProductsIds from 'utils/getProductsIds';
+import injectAdScript from 'utils/injectAdScript';
 
 const executePlugin = () => {
-  const { type } = getCurrentPageInfo() || {};
+  const type = getCurrentPageInfo();
 
   let products;
 
@@ -14,4 +14,4 @@ const executePlugin = () => {
   injectAdScript(type, products);
 };
 
-export { executePlugin };
+export default executePlugin;

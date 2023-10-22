@@ -1,6 +1,6 @@
 import { EAreas } from 'types/areas';
 import { TPages } from 'types/pages';
-import { getProductsIds } from './getProductsIds';
+import getProductsIds from 'utils/getProductsIds';
 
 const WEBSITE_ID = 17200; // TODO: MAKE IT DYNAMIC IN FUTURE!!!
 
@@ -15,21 +15,21 @@ const mapPageToArea = (page: TPages) => {
 };
 
 const injectAdScript = (
-  page: TPages | undefined,
+  page: TPages | null,
   offerIds: ReturnType<typeof getProductsIds> | undefined,
 ) => {
   const area = page ? mapPageToArea(page) : null;
 
-  const dynamicScript = document.createElement('script');
-  const externalScript = document.createElement('script');
+  const adPixelScript = document.createElement('script');
+  const adPixelDepsScript = document.createElement('script');
 
   const areaContent = area ? 'area: "' + area + '",' : '';
   const offerIdsContent =
     offerIds !== undefined ? 'offer_ids: [' + offerIds + '],' : '';
 
-  dynamicScript.type = 'text/javascript';
+  adPixelScript.type = 'text/javascript';
 
-  dynamicScript.innerHTML =
+  adPixelScript.innerHTML =
     'dlApi={' +
     areaContent +
     'cmd: [],keyvalues: {website_id: ' +
@@ -38,12 +38,12 @@ const injectAdScript = (
     offerIdsContent +
     'autoslot: 1,}};';
 
-  externalScript.src =
+  adPixelDepsScript.src =
     'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
-  externalScript.async = true;
+  adPixelDepsScript.async = true;
 
-  document.head.appendChild(dynamicScript);
-  document.head.appendChild(externalScript);
+  document.head.appendChild(adPixelScript);
+  document.head.appendChild(adPixelDepsScript);
 };
 
-export { injectAdScript };
+export default injectAdScript;

@@ -1,4 +1,4 @@
-import { executePlugin } from 'utils/executePlugin';
+import executePlugin from 'utils/executePlugin';
 
 window.addEventListener('DOMContentLoaded', () => {
   executePlugin();

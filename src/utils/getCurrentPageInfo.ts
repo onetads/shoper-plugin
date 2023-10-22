@@ -1,14 +1,10 @@
 import { PAGES } from 'consts/pages';
 import { TPages } from 'types/pages';
 
-type TGetCurrentPageInfoResult = {
-  type: TPages;
-  id: string | null;
-} | null;
+type TGetCurrentPageInfoResult = TPages | null;
 
 const getCurrentPageInfo = (): TGetCurrentPageInfoResult => {
-  const currentPageType = window.Shop.pageType;
-  const currentPageId = window.Shop.pageId;
+  const currentPageType = Shop.pageType;
 
   const foundPage = PAGES.find((page) =>
     currentPageType.split(' ').some((pageTypeItem) => pageTypeItem === page),
@@ -16,10 +12,7 @@ const getCurrentPageInfo = (): TGetCurrentPageInfoResult => {
 
   if (!foundPage) return null;
 
-  return {
-    type: foundPage,
-    id: currentPageId === '' ? null : currentPageId,
-  };
+  return foundPage as TPages;
 };
 
-export { getCurrentPageInfo };
+export default getCurrentPageInfo;
