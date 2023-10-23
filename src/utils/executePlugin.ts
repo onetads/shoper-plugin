@@ -5,11 +5,7 @@ import injectAdScript from 'utils/injectAdScript';
 const executePlugin = () => {
   const type = getCurrentPageInfo();
 
-  let products;
-
-  if (type) {
-    products = getProductsIds(type);
-  }
+  const products = type ? getProductsIds(type) : [];
 
   injectAdScript(type, products);
 };

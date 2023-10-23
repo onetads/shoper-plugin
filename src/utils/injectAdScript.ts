@@ -16,27 +16,26 @@ const mapPageToArea = (page: TPages) => {
 
 const injectAdScript = (
   page: TPages | null,
-  offerIds: ReturnType<typeof getProductsIds> | undefined,
+  offerIds: ReturnType<typeof getProductsIds>,
 ) => {
   const area = page ? mapPageToArea(page) : null;
 
   const adPixelScript = document.createElement('script');
   const adPixelDepsScript = document.createElement('script');
 
-  const areaContent = area ? 'area: "' + area + '",' : '';
-  const offerIdsContent =
-    offerIds !== undefined ? 'offer_ids: [' + offerIds + '],' : '';
-
   adPixelScript.type = 'text/javascript';
 
-  adPixelScript.innerHTML =
-    'dlApi={' +
-    areaContent +
-    'cmd: [],keyvalues: {website_id: ' +
-    WEBSITE_ID +
-    ',' +
-    offerIdsContent +
-    'autoslot: 1,}};';
+  adPixelScript.innerHTML = `
+  dlApi={
+    area: '${area || ''}',
+    cmd: [],
+    keyvalues: {
+      website_id: ${WEBSITE_ID},
+      offer_ids: ${JSON.stringify(offerIds)},
+    },
+    autoslot: 1,
+  };
+ `;
 
   adPixelDepsScript.src =
     'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
