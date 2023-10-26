@@ -4,4 +4,4 @@ const INDEX_PAGE = 'shop_index';
 
 const PAGES = [PRODUCT_PAGE, LISTING_PAGE, INDEX_PAGE] as const;
 
-export { PAGES };
+export { PAGES, PRODUCT_PAGE, LISTING_PAGE, INDEX_PAGE };
