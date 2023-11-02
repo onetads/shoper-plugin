@@ -3,6 +3,10 @@ import { EProductAvailability } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
 
+const PROBLEMATIC_TEMPLATES = [
+  '#wce_default-skin-translation',
+  '#wce_default-js-translation',
+];
 const TEMPLATES_MAP = {
   [PRODUCT_PAGE]: {
     [EProductAvailability.ACTIVE]: ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE,
@@ -31,4 +35,6 @@ const TEMPLATES_MAP = {
   },
 };
 
-export { TEMPLATES_MAP };
+const NOT_VALID_TEMPLATE = 'NOT_VALID_TEMPLATE';
+
+export { TEMPLATES_MAP, NOT_VALID_TEMPLATE, PROBLEMATIC_TEMPLATES };

@@ -1,12 +1,18 @@
 import { PRODUCT_PAGE } from 'consts/pages';
 import {
+  CONTAINERS_IDS_TO_CLEAR,
+  CONTAINER_IDS_TO_DELETE,
   DATA_PRODUCT_ID,
   PRODUCTS_CLASSNAME,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
 } from 'consts/products';
-import { REPLACE_CONTENT_MAP } from 'consts/selectors';
-import { TEMPLATES_MAP } from 'consts/templates';
+import { BASKET_ID, CONTENT, REPLACE_CONTENT_MAP } from 'consts/selectors';
+import {
+  NOT_VALID_TEMPLATE,
+  PROBLEMATIC_TEMPLATES,
+  TEMPLATES_MAP,
+} from 'consts/templates';
 import { TPages } from 'types/pages';
 import { EProductAvailability, EProductElements } from 'types/products';
 import { ETemplates } from 'types/templates';
@@ -19,9 +25,9 @@ class TemplateManager {
 
     if (!page) return;
 
-    this.checkDOMforTemplates(page);
+    this.page = page;
 
-    console.log(this.templates);
+    this.checkDOMforTemplates(page);
   }
 
   private templates = Object.keys(ETemplates).reduce(
@@ -32,125 +38,214 @@ class TemplateManager {
     {},
   ) as Record<ETemplates, string | null>;
 
-  private viewType: EViews | null;
+  private viewType: EViews = EViews.PHOTO;
+  private page: TPages | null = null;
 
   private checkDOMforTemplates(page: TPages) {
-    const productsContainer = document.getElementById(PRODUCT_CONTAINERS[page]);
+    const found = PROBLEMATIC_TEMPLATES.find((id) => {
+      return !!document.head.querySelector(id);
+    });
+
+    if (found) {
+      console.error('PROBLEMATIC TEMPLATE DETECTED');
+      return;
+    }
+
+    const productsContainer = document.querySelector(PRODUCT_CONTAINERS[page]);
 
     if (!productsContainer) return;
 
     const productsElements = Array.from(
-      productsContainer.querySelectorAll(`[${DATA_PRODUCT_ID}]`),
+      productsContainer.querySelectorAll(`div[${DATA_PRODUCT_ID}]`),
     );
 
     const productInnerWrapper = productsContainer.querySelector(
       `.${PRODUCTS_CLASSNAME}`,
     );
 
-    if (!productInnerWrapper) return;
+    if (productInnerWrapper) {
+      const viewType = productInnerWrapper.className.includes(EViews.FULL)
+        ? EViews.FULL
+        : EViews.PHOTO;
 
-    const viewType = productInnerWrapper.className.includes(EViews.FULL)
-      ? EViews.FULL
-      : EViews.PHOTO;
-
-    this.viewType = viewType;
+      this.viewType = viewType;
+    }
 
     for (const productElement of productsElements) {
       if (!(productElement instanceof HTMLElement)) continue;
 
       const elementClasses = productElement.className.split(' ');
 
-      // FIX ME - DOES NOT WORK FOR RELATED PRODUCTS IN PRODUCT PAGE
       elementClasses.forEach((className) => {
-        if (className === PRODUCT_INACTIVE) {
-          const mappedTemplate = this.getMappedTemplate({
+        if (
+          className === PRODUCT_INACTIVE ||
+          !productElement.querySelector('.product .basket .addtobasket')
+        ) {
+          this.saveTemplate(
             page,
-            availability: EProductAvailability.INACTIVE,
-            viewType,
-          });
-
-          if (this.getTemplate(mappedTemplate)) return;
-
-          this.saveTemplateInLocalStorage(productElement, mappedTemplate);
-        } else {
-          const mappedTemplate = this.getMappedTemplate({
-            page,
-            availability: EProductAvailability.ACTIVE,
-            viewType,
-          });
-
-          if (this.getTemplate(mappedTemplate)) return;
-
-          this.saveTemplateInLocalStorage(productElement, mappedTemplate);
+            productElement,
+            EProductAvailability.INACTIVE,
+          );
+        } else if (className === 'product') {
+          this.saveTemplate(page, productElement, EProductAvailability.ACTIVE);
         }
       });
     }
+  }
+
+  private saveTemplate(
+    page: TPages,
+    productElement: HTMLElement,
+    availability: EProductAvailability,
+  ) {
+    const mappedTemplate = this.getMappedTemplate({
+      page,
+      availability,
+    });
+
+    if (this.getTemplate(mappedTemplate)) return;
+
+    this.saveTemplateInLocalStorage(productElement, mappedTemplate);
   }
 
   private saveTemplateInLocalStorage(
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
   ) {
-    const preparedTemplate = this.prepareTemplate(productElement);
+    const preparedTemplate = this.prepareTemplate(
+      productElement,
+      mappedTemplate,
+    );
 
     if (!preparedTemplate) return;
 
+    this.templates = { ...this.templates, [mappedTemplate]: preparedTemplate };
     localStorage.setItem(mappedTemplate, preparedTemplate);
   }
 
   private getMappedTemplate({
     page,
     availability,
-    viewType,
   }: {
     page: TPages;
     availability: EProductAvailability;
-    viewType: EViews;
   }) {
-    if (page === PRODUCT_PAGE) return TEMPLATES_MAP[page][availability];
-    else return TEMPLATES_MAP[page][viewType][availability];
+    if (page === PRODUCT_PAGE) {
+      return TEMPLATES_MAP[page][availability];
+    } else return TEMPLATES_MAP[page][this.viewType][availability];
   }
 
-  private prepareTemplate(productElement: HTMLElement) {
+  private prepareTemplate(
+    productElement: HTMLElement,
+    mappedTemplate: ETemplates,
+  ) {
     const copiedProductElement = document.createElement('div');
     copiedProductElement.innerHTML = productElement.outerHTML;
 
+    let canInjectTemplate = true;
+
     for (const property in REPLACE_CONTENT_MAP) {
+      if (!canInjectTemplate) break;
+
       const { key, map } = REPLACE_CONTENT_MAP[property as EProductElements];
 
-      const contentMap = [...map.default];
+      const contentMap = [];
 
-      if (this.viewType === EViews.FULL)
-        contentMap.push(...(map.additional || []));
-
-      contentMap.forEach(({ selector, replace }) => {
-        const selectedElement = copiedProductElement.querySelector(selector);
-
-        if (!selectedElement) {
-          console.log('NOT FOUND!');
-          return;
+      if (this.page === 'shop_product') {
+        contentMap.push(...map.relatedView);
+      } else {
+        if (this.viewType === EViews.PHOTO) {
+          contentMap.push(...map.photoView);
         }
 
-        replace.forEach((item) => {
-          if (item === 'content') {
-            selectedElement.innerHTML = key;
-          } else {
-            selectedElement.setAttribute(item, key);
+        if (this.viewType === EViews.FULL) {
+          contentMap.push(...map.fullView);
+        }
+      }
+
+      contentMap.forEach(
+        ({ selector, replace, forActiveOnly, forNotActiveOnly, canBeNull }) => {
+          if (!canInjectTemplate) return;
+
+          if (
+            forActiveOnly &&
+            (mappedTemplate === ETemplates.LIST_FULL_NOT_AVAILABLE ||
+              mappedTemplate === ETemplates.LIST_PHOTO_NOT_AVAILABLE)
+          )
+            return;
+
+          if (
+            forNotActiveOnly &&
+            (mappedTemplate === ETemplates.LIST_FULL_AVAILABLE ||
+              mappedTemplate === ETemplates.LIST_PHOTO_AVAILABLE)
+          )
+            return;
+
+          const selectedElements =
+            copiedProductElement.querySelectorAll(selector);
+
+          if (selectedElements.length === 0 && canBeNull !== true) {
+            console.error('SELECTOR NOT FOUND');
+
+            canInjectTemplate = false;
+            return;
           }
-        });
-      });
+
+          selectedElements.forEach((element) => {
+            replace.forEach((item) => {
+              if (item === CONTENT) {
+                element.innerHTML = key;
+                return;
+              }
+
+              if (item === BASKET_ID) {
+                const actionContent = element.getAttribute('action');
+
+                if (!actionContent) return;
+
+                const findNumberRegex = /\d+/;
+
+                element.setAttribute(
+                  'action',
+                  actionContent.replace(findNumberRegex, key),
+                );
+                return;
+              }
+
+              element.setAttribute(item, key);
+            });
+          });
+        },
+      );
     }
+
+    CONTAINERS_IDS_TO_CLEAR.forEach((className) => {
+      const elementToClear = copiedProductElement.querySelector(className);
+
+      if (elementToClear) {
+        elementToClear.innerHTML = '';
+      }
+    });
+
+    CONTAINER_IDS_TO_DELETE.forEach((className) => {
+      const element = copiedProductElement.querySelector(className);
+      if (!element) return;
+
+      element.remove();
+    });
+
+    if (!canInjectTemplate) return NOT_VALID_TEMPLATE;
 
     if (
       !(
         copiedProductElement.firstElementChild &&
-        copiedProductElement.firstElementChild.firstElementChild
+        copiedProductElement.firstElementChild
       )
     )
       return;
 
     copiedProductElement.firstElementChild.replaceChildren(
-      copiedProductElement.firstElementChild.firstElementChild,
+      copiedProductElement.firstElementChild.children[0],
     );
 
     return copiedProductElement.firstElementChild.outerHTML;

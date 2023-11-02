@@ -2,7 +2,11 @@ import TemplateManager from './managers/TemplateManager';
 import executePlugin from 'utils/executePlugin';
 
 window.addEventListener('DOMContentLoaded', () => {
-  executePlugin();
+  if (window.Shop) {
+    localStorage.clear();
 
-  window.TemplateManager = new TemplateManager();
+    executePlugin();
+
+    window.TemplateManager = new TemplateManager();
+  }
 });

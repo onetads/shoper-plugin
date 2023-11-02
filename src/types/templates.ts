@@ -10,13 +10,17 @@ enum ETemplates {
 type TContentMap = {
   selector: string;
   replace: string[];
+  forActiveOnly?: boolean;
+  forNotActiveOnly?: boolean;
+  canBeNull?: boolean;
 };
 
 type TReplaceContentMap = {
   key: string;
   map: {
-    default: TContentMap[];
-    additional?: TContentMap[];
+    photoView: TContentMap[];
+    fullView: TContentMap[];
+    relatedView: TContentMap[];
   };
 };
 
