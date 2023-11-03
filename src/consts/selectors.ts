@@ -67,11 +67,21 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
         },
+        {
+          canBeNull: true,
+          selector: '.img-wrap img[srcset]',
+          replace: ['srcset'],
+        },
       ],
       listView: [
         {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
+        },
+        {
+          canBeNull: true,
+          selector: '.img-wrap img[srcset]',
+          replace: ['srcset'],
         },
       ],
       relatedView: [

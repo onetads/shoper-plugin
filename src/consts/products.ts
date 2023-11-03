@@ -15,6 +15,8 @@ const CONTAINER_IDS_TO_DELETE = [
   '.price-netto',
   '.price del',
   '.product__currency',
+  '.tm-hornet-container',
+  '.tags',
 ];
 const CONTAINERS_IDS_TO_CLEAR = [
   '.price__additional-info',
