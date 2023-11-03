@@ -11,7 +11,7 @@ const getProductsIds = (page: TPages) => {
   if (!productsContainer) return [];
 
   const productElements = Array.from(
-    productsContainer.querySelectorAll(`[${DATA_PRODUCT_ID}]`),
+    productsContainer.querySelectorAll(DATA_PRODUCT_ID),
   );
 
   const productsIds = [];

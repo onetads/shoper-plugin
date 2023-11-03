@@ -21,7 +21,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.ID]: {
     key: PRODUCT_ID_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.product',
           replace: ['data-product-id'],
@@ -38,7 +38,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: ['data-product-id'],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.product',
           replace: ['data-product-id'],
@@ -62,13 +62,13 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.IMG]: {
     key: PRODUCT_IMAGE_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
@@ -85,7 +85,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.PRODUCT_NAME]: {
     key: PRODUCT_NAME_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.prodimage',
           replace: ['title'],
@@ -109,7 +109,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: ['data-product-name'],
         },
       ],
-      fullView: [
+      listView: [
         {
           canBeNull: true,
           selector: '.description h3 a',
@@ -157,7 +157,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.PRODUCT_LINK]: {
     key: PRODUCT_LINK_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.prodimage',
           replace: ['href'],
@@ -167,7 +167,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: ['href'],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.description h3 a',
           replace: ['href'],
@@ -197,13 +197,13 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.PRICE]: {
     key: PRODUCT_PRICE_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.price em',
           replace: [CONTENT],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.price em',
           replace: [CONTENT],
@@ -221,7 +221,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.PRODUCER]: {
     key: PRODUCT_PRODUCER_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.product',
           replace: ['data-producer'],
@@ -232,7 +232,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: ['title', CONTENT],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.product',
           replace: ['data-producer'],
@@ -249,27 +249,27 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.PRODUCER_LINK]: {
     key: PRODUCT_PRODUCER_LINK_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           canBeNull: true,
           selector: '.manufacturer a',
           replace: ['href'],
         },
       ],
-      fullView: [],
+      listView: [],
       relatedView: [],
     },
   },
   [EProductElements.CATEGORY]: {
     key: PRODUCT_CATEGORY_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           selector: '.product',
           replace: ['data-category'],
         },
       ],
-      fullView: [
+      listView: [
         {
           selector: '.product',
           replace: ['data-category'],
@@ -286,14 +286,14 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.AVAILABILITY]: {
     key: PRODUCT_AVAILABILITY_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           canBeNull: true,
           selector: '.avail span:last-child',
           replace: [CONTENT],
         },
       ],
-      fullView: [
+      listView: [
         {
           canBeNull: true,
           selector: '.avail span:last-child',
@@ -306,7 +306,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.DELIVERY]: {
     key: PRODUCT_DELIVERY_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           forActiveOnly: true,
           canBeNull: true,
@@ -314,7 +314,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: [CONTENT],
         },
       ],
-      fullView: [
+      listView: [
         {
           forActiveOnly: true,
           canBeNull: true,
@@ -328,8 +328,8 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.DESCRIPTION]: {
     key: PRODUCT_DESCRIPTION_KEY,
     map: {
-      photoView: [],
-      fullView: [
+      gridView: [],
+      listView: [
         {
           selector: '.product-short-description',
           replace: [CONTENT],
@@ -346,7 +346,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.STOCK_ID]: {
     key: PRODUCT_STOCK_ID_KEY,
     map: {
-      photoView: [
+      gridView: [
         {
           canBeNull: true,
           forActiveOnly: true,
@@ -366,7 +366,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           replace: ['data-stock-id'],
         },
       ],
-      fullView: [
+      listView: [
         {
           forActiveOnly: true,
           selector: '.basket input[name="stock_id"]',

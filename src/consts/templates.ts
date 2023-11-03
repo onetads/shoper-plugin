@@ -14,23 +14,23 @@ const TEMPLATES_MAP = {
       ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
   },
   [LISTING_PAGE]: {
-    [EViews.FULL]: {
-      [EProductAvailability.ACTIVE]: ETemplates.LIST_FULL_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_FULL_NOT_AVAILABLE,
+    [EViews.LIST_VIEW]: {
+      [EProductAvailability.ACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
     },
-    [EViews.PHOTO]: {
-      [EProductAvailability.ACTIVE]: ETemplates.LIST_PHOTO_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_PHOTO_NOT_AVAILABLE,
+    [EViews.GRID_VIEW]: {
+      [EProductAvailability.ACTIVE]: ETemplates.GRID_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.GRID_VIEW_NOT_AVAILABLE,
     },
   },
   [INDEX_PAGE]: {
-    [EViews.FULL]: {
-      [EProductAvailability.ACTIVE]: ETemplates.LIST_FULL_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_FULL_NOT_AVAILABLE,
+    [EViews.LIST_VIEW]: {
+      [EProductAvailability.ACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
     },
-    [EViews.PHOTO]: {
-      [EProductAvailability.ACTIVE]: ETemplates.LIST_PHOTO_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_PHOTO_NOT_AVAILABLE,
+    [EViews.GRID_VIEW]: {
+      [EProductAvailability.ACTIVE]: ETemplates.GRID_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.GRID_VIEW_NOT_AVAILABLE,
     },
   },
 };

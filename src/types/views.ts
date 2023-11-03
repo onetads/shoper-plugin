@@ -1,6 +1,6 @@
 enum EViews {
-  FULL = 'viewfull',
-  PHOTO = 'viewphot',
+  LIST_VIEW = 'viewfull',
+  GRID_VIEW = 'viewphot',
 }
 
 export { EViews };

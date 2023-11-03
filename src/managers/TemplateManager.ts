@@ -3,7 +3,7 @@ import {
   CONTAINERS_IDS_TO_CLEAR,
   CONTAINER_IDS_TO_DELETE,
   DATA_PRODUCT_ID,
-  PRODUCTS_CLASSNAME,
+  PRODUCT_CONTAINER_ID,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
 } from 'consts/products';
@@ -38,7 +38,7 @@ class TemplateManager {
     {},
   ) as Record<ETemplates, string | null>;
 
-  private viewType: EViews = EViews.PHOTO;
+  private viewType: EViews = EViews.GRID_VIEW;
   private page: TPages | null = null;
 
   private checkDOMforTemplates(page: TPages) {
@@ -56,17 +56,16 @@ class TemplateManager {
     if (!productsContainer) return;
 
     const productsElements = Array.from(
-      productsContainer.querySelectorAll(`div[${DATA_PRODUCT_ID}]`),
+      productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
     );
 
-    const productInnerWrapper = productsContainer.querySelector(
-      `.${PRODUCTS_CLASSNAME}`,
-    );
+    const productInnerWrapper =
+      productsContainer.querySelector(PRODUCT_CONTAINER_ID);
 
     if (productInnerWrapper) {
-      const viewType = productInnerWrapper.className.includes(EViews.FULL)
-        ? EViews.FULL
-        : EViews.PHOTO;
+      const viewType = productInnerWrapper.className.includes(EViews.LIST_VIEW)
+        ? EViews.LIST_VIEW
+        : EViews.GRID_VIEW;
 
       this.viewType = viewType;
     }
@@ -154,12 +153,12 @@ class TemplateManager {
       if (this.page === 'shop_product') {
         contentMap.push(...map.relatedView);
       } else {
-        if (this.viewType === EViews.PHOTO) {
-          contentMap.push(...map.photoView);
+        if (this.viewType === EViews.GRID_VIEW) {
+          contentMap.push(...map.gridView);
         }
 
-        if (this.viewType === EViews.FULL) {
-          contentMap.push(...map.fullView);
+        if (this.viewType === EViews.LIST_VIEW) {
+          contentMap.push(...map.listView);
         }
       }
 
@@ -169,23 +168,23 @@ class TemplateManager {
 
           if (
             forActiveOnly &&
-            (mappedTemplate === ETemplates.LIST_FULL_NOT_AVAILABLE ||
-              mappedTemplate === ETemplates.LIST_PHOTO_NOT_AVAILABLE)
+            (mappedTemplate === ETemplates.LIST_VIEW_NOT_AVAILABLE ||
+              mappedTemplate === ETemplates.GRID_VIEW_NOT_AVAILABLE)
           )
             return;
 
           if (
             forNotActiveOnly &&
-            (mappedTemplate === ETemplates.LIST_FULL_AVAILABLE ||
-              mappedTemplate === ETemplates.LIST_PHOTO_AVAILABLE)
+            (mappedTemplate === ETemplates.LIST_VIEW_AVAILABLE ||
+              mappedTemplate === ETemplates.GRID_VIEW_AVAILABLE)
           )
             return;
 
           const selectedElements =
             copiedProductElement.querySelectorAll(selector);
 
-          if (selectedElements.length === 0 && canBeNull !== true) {
-            console.error('SELECTOR NOT FOUND');
+          if (!selectedElements.length && !canBeNull) {
+            console.error(`SELECTOR NOT FOUND - ${selector}`);
 
             canInjectTemplate = false;
             return;
@@ -236,19 +235,13 @@ class TemplateManager {
 
     if (!canInjectTemplate) return NOT_VALID_TEMPLATE;
 
-    if (
-      !(
-        copiedProductElement.firstElementChild &&
-        copiedProductElement.firstElementChild
-      )
-    )
-      return;
+    if (!copiedProductElement.firstElementChild) return;
 
-    copiedProductElement.firstElementChild.replaceChildren(
-      copiedProductElement.firstElementChild.children[0],
-    );
+    // clear productContainer to only have product innerwraper without any other items like tags
+    const productContainer = copiedProductElement.children[0];
+    productContainer.replaceChildren(productContainer.children[0]);
 
-    return copiedProductElement.firstElementChild.outerHTML;
+    return productContainer.outerHTML;
   }
 
   public getTemplate(template: ETemplates) {

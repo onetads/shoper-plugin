@@ -1,13 +1,12 @@
 import { TPages } from 'types/pages';
 
-const MAIN_PRODUCTS_CONTAINER_ID = '#box_mainproducts';
-const RELATED_PRODUCTS_CONTAINER_ID = '.product-related';
-
-const DATA_PRODUCT_ID = 'data-product-id';
-
 const PRODUCT_ID_KEY = 'productId';
 const PRODUCT_INACTIVE = 'product_inactive';
-const PRODUCTS_CLASSNAME = 'products';
+
+const PRODUCT_CONTAINER_ID = '.products';
+const DATA_PRODUCT_ID = '[data-product-id]';
+const MAIN_PRODUCTS_CONTAINER_ID = '#box_mainproducts';
+const RELATED_PRODUCTS_CONTAINER_ID = '.product-related';
 
 const CONTAINER_IDS_TO_DELETE = [
   '.mx_voteStars_container',
@@ -33,7 +32,7 @@ export {
   PRODUCT_ID_KEY,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
-  PRODUCTS_CLASSNAME,
+  PRODUCT_CONTAINER_ID,
   CONTAINER_IDS_TO_DELETE,
   CONTAINERS_IDS_TO_CLEAR,
 };
