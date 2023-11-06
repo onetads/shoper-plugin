@@ -16,7 +16,7 @@ const TEMPLATES_MAP = {
   [LISTING_PAGE]: {
     [EViews.LIST_VIEW]: {
       [EProductAvailability.ACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_NOT_AVAILABLE,
     },
     [EViews.GRID_VIEW]: {
       [EProductAvailability.ACTIVE]: ETemplates.GRID_VIEW_AVAILABLE,
@@ -26,7 +26,7 @@ const TEMPLATES_MAP = {
   [INDEX_PAGE]: {
     [EViews.LIST_VIEW]: {
       [EProductAvailability.ACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
-      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_AVAILABLE,
+      [EProductAvailability.INACTIVE]: ETemplates.LIST_VIEW_NOT_AVAILABLE,
     },
     [EViews.GRID_VIEW]: {
       [EProductAvailability.ACTIVE]: ETemplates.GRID_VIEW_AVAILABLE,
