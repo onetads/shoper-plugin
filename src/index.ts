@@ -1,10 +1,12 @@
 import TemplateManager from './managers/TemplateManager';
 import executePlugin from 'utils/executePlugin';
 
-window.addEventListener('DOMContentLoaded', () => {
+window.onload = () => {
   if (window.Shop) {
     executePlugin();
 
     window.TemplateManager = new TemplateManager();
+
+    window.TemplateManager.injectProduct();
   }
-});
+};
