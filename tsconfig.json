@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["es2021", "dom"],
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
@@ -15,7 +16,8 @@
       "types/*": ["./src/types/*"],
       "utils/*": ["./src/utils/*"],
       "consts/*": ["./src/consts/*"],
-    }
+      "managers/*": ["./src/managers/*"],
+    },
   },
   "include": ["**/*.js", "**/*.ts"],
   "exclude": ["dist", "node_modules"],

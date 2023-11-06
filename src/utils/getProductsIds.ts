@@ -1,24 +1,17 @@
 import {
   DATA_PRODUCT_ID,
-  MAIN_PRODUCTS_CONTAINER_ID,
+  PRODUCT_CONTAINERS,
   PRODUCT_ID_KEY,
-  RELATED_PRODUCTS_CONTAINER_ID,
 } from 'consts/products';
 import { TPages } from 'types/pages';
 
-const productsContainers: Record<TPages, string> = {
-  shop_product_list: MAIN_PRODUCTS_CONTAINER_ID,
-  shop_index: MAIN_PRODUCTS_CONTAINER_ID,
-  shop_product: RELATED_PRODUCTS_CONTAINER_ID,
-};
-
 const getProductsIds = (page: TPages) => {
-  const productsContainer = document.getElementById(productsContainers[page]);
+  const productsContainer = document.getElementById(PRODUCT_CONTAINERS[page]);
 
   if (!productsContainer) return [];
 
   const productElements = Array.from(
-    productsContainer.querySelectorAll(`[${DATA_PRODUCT_ID}]`),
+    productsContainer.querySelectorAll(DATA_PRODUCT_ID),
   );
 
   const productsIds = [];
