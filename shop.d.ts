@@ -1,4 +1,4 @@
-type TGetProduct = (arg1: { id: number }) => {
+type TGetProduct = (productId: { id: number }) => {
   id: number;
   can_buy: boolean;
   availability: { name: string };

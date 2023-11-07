@@ -6,6 +6,8 @@ import {
   PRODUCT_CONTAINER_ID,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
+  RELATED_PRODUCTS_CONTAINER_ID,
+  PRODUCT_CLASS,
 } from 'consts/products';
 import {
   BASKET_ID,
@@ -14,15 +16,16 @@ import {
   PRODUCT_CATEGORY_KEY,
   PRODUCT_DELIVERY_KEY,
   PRODUCT_DESCRIPTION_KEY,
-  PRODUCT_IMAGE_KEY,
   PRODUCT_LINK_KEY,
   PRODUCT_NAME_KEY,
   PRODUCT_PRICE_KEY,
-  PRODUCT_PRODUCER_KEY,
-  PRODUCT_PRODUCER_LINK_KEY,
   PRODUCT_ID_KEY,
   PRODUCT_STOCK_ID_KEY,
   REPLACE_CONTENT_MAP,
+  PRODUCT_IMAGE_FILENAME_KEY,
+  PRODUCT_MAIN_IMAGE_KEY,
+  PRODUCT_PRODUCER_NAME_KEY,
+  PRODUCT_PRODUCER_ID_KEY,
 } from 'consts/selectors';
 import {
   NOT_VALID_TEMPLATE,
@@ -101,7 +104,7 @@ class TemplateManager {
             productElement,
             EProductAvailability.INACTIVE,
           );
-        } else if (className === 'product') {
+        } else if (className === PRODUCT_CLASS) {
           this.saveTemplate(page, productElement, EProductAvailability.ACTIVE);
         }
       });
@@ -166,7 +169,7 @@ class TemplateManager {
 
       const contentMap = [];
 
-      if (this.page === 'shop_product') {
+      if (this.page === PRODUCT_PAGE) {
         contentMap.push(...map.relatedView);
       } else {
         if (this.viewType === EViews.GRID_VIEW) {
@@ -179,7 +182,14 @@ class TemplateManager {
       }
 
       contentMap.forEach(
-        ({ selector, replace, forActiveOnly, forNotActiveOnly, canBeNull }) => {
+        ({
+          selector,
+          replace,
+          forActiveOnly,
+          forNotActiveOnly,
+          canBeNull,
+          prepareValue,
+        }) => {
           if (!canInjectTemplate) return;
 
           if (
@@ -200,9 +210,6 @@ class TemplateManager {
             copiedProductElement.querySelectorAll(selector);
 
           if (!selectedElements.length && !canBeNull) {
-            console.log(productElement);
-            console.log(mappedTemplate);
-
             console.error(`SELECTOR NOT FOUND - ${selector}`);
 
             canInjectTemplate = false;
@@ -230,7 +237,9 @@ class TemplateManager {
                 return;
               }
 
-              element.setAttribute(item, key);
+              const newValue = prepareValue ? prepareValue(element) : key;
+
+              element.setAttribute(item, newValue);
             });
           });
         },
@@ -277,13 +286,14 @@ class TemplateManager {
       [PRODUCT_STOCK_ID_KEY]: product.stockId,
       [PRODUCT_ID_KEY]: product.id,
       [PRODUCT_LINK_KEY]: product.url,
-      [PRODUCT_PRODUCER_KEY]: product.producer.name,
-      [PRODUCT_PRODUCER_LINK_KEY]: `/pl/producer/${product.producer.name}/${product.producer.id}`,
+      [PRODUCT_PRODUCER_NAME_KEY]: product.producer.name,
+      [PRODUCT_PRODUCER_ID_KEY]: product.producer.id,
       [PRODUCT_CATEGORY_KEY]: product.category.name,
-      [PRODUCT_IMAGE_KEY]: `/environment/cache/images/300_300_productGfx_${product.main_image}/${product.main_image_filename}`,
+      [PRODUCT_IMAGE_FILENAME_KEY]: product.main_image_filename,
+      [PRODUCT_MAIN_IMAGE_KEY]: product.main_image,
       [PRODUCT_PRICE_KEY]: product.price.gross.final,
       [PRODUCT_AVAILABILITY_KEY]: product.availability.name,
-      [PRODUCT_DELIVERY_KEY]: product.availability.name,
+      [PRODUCT_DELIVERY_KEY]: product.delivery.name,
       [PRODUCT_DESCRIPTION_KEY]: product.description,
     };
   }
@@ -295,7 +305,7 @@ class TemplateManager {
     const currentPage = this.page;
 
     if (isActive) {
-      if (currentPage === 'shop_product') {
+      if (currentPage === PRODUCT_PAGE) {
         template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE);
       } else {
         template = this.getTemplate(
@@ -305,7 +315,7 @@ class TemplateManager {
         );
       }
     } else {
-      if (currentPage === 'shop_product') {
+      if (currentPage === PRODUCT_PAGE) {
         template = this.getTemplate(
           ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
         );
@@ -328,10 +338,12 @@ class TemplateManager {
         product[objKey].toString(),
       );
     }
-    const prodcutsWrapper = document.querySelector(
-      this.page === 'shop_product' ? '.product-related' : '.products',
+    const productsWrapper = document.querySelector(
+      this.page === PRODUCT_PAGE
+        ? RELATED_PRODUCTS_CONTAINER_ID
+        : PRODUCT_CONTAINER_ID,
     );
-    prodcutsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
+    productsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
   }
 }
 

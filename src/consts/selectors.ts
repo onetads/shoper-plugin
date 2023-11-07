@@ -3,11 +3,12 @@ import { TReplaceContentMap } from 'types/templates';
 
 const PRODUCT_NAME_KEY = '{{ PRODUCT_NAME_KEY }}';
 const PRODUCT_LINK_KEY = '{{ PRODUCT_LINK_KEY }}';
-const PRODUCT_PRODUCER_KEY = '{{ PRODUCT_PRODUCER_KEY }}';
-const PRODUCT_PRODUCER_LINK_KEY = '{{ PRODUCT_PRODUCER_LINK_KEY }}';
+const PRODUCT_PRODUCER_NAME_KEY = '{{ PRODUCT_PRODUCER_NAME_KEY }}';
+const PRODUCT_PRODUCER_ID_KEY = '{{ PRODUCT_PRODUCER_ID_KEY }}';
 const PRODUCT_ID_KEY = '{{ PRODUCT_ID_KEY }}';
 const PRODUCT_CATEGORY_KEY = '{{ PRODUCT_CATEGORY_KEY }}';
-const PRODUCT_IMAGE_KEY = '{{ PRODUCT_IMAGE_KEY }}';
+const PRODUCT_MAIN_IMAGE_KEY = '{{ PRODUCT_MAIN_IMAGE_KEY }}';
+const PRODUCT_IMAGE_FILENAME_KEY = '{{ PRODUCT_IMAGE_FILENAME_KEY }}';
 const PRODUCT_PRICE_KEY = '{{ PRODUCT_PRICE_KEY }}';
 const PRODUCT_AVAILABILITY_KEY = '{{ PRODUCT_AVAILABILITY_KEY }}';
 const PRODUCT_DELIVERY_KEY = '{{ PRODUCT_DELIVERY_KEY }}';
@@ -16,6 +17,41 @@ const PRODUCT_STOCK_ID_KEY = '{{ PRODUCT_STOCK_ID_KEY }}';
 
 const CONTENT = 'CONTENT';
 const BASKET_ID = 'BASKET_ID';
+
+const prepareImageValue = (element: HTMLImageElement) => {
+  let srcValue = '';
+  srcValue = element.getAttribute('data-src') || '';
+
+  if (!srcValue) {
+    srcValue = element.getAttribute('src') || '';
+  }
+
+  const replacedString = srcValue.replace(
+    /productGfx_\d+/,
+    `productGfx_${PRODUCT_MAIN_IMAGE_KEY}`,
+  );
+
+  const finalString =
+    replacedString.replace(/\/[^/]+$/, '') + `/${PRODUCT_IMAGE_FILENAME_KEY}`;
+
+  return finalString;
+};
+
+const prepareProducerLink = (element: HTMLImageElement) => {
+  const hrefContent = element.getAttribute('href');
+
+  if (!hrefContent) return '';
+
+  const parts = hrefContent.split('/');
+
+  if (parts.length >= 4) {
+    parts[3] = PRODUCT_PRODUCER_NAME_KEY;
+    parts[4] = PRODUCT_PRODUCER_ID_KEY;
+  }
+
+  const modifiedString = parts.join('/');
+  return modifiedString;
+};
 
 const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.ID]: {
@@ -60,34 +96,39 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   },
 
   [EProductElements.IMG]: {
-    key: PRODUCT_IMAGE_KEY,
+    key: PRODUCT_MAIN_IMAGE_KEY,
     map: {
       gridView: [
         {
           selector: '.img-wrap img',
-          replace: ['src', 'data-src'],
+          replace: ['data-src', 'src'],
+          prepareValue: prepareImageValue,
         },
         {
           canBeNull: true,
           selector: '.img-wrap img[srcset]',
           replace: ['srcset'],
+          prepareValue: prepareImageValue,
         },
       ],
       listView: [
         {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
+          prepareValue: prepareImageValue,
         },
         {
           canBeNull: true,
           selector: '.img-wrap img[srcset]',
           replace: ['srcset'],
+          prepareValue: prepareImageValue,
         },
       ],
       relatedView: [
         {
           selector: '.details img',
           replace: ['src'],
+          prepareValue: prepareImageValue,
         },
       ],
     },
@@ -152,6 +193,10 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
         {
           selector: 'h3 a',
           replace: ['title'],
+        },
+        {
+          selector: '.productname',
+          replace: [CONTENT],
         },
         {
           selector: '.details',
@@ -229,7 +274,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   },
 
   [EProductElements.PRODUCER]: {
-    key: PRODUCT_PRODUCER_KEY,
+    key: PRODUCT_PRODUCER_NAME_KEY,
     map: {
       gridView: [
         {
@@ -257,13 +302,14 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
     },
   },
   [EProductElements.PRODUCER_LINK]: {
-    key: PRODUCT_PRODUCER_LINK_KEY,
+    key: PRODUCT_PRODUCER_ID_KEY,
     map: {
       gridView: [
         {
           canBeNull: true,
           selector: '.manufacturer a',
           replace: ['href'],
+          prepareValue: prepareProducerLink,
         },
       ],
       listView: [],
@@ -406,13 +452,14 @@ export {
   PRODUCT_ID_KEY,
   PRODUCT_NAME_KEY,
   PRODUCT_LINK_KEY,
-  PRODUCT_PRODUCER_KEY,
-  PRODUCT_PRODUCER_LINK_KEY,
   PRODUCT_CATEGORY_KEY,
-  PRODUCT_IMAGE_KEY,
+  PRODUCT_MAIN_IMAGE_KEY,
+  PRODUCT_IMAGE_FILENAME_KEY,
   PRODUCT_PRICE_KEY,
   PRODUCT_AVAILABILITY_KEY,
   PRODUCT_DELIVERY_KEY,
   PRODUCT_DESCRIPTION_KEY,
   PRODUCT_STOCK_ID_KEY,
+  PRODUCT_PRODUCER_NAME_KEY,
+  PRODUCT_PRODUCER_ID_KEY,
 };

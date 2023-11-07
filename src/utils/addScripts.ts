@@ -2,7 +2,7 @@ import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 import getProductsIds from 'utils/getProductsIds';
 import injectAdScript from 'utils/injectAdScript';
 
-const executePlugin = () => {
+const addScripts = () => {
   const type = getCurrentPageInfo();
 
   const products = type ? getProductsIds(type) : [];
@@ -10,4 +10,4 @@ const executePlugin = () => {
   injectAdScript(type, products);
 };
 
-export default executePlugin;
+export default addScripts;

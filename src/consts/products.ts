@@ -2,6 +2,7 @@ import { TPages } from 'types/pages';
 
 const PRODUCT_ID_KEY = 'productId';
 const PRODUCT_INACTIVE = 'product_inactive';
+const PRODUCT_CLASS = 'product';
 
 const PRODUCT_CONTAINER_ID = '.products';
 const DATA_PRODUCT_ID = '[data-product-id]';
@@ -37,4 +38,6 @@ export {
   PRODUCT_CONTAINER_ID,
   CONTAINER_IDS_TO_DELETE,
   CONTAINERS_IDS_TO_CLEAR,
+  RELATED_PRODUCTS_CONTAINER_ID,
+  PRODUCT_CLASS,
 };
