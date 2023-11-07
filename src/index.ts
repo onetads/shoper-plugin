@@ -1,23 +1,20 @@
 import initTemplateManager from 'utils/initTemplateManager';
-import addScripts from 'utils/addScripts';
+import initAdManager from 'utils/initAdManager';
+import runWhenPageReady from 'utils/runWhenPageReady';
+import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 
-const attemptsLimit = 30;
-const delay = 50;
+window.addEventListener('DOMContentLoaded', () => {
+  runWhenPageReady(() => {
+    const page = getCurrentPageInfo();
+    const AdManager = initAdManager(page);
+    AdManager.injectAdnPixelScript();
 
-let currentAttempt = 0;
+    if (page) {
+      const TemplateManager = initTemplateManager(page);
+      TemplateManager.checkDOMforTemplates();
 
-const intervalId = setInterval(() => {
-  if (currentAttempt > attemptsLimit) return;
-
-  const shopObject = window.Shop;
-  const frontAPIObject = window.frontAPI;
-
-  currentAttempt++;
-  if (!shopObject || !frontAPIObject) return;
-
-  addScripts();
-
-  const TemplateManager = initTemplateManager();
-  TemplateManager.injectProduct();
-  clearInterval(intervalId);
-}, delay);
+      const promotedProducts = AdManager.getPromotedProducts();
+      TemplateManager.injectProducts(promotedProducts);
+    }
+  });
+});

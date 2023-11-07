@@ -1,5 +1,6 @@
 import TemplateManager from 'managers/TemplateManager';
+import { TPages } from 'types/pages';
 
-const initTemplateManager = () => new TemplateManager();
+const initTemplateManager = (page: TPages) => new TemplateManager(page);
 
 export default initTemplateManager;
