@@ -3,10 +3,10 @@ import {
   CONTAINERS_IDS_TO_CLEAR,
   CONTAINER_IDS_TO_DELETE,
   DATA_PRODUCT_ID,
-  PRODUCT_CONTAINER_ID,
+  PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
-  RELATED_PRODUCTS_CONTAINER_ID,
+  RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
 } from 'consts/products';
 import {
@@ -78,8 +78,9 @@ class TemplateManager {
       productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
     );
 
-    const productInnerWrapper =
-      productsContainer.querySelector(PRODUCT_CONTAINER_ID);
+    const productInnerWrapper = productsContainer.querySelector(
+      PRODUCT_CONTAINER_SELECTOR,
+    );
 
     if (productInnerWrapper) {
       const viewType = productInnerWrapper.className.includes(EViews.LIST_VIEW)
@@ -294,7 +295,7 @@ class TemplateManager {
       [PRODUCT_PRICE_KEY]: product.price.gross.final,
       [PRODUCT_AVAILABILITY_KEY]: product.availability.name,
       [PRODUCT_DELIVERY_KEY]: product.delivery.name,
-      [PRODUCT_DESCRIPTION_KEY]: product.description,
+      [PRODUCT_DESCRIPTION_KEY]: product.shortDescription,
     };
   }
 
@@ -340,8 +341,8 @@ class TemplateManager {
     }
     const productsWrapper = document.querySelector(
       this.page === PRODUCT_PAGE
-        ? RELATED_PRODUCTS_CONTAINER_ID
-        : PRODUCT_CONTAINER_ID,
+        ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+        : PRODUCT_CONTAINER_SELECTOR,
     );
     productsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
   }

@@ -19,8 +19,7 @@ const CONTENT = 'CONTENT';
 const BASKET_ID = 'BASKET_ID';
 
 const prepareImageValue = (element: HTMLImageElement) => {
-  let srcValue = '';
-  srcValue = element.getAttribute('data-src') || '';
+  let srcValue = element.getAttribute('data-src') || '';
 
   if (!srcValue) {
     srcValue = element.getAttribute('src') || '';
@@ -44,10 +43,8 @@ const prepareProducerLink = (element: HTMLImageElement) => {
 
   const parts = hrefContent.split('/');
 
-  if (parts.length >= 4) {
-    parts[3] = PRODUCT_PRODUCER_NAME_KEY;
-    parts[4] = PRODUCT_PRODUCER_ID_KEY;
-  }
+  parts[parts.length - 2] = PRODUCT_PRODUCER_NAME_KEY;
+  parts[parts.length - 1] = PRODUCT_PRODUCER_ID_KEY;
 
   const modifiedString = parts.join('/');
   return modifiedString;
