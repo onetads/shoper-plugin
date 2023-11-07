@@ -62,15 +62,15 @@ class TemplateManager {
 
     if (hasProblematicTemplates) {
       console.error('PROBLEMATIC TEMPLATE DETECTED');
-      return false;
+      return;
     }
 
-    if (!this.page) return false;
+    if (!this.page) return;
     const productsContainer = document.querySelector(
       PRODUCT_CONTAINERS[this.page],
     );
 
-    if (!productsContainer) return false;
+    if (!productsContainer) return;
 
     const productsElements = Array.from(
       productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
