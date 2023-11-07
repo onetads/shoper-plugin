@@ -3,11 +3,30 @@ import {
   CONTAINERS_IDS_TO_CLEAR,
   CONTAINER_IDS_TO_DELETE,
   DATA_PRODUCT_ID,
-  PRODUCT_CONTAINER_ID,
+  PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
+  RELATED_PRODUCTS_CONTAINER_SELECTOR,
+  PRODUCT_CLASS,
 } from 'consts/products';
-import { BASKET_ID, CONTENT, REPLACE_CONTENT_MAP } from 'consts/selectors';
+import {
+  BASKET_ID,
+  CONTENT,
+  PRODUCT_AVAILABILITY_KEY,
+  PRODUCT_CATEGORY_KEY,
+  PRODUCT_DELIVERY_KEY,
+  PRODUCT_DESCRIPTION_KEY,
+  PRODUCT_LINK_KEY,
+  PRODUCT_NAME_KEY,
+  PRODUCT_PRICE_KEY,
+  PRODUCT_ID_KEY,
+  PRODUCT_STOCK_ID_KEY,
+  REPLACE_CONTENT_MAP,
+  PRODUCT_IMAGE_FILENAME_KEY,
+  PRODUCT_MAIN_IMAGE_KEY,
+  PRODUCT_PRODUCER_NAME_KEY,
+  PRODUCT_PRODUCER_ID_KEY,
+} from 'consts/selectors';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
@@ -59,8 +78,9 @@ class TemplateManager {
       productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
     );
 
-    const productInnerWrapper =
-      productsContainer.querySelector(PRODUCT_CONTAINER_ID);
+    const productInnerWrapper = productsContainer.querySelector(
+      PRODUCT_CONTAINER_SELECTOR,
+    );
 
     if (productInnerWrapper) {
       const viewType = productInnerWrapper.className.includes(EViews.LIST_VIEW)
@@ -85,7 +105,7 @@ class TemplateManager {
             productElement,
             EProductAvailability.INACTIVE,
           );
-        } else if (className === 'product') {
+        } else if (className === PRODUCT_CLASS) {
           this.saveTemplate(page, productElement, EProductAvailability.ACTIVE);
         }
       });
@@ -150,7 +170,7 @@ class TemplateManager {
 
       const contentMap = [];
 
-      if (this.page === 'shop_product') {
+      if (this.page === PRODUCT_PAGE) {
         contentMap.push(...map.relatedView);
       } else {
         if (this.viewType === EViews.GRID_VIEW) {
@@ -163,7 +183,14 @@ class TemplateManager {
       }
 
       contentMap.forEach(
-        ({ selector, replace, forActiveOnly, forNotActiveOnly, canBeNull }) => {
+        ({
+          selector,
+          replace,
+          forActiveOnly,
+          forNotActiveOnly,
+          canBeNull,
+          prepareValue,
+        }) => {
           if (!canInjectTemplate) return;
 
           if (
@@ -211,7 +238,9 @@ class TemplateManager {
                 return;
               }
 
-              element.setAttribute(item, key);
+              const newValue = prepareValue ? prepareValue(element) : key;
+
+              element.setAttribute(item, newValue);
             });
           });
         },
@@ -246,6 +275,76 @@ class TemplateManager {
 
   public getTemplate(template: ETemplates) {
     return this.templates[template];
+  }
+
+  private getProduct() {
+    const PRODUCT_ID = 31;
+    const product = frontAPI.getProduct({ id: PRODUCT_ID });
+
+    return {
+      isActive: product.can_buy,
+      [PRODUCT_NAME_KEY]: product.name,
+      [PRODUCT_STOCK_ID_KEY]: product.stockId,
+      [PRODUCT_ID_KEY]: product.id,
+      [PRODUCT_LINK_KEY]: product.url,
+      [PRODUCT_PRODUCER_NAME_KEY]: product.producer.name,
+      [PRODUCT_PRODUCER_ID_KEY]: product.producer.id,
+      [PRODUCT_CATEGORY_KEY]: product.category.name,
+      [PRODUCT_IMAGE_FILENAME_KEY]: product.main_image_filename,
+      [PRODUCT_MAIN_IMAGE_KEY]: product.main_image,
+      [PRODUCT_PRICE_KEY]: product.price.gross.final,
+      [PRODUCT_AVAILABILITY_KEY]: product.availability.name,
+      [PRODUCT_DELIVERY_KEY]: product.delivery.name,
+      [PRODUCT_DESCRIPTION_KEY]: product.shortDescription,
+    };
+  }
+
+  public injectProduct() {
+    const { isActive, ...product } = this.getProduct();
+
+    let template;
+    const currentPage = this.page;
+
+    if (isActive) {
+      if (currentPage === PRODUCT_PAGE) {
+        template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE);
+      } else {
+        template = this.getTemplate(
+          this.viewType === EViews.LIST_VIEW
+            ? ETemplates.LIST_VIEW_AVAILABLE
+            : ETemplates.GRID_VIEW_AVAILABLE,
+        );
+      }
+    } else {
+      if (currentPage === PRODUCT_PAGE) {
+        template = this.getTemplate(
+          ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
+        );
+      } else {
+        template = this.getTemplate(
+          this.viewType === EViews.LIST_VIEW
+            ? ETemplates.LIST_VIEW_NOT_AVAILABLE
+            : ETemplates.GRID_VIEW_NOT_AVAILABLE,
+        );
+      }
+    }
+    if (template === NOT_VALID_TEMPLATE || template === null) return;
+
+    let modifiedTemplate = template;
+    for (const key in product) {
+      const objKey = key as keyof typeof product;
+
+      modifiedTemplate = modifiedTemplate?.replaceAll(
+        new RegExp(key, 'g'),
+        product[objKey].toString(),
+      );
+    }
+    const productsWrapper = document.querySelector(
+      this.page === PRODUCT_PAGE
+        ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+        : PRODUCT_CONTAINER_SELECTOR,
+    );
+    productsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
   }
 }
 

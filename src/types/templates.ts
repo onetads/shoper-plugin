@@ -13,6 +13,7 @@ type TContentMap = {
   forActiveOnly?: boolean;
   forNotActiveOnly?: boolean;
   canBeNull?: boolean;
+  prepareValue?: (item: Element) => string;
 };
 
 type TReplaceContentMap = {
