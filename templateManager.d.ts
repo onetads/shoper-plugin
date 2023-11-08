@@ -1,4 +1,4 @@
-import TemplateManager from './src/managers/TemplateManager/TemplateManager';
+import TemplateManager from './src/managers/TemplateManager';
 
 declare global {
   interface Window {
