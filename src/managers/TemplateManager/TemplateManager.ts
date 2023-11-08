@@ -27,20 +27,28 @@ import {
   PRODUCT_PRODUCER_NAME_KEY,
   PRODUCT_PRODUCER_ID_KEY,
 } from 'consts/selectors';
+import { DEFAULT_LANGUAGE } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
   TEMPLATES_MAP,
 } from 'consts/templates';
 import { TPages } from 'types/pages';
-import { EProductAvailability, EProductElements } from 'types/products';
+import {
+  EProductAvailability,
+  EProductElements,
+  TProduct,
+  EProductQuickViews,
+} from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
+import getQuickViewContent from 'utils/getQuickViewContent';
 
 class TemplateManager {
   constructor(page: TPages) {
     if (!page) return;
-
+    this.lang =
+      document.documentElement.getAttribute('lang') || DEFAULT_LANGUAGE;
     this.page = page;
   }
 
@@ -53,6 +61,7 @@ class TemplateManager {
   ) as Record<ETemplates, string | null>;
 
   private viewType: EViews = EViews.GRID_VIEW;
+  private lang: string;
   private page: TPages;
 
   public checkDOMforTemplates = () => {
@@ -279,9 +288,9 @@ class TemplateManager {
     return this.templates[template];
   };
 
-  private getProduct = (id: number) => {
-    const product = frontAPI.getProduct({ id: id });
+  private getProduct = (id: number) => frontAPI.getProduct({ id: id });
 
+  private getProductMap = (product: TProduct) => {
     return {
       isActive: product.can_buy,
       [PRODUCT_NAME_KEY]: product.name,
@@ -300,9 +309,42 @@ class TemplateManager {
     };
   };
 
+  private getProductWithEvents = (
+    stringProductElement: string,
+    product: TProduct,
+  ): HTMLElement => {
+    const elemWrapper = document.createElement('div');
+    elemWrapper.innerHTML = stringProductElement;
+    const productBox = elemWrapper.firstChild as HTMLElement;
+    const quickViewButton = productBox.querySelector(
+      '.btn.large.tablet.quickview',
+    ) as HTMLElement;
+
+    if (
+      quickViewButton &&
+      quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
+    ) {
+      quickViewButton.addEventListener('click', () => {
+        const modal = new Shop.Modal({
+          showMask: true,
+          position: 'center',
+          positionType: 'absolute',
+          offset: 20,
+          header: product.name,
+          content: getQuickViewContent(product, this.lang),
+        });
+
+        modal.createModal();
+      });
+    }
+
+    return productBox;
+  };
+
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
-      const { isActive, ...product } = this.getProduct(id);
+      const product = this.getProduct(id);
+      const { isActive, ...mappedProduct } = this.getProductMap(product);
 
       let template;
       const currentPage = this.page;
@@ -335,12 +377,12 @@ class TemplateManager {
       if (template === NOT_VALID_TEMPLATE || template === null) return;
 
       let modifiedTemplate = template;
-      for (const key in product) {
-        const objKey = key as keyof typeof product;
+      for (const key in mappedProduct) {
+        const objKey = key as keyof typeof mappedProduct;
 
         modifiedTemplate = modifiedTemplate?.replaceAll(
           new RegExp(key, 'g'),
-          product[objKey].toString(),
+          mappedProduct[objKey].toString(),
         );
       }
       const productsWrapper = document.querySelector(
@@ -348,7 +390,15 @@ class TemplateManager {
           ? RELATED_PRODUCTS_CONTAINER_SELECTOR
           : PRODUCT_CONTAINER_SELECTOR,
       );
-      productsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
+
+      const productWithEvents = this.getProductWithEvents(
+        modifiedTemplate,
+        product,
+      );
+      productsWrapper?.insertBefore(
+        productWithEvents,
+        productsWrapper.firstChild,
+      );
     });
   };
 }
