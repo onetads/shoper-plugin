@@ -1,6 +1,5 @@
 import { TPages } from 'types/pages';
 
-const MAXIMUM_RATE = 5;
 const PRODUCT_ID_KEY = 'productId';
 const PRODUCT_INACTIVE = 'product_inactive';
 const PRODUCT_CLASS = 'product';
@@ -29,7 +28,6 @@ const PRODUCT_CONTAINERS: Record<TPages, string> = {
 };
 
 export {
-  MAXIMUM_RATE,
   DATA_PRODUCT_ID,
   PRODUCT_ID_KEY,
   PRODUCT_CONTAINERS,
