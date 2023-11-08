@@ -18,4 +18,36 @@ enum EProductElements {
   STOCK_ID = 'STOCK_ID',
 }
 
-export { EProductAvailability, EProductElements };
+enum EProductQuickViews {
+  MODAL = '1',
+  DROPDOWN = '2',
+}
+
+type TProduct = {
+  id: number;
+  can_buy: boolean;
+  availability: { name: string };
+  delivery: { name: string };
+  description: string;
+  stockId: number;
+  main_image_filename: string;
+  main_image: string;
+  rate: number;
+  price: {
+    gross: {
+      final: string;
+    };
+  };
+  producer: {
+    name: string;
+    id: string;
+  };
+  shortDescription: string;
+  url: string;
+  name: string;
+  category: {
+    name: string;
+  };
+};
+
+export { EProductAvailability, EProductElements, TProduct, EProductQuickViews };

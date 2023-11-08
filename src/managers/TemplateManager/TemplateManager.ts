@@ -1,7 +1,7 @@
 import { PRODUCT_PAGE } from 'consts/pages';
 import {
-  CONTAINERS_IDS_TO_CLEAR,
-  CONTAINER_IDS_TO_DELETE,
+  CONTAINER_SELECTORS_TO_CLEAR,
+  CONTAINER_SELECTORS_TO_DELETE,
   DATA_PRODUCT_ID,
   PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
@@ -27,26 +27,29 @@ import {
   PRODUCT_PRODUCER_NAME_KEY,
   PRODUCT_PRODUCER_ID_KEY,
 } from 'consts/selectors';
+import { DEFAULT_LANGUAGE } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
   TEMPLATES_MAP,
 } from 'consts/templates';
 import { TPages } from 'types/pages';
-import { EProductAvailability, EProductElements } from 'types/products';
+import {
+  EProductAvailability,
+  EProductElements,
+  TProduct,
+  EProductQuickViews,
+} from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
-import getCurrentPageInfo from 'utils/getCurrentPageInfo';
+import getQuickViewContent from 'utils/getQuickViewContent';
 
 class TemplateManager {
-  constructor() {
-    const page = getCurrentPageInfo();
-
+  constructor(page: TPages) {
     if (!page) return;
-
+    this.lang =
+      document.documentElement.getAttribute('lang') || DEFAULT_LANGUAGE;
     this.page = page;
-
-    this.checkDOMforTemplates(page);
   }
 
   private templates = Object.keys(ETemplates).reduce(
@@ -58,19 +61,23 @@ class TemplateManager {
   ) as Record<ETemplates, string | null>;
 
   private viewType: EViews = EViews.GRID_VIEW;
-  private page: TPages | null = null;
+  private lang: string;
+  private page: TPages;
 
-  private checkDOMforTemplates(page: TPages) {
-    const found = PROBLEMATIC_TEMPLATES.find((id) => {
+  public checkDOMforTemplates = () => {
+    const hasProblematicTemplates = PROBLEMATIC_TEMPLATES.find((id) => {
       return !!document.head.querySelector(id);
     });
 
-    if (found) {
+    if (hasProblematicTemplates) {
       console.error('PROBLEMATIC TEMPLATE DETECTED');
       return;
     }
 
-    const productsContainer = document.querySelector(PRODUCT_CONTAINERS[page]);
+    if (!this.page) return;
+    const productsContainer = document.querySelector(
+      PRODUCT_CONTAINERS[this.page],
+    );
 
     if (!productsContainer) return;
 
@@ -101,22 +108,26 @@ class TemplateManager {
           !productElement.querySelector('.product .basket .addtobasket')
         ) {
           this.saveTemplate(
-            page,
+            this.page,
             productElement,
             EProductAvailability.INACTIVE,
           );
         } else if (className === PRODUCT_CLASS) {
-          this.saveTemplate(page, productElement, EProductAvailability.ACTIVE);
+          this.saveTemplate(
+            this.page,
+            productElement,
+            EProductAvailability.ACTIVE,
+          );
         }
       });
     }
-  }
+  };
 
-  private saveTemplate(
+  private saveTemplate = (
     page: TPages,
     productElement: HTMLElement,
     availability: EProductAvailability,
-  ) {
+  ) => {
     const mappedTemplate = this.getMappedTemplate({
       page,
       availability,
@@ -125,12 +136,12 @@ class TemplateManager {
     if (this.getTemplate(mappedTemplate)) return;
 
     this.saveTemplateInLocalStorage(productElement, mappedTemplate);
-  }
+  };
 
-  private saveTemplateInLocalStorage(
+  private saveTemplateInLocalStorage = (
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
-  ) {
+  ) => {
     const preparedTemplate = this.prepareTemplate(
       productElement,
       mappedTemplate,
@@ -140,24 +151,24 @@ class TemplateManager {
 
     this.templates = { ...this.templates, [mappedTemplate]: preparedTemplate };
     localStorage.setItem(mappedTemplate, preparedTemplate);
-  }
+  };
 
-  private getMappedTemplate({
+  private getMappedTemplate = ({
     page,
     availability,
   }: {
     page: TPages;
     availability: EProductAvailability;
-  }) {
+  }) => {
     if (page === PRODUCT_PAGE) {
       return TEMPLATES_MAP[page][availability];
     } else return TEMPLATES_MAP[page][this.viewType][availability];
-  }
+  };
 
-  private prepareTemplate(
+  private prepareTemplate = (
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
-  ) {
+  ) => {
     const copiedProductElement = document.createElement('div');
     copiedProductElement.innerHTML = productElement.outerHTML;
 
@@ -247,7 +258,7 @@ class TemplateManager {
       );
     }
 
-    CONTAINERS_IDS_TO_CLEAR.forEach((className) => {
+    CONTAINER_SELECTORS_TO_CLEAR.forEach((className) => {
       const elementToClear = copiedProductElement.querySelector(className);
 
       if (elementToClear) {
@@ -255,7 +266,7 @@ class TemplateManager {
       }
     });
 
-    CONTAINER_IDS_TO_DELETE.forEach((className) => {
+    CONTAINER_SELECTORS_TO_DELETE.forEach((className) => {
       const element = copiedProductElement.querySelector(className);
       if (!element) return;
 
@@ -271,16 +282,15 @@ class TemplateManager {
     productContainer.replaceChildren(productContainer.children[0]);
 
     return productContainer.outerHTML;
-  }
+  };
 
-  public getTemplate(template: ETemplates) {
+  public getTemplate = (template: ETemplates) => {
     return this.templates[template];
-  }
+  };
 
-  private getProduct() {
-    const PRODUCT_ID = 31;
-    const product = frontAPI.getProduct({ id: PRODUCT_ID });
+  private getProduct = (id: number) => frontAPI.getProduct({ id: id });
 
+  private getProductMap = (product: TProduct) => {
     return {
       isActive: product.can_buy,
       [PRODUCT_NAME_KEY]: product.name,
@@ -297,55 +307,100 @@ class TemplateManager {
       [PRODUCT_DELIVERY_KEY]: product.delivery.name,
       [PRODUCT_DESCRIPTION_KEY]: product.shortDescription,
     };
-  }
+  };
 
-  public injectProduct() {
-    const { isActive, ...product } = this.getProduct();
+  private getProductWithEvents = (
+    stringProductElement: string,
+    product: TProduct,
+  ): HTMLElement => {
+    const elemWrapper = document.createElement('div');
+    elemWrapper.innerHTML = stringProductElement;
+    const productBox = elemWrapper.firstChild as HTMLElement;
+    const quickViewButton = productBox.querySelector(
+      '.btn.large.tablet.quickview',
+    ) as HTMLElement;
 
-    let template;
-    const currentPage = this.page;
+    if (
+      quickViewButton &&
+      quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
+    ) {
+      quickViewButton.addEventListener('click', () => {
+        const modal = new Shop.Modal({
+          showMask: true,
+          position: 'center',
+          positionType: 'absolute',
+          offset: 20,
+          header: product.name,
+          content: getQuickViewContent(product, this.lang),
+        });
 
-    if (isActive) {
-      if (currentPage === PRODUCT_PAGE) {
-        template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE);
-      } else {
-        template = this.getTemplate(
-          this.viewType === EViews.LIST_VIEW
-            ? ETemplates.LIST_VIEW_AVAILABLE
-            : ETemplates.GRID_VIEW_AVAILABLE,
-        );
-      }
-    } else {
-      if (currentPage === PRODUCT_PAGE) {
-        template = this.getTemplate(
-          ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
-        );
-      } else {
-        template = this.getTemplate(
-          this.viewType === EViews.LIST_VIEW
-            ? ETemplates.LIST_VIEW_NOT_AVAILABLE
-            : ETemplates.GRID_VIEW_NOT_AVAILABLE,
-        );
-      }
+        modal.createModal();
+      });
     }
-    if (template === NOT_VALID_TEMPLATE || template === null) return;
 
-    let modifiedTemplate = template;
-    for (const key in product) {
-      const objKey = key as keyof typeof product;
+    return productBox;
+  };
 
-      modifiedTemplate = modifiedTemplate?.replaceAll(
-        new RegExp(key, 'g'),
-        product[objKey].toString(),
+  public injectProducts = (productsIds: number[]) => {
+    productsIds.forEach((id) => {
+      const product = this.getProduct(id);
+      const { isActive, ...mappedProduct } = this.getProductMap(product);
+
+      let template;
+      const currentPage = this.page;
+
+      if (isActive) {
+        if (currentPage === PRODUCT_PAGE) {
+          template = this.getTemplate(
+            ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE,
+          );
+        } else {
+          template = this.getTemplate(
+            this.viewType === EViews.LIST_VIEW
+              ? ETemplates.LIST_VIEW_AVAILABLE
+              : ETemplates.GRID_VIEW_AVAILABLE,
+          );
+        }
+      } else {
+        if (currentPage === PRODUCT_PAGE) {
+          template = this.getTemplate(
+            ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
+          );
+        } else {
+          template = this.getTemplate(
+            this.viewType === EViews.LIST_VIEW
+              ? ETemplates.LIST_VIEW_NOT_AVAILABLE
+              : ETemplates.GRID_VIEW_NOT_AVAILABLE,
+          );
+        }
+      }
+      if (template === NOT_VALID_TEMPLATE || template === null) return;
+
+      let modifiedTemplate = template;
+      for (const key in mappedProduct) {
+        const objKey = key as keyof typeof mappedProduct;
+
+        modifiedTemplate = modifiedTemplate?.replaceAll(
+          new RegExp(key, 'g'),
+          mappedProduct[objKey].toString(),
+        );
+      }
+      const productsWrapper = document.querySelector(
+        this.page === PRODUCT_PAGE
+          ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+          : PRODUCT_CONTAINER_SELECTOR,
       );
-    }
-    const productsWrapper = document.querySelector(
-      this.page === PRODUCT_PAGE
-        ? RELATED_PRODUCTS_CONTAINER_SELECTOR
-        : PRODUCT_CONTAINER_SELECTOR,
-    );
-    productsWrapper?.insertAdjacentHTML('afterbegin', modifiedTemplate);
-  }
+
+      const productWithEvents = this.getProductWithEvents(
+        modifiedTemplate,
+        product,
+      );
+      productsWrapper?.insertBefore(
+        productWithEvents,
+        productsWrapper.firstChild,
+      );
+    });
+  };
 }
 
 export default TemplateManager;

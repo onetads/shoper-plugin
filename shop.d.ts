@@ -1,32 +1,40 @@
-type TGetProduct = (productId: { id: number }) => {
-  id: number;
-  can_buy: boolean;
-  availability: { name: string };
-  delivery: { name: string };
-  description: string;
-  stockId: number;
-  main_image_filename: string;
-  main_image: string;
-  price: {
-    gross: {
-      final: string;
-    };
+import { TProduct } from 'types/products';
+
+type TGetProduct = (productId: { id: number }) => TProduct;
+
+type TUserOptions = {
+  ajaxbasket: {
+    mode: number;
   };
-  producer: {
-    name: string;
-    id: string;
-  };
-  shortDescription: string;
-  url: string;
-  name: string;
-  category: {
-    name: string;
-  };
+};
+
+type TModalOptions = {
+  showMask: boolean;
+  position: 'center' | 'top';
+  positionType: 'fixed' | 'absolute';
+  offset: number;
+  header: string;
+  content: string;
 };
 
 declare global {
   namespace Shop {
     const pageType: string;
+    const useroptions: TUserOptions;
+    const Modal: new (arg: TModalOptions) => {
+      createModal: () => void;
+    };
+    const lang: {
+      quickview: {
+        addtobasket: string;
+        availability: string;
+        delivery: string;
+        evaluation: string;
+        exchange: string;
+        price: string;
+        producer: string;
+      };
+    };
   }
 
   namespace frontAPI {
@@ -34,4 +42,4 @@ declare global {
   }
 }
 
-export {};
+export { TProduct };

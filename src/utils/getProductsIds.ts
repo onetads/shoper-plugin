@@ -6,7 +6,7 @@ import {
 import { TPages } from 'types/pages';
 
 const getProductsIds = (page: TPages) => {
-  const productsContainer = document.getElementById(PRODUCT_CONTAINERS[page]);
+  const productsContainer = document.querySelector(PRODUCT_CONTAINERS[page]);
 
   if (!productsContainer) return [];
 
