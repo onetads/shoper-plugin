@@ -1,9 +1,12 @@
+import AdManager from 'managers/AdManager/AdManager';
+import { TPages } from 'types/pages';
 import {
   DATA_PRODUCT_ID,
   PRODUCT_CONTAINERS,
   PRODUCT_ID_KEY,
 } from 'consts/products';
-import { TPages } from 'types/pages';
+
+const initAdManager = (page: TPages | null) => new AdManager(page);
 
 const getProductsIds = (page: TPages) => {
   const productsContainer = document.querySelector(PRODUCT_CONTAINERS[page]);
@@ -34,4 +37,4 @@ const getProductsIds = (page: TPages) => {
   return productsIds;
 };
 
-export default getProductsIds;
+export { getProductsIds, initAdManager };

@@ -24,6 +24,12 @@ declare global {
     const Modal: new (arg: TModalOptions) => {
       createModal: () => void;
     };
+    const QuickView: new () => {
+      create: (arg: TProduct, arg2: JQuery) => void;
+    };
+    const AjaxBasket: new () => {
+      sendAjax: (arg: HTMLFormElement) => void;
+    };
     const lang: {
       quickview: {
         addtobasket: string;
@@ -39,6 +45,24 @@ declare global {
 
   namespace frontAPI {
     const getProduct: TGetProduct;
+    const addToBasket: (arg: {
+      lang?: string;
+      currency?: string;
+      data: {
+        stock_id: number;
+      };
+    }) => {
+      added: string;
+      basket: {
+        count: number;
+      };
+      _flash_messanger: {
+        error: Array<string>;
+        info: Array<string>;
+        success: Array<string>;
+        warning: Array<string>;
+      };
+    };
   }
 }
 
