@@ -39,10 +39,10 @@ import {
   EProductElements,
   TProduct,
   EProductQuickViews,
+  EBasketModes,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
-import getQuickViewContent from 'utils/getQuickViewContent';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -319,22 +319,33 @@ class TemplateManager {
     const quickViewButton = productBox.querySelector(
       '.btn.large.tablet.quickview',
     ) as HTMLElement;
+    const addToCartButton = productBox.querySelector(
+      '.addtobasket.btn',
+    ) as HTMLElement;
 
     if (
       quickViewButton &&
       quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
     ) {
       quickViewButton.addEventListener('click', () => {
-        const modal = new Shop.Modal({
-          showMask: true,
-          position: 'center',
-          positionType: 'absolute',
-          offset: 20,
-          header: product.name,
-          content: getQuickViewContent(product, this.lang),
-        });
+        // Little hack, however there is some naming problems in Shoper getProduct method;
+        product.short_description = product.shortDescription;
+        const quickViewInstance = new Shop.QuickView();
+        quickViewInstance.create(product, $(quickViewButton));
+      });
+    }
 
-        modal.createModal();
+    if (
+      addToCartButton &&
+      Shop.useroptions.ajaxbasket.mode === EBasketModes.NO_REDIRECT_NO_REFRESH
+    ) {
+      const productForm = addToCartButton.closest('form');
+      addToCartButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        const ajaxBasketInstance = new Shop.AjaxBasket();
+        if (productForm) {
+          ajaxBasketInstance.sendAjax(productForm);
+        }
       });
     }
 

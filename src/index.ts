@@ -1,5 +1,5 @@
-import initTemplateManager from 'utils/initTemplateManager';
-import initAdManager from 'utils/initAdManager';
+import { initTemplateManager } from 'managers/TemplateManager/TemplateManager.utils';
+import { initAdManager } from 'managers/AdManager/AdManager.utils';
 import runWhenPageReady from 'utils/runWhenPageReady';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 

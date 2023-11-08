@@ -1,6 +1,6 @@
 import { TPages } from 'types/pages';
-import getProductsIds from 'utils/getProductsIds';
 import { EAreas } from 'types/areas';
+import { getProductsIds } from './AdManager.utils';
 
 class AdManager {
   constructor(page: TPages | null) {
