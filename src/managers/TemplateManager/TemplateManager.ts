@@ -8,12 +8,16 @@ import {
   PRODUCT_INACTIVE,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+} from 'consts/products';
+import {
   CUSTOM_QUICK_VIEW_CLASS,
   ADD_TO_CART_SELECTOR,
   AVAILABILITY_CONTAINER_CLASS,
   AVAILABILITY_BUTTON_CLASS,
   QUICK_VIEW_SELECTOR,
-} from 'consts/products';
+  AVAILABILITY_BUTTON_CLASS_NEW,
+  AVAILABILITY_CONTAINER_CLASS_NEW,
+} from 'consts/eventSelectors';
 import {
   BASKET_ID,
   CONTENT,
@@ -31,15 +35,13 @@ import {
   PRODUCT_MAIN_IMAGE_KEY,
   PRODUCT_PRODUCER_NAME_KEY,
   PRODUCT_PRODUCER_ID_KEY,
-} from 'consts/selectors';
-import { DEFAULT_LANGUAGE, BASIC_TAG } from 'consts/common';
+} from 'consts/replaceMap';
+import { BASIC_TAG } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
   TEMPLATES_MAP,
 } from 'consts/templates';
-import runOutsideCallStack from 'utils/runOutsideCallStack';
-import createCustomClassName from 'utils/createCustomClassName';
 import createSelector from 'utils/createSelector';
 import { TPages } from 'types/pages';
 import {
@@ -52,11 +54,15 @@ import {
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
 
+import {
+  attachAjaxCartEvent,
+  reinitNotifyButton,
+  reinitQuickView,
+} from './TemplateManager.utils';
+
 class TemplateManager {
   constructor(page: TPages) {
     if (!page) return;
-    this.lang =
-      document.documentElement.getAttribute('lang') || DEFAULT_LANGUAGE;
     this.page = page;
   }
 
@@ -69,7 +75,7 @@ class TemplateManager {
   ) as Record<ETemplates, string | null>;
 
   private viewType: EViews = EViews.GRID_VIEW;
-  private lang: string;
+  private wasShoperReinitiated: boolean = false;
   private page: TPages;
 
   public checkDOMforTemplates = () => {
@@ -317,11 +323,9 @@ class TemplateManager {
     };
   };
 
-  private getProductWithEvents = (
-    stringProductElement: string,
-  ): HTMLElement => {
+  private getProductWithCustoms = (productElement: string): HTMLElement => {
     const elemWrapper = document.createElement(BASIC_TAG);
-    elemWrapper.innerHTML = stringProductElement;
+    elemWrapper.innerHTML = productElement;
     const productBox = elemWrapper.firstChild as HTMLElement;
     const quickViewButton = productBox.querySelector(
       QUICK_VIEW_SELECTOR,
@@ -334,55 +338,29 @@ class TemplateManager {
     ) as HTMLElement;
 
     if (
+      addToCartForm &&
+      Shop.useroptions.ajaxbasket.mode === EBasketModes.NO_REDIRECT_NO_REFRESH
+    ) {
+      attachAjaxCartEvent(addToCartForm);
+    }
+
+    if (
       quickViewButton &&
       quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
     ) {
       quickViewButton.classList.add(CUSTOM_QUICK_VIEW_CLASS);
-      runOutsideCallStack(() => {
-        Shop.QuickView.prototype.initialize({
-          ...Shop.QuickView.prototype.options,
-          selectors: {
-            ...Shop.QuickView.prototype.options.selectors,
-            button: `.${CUSTOM_QUICK_VIEW_CLASS}`,
-          },
-        });
-      });
-    }
-
-    if (
-      addToCartForm &&
-      Shop.useroptions.ajaxbasket.mode === EBasketModes.NO_REDIRECT_NO_REFRESH
-    ) {
-      addToCartForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        Shop.AjaxBasket.prototype.sendAjax(addToCartForm);
-      });
     }
 
     if (availabilityNotifyContainer) {
-      const customContainerClass = createCustomClassName(
-        AVAILABILITY_CONTAINER_CLASS,
-      );
-      const customButtonClass = createCustomClassName(
-        AVAILABILITY_BUTTON_CLASS,
-      );
       const availabilityButton = availabilityNotifyContainer.querySelector(
         createSelector(AVAILABILITY_BUTTON_CLASS),
       );
-      availabilityNotifyContainer.classList.add(customContainerClass);
+      availabilityNotifyContainer.classList.add(
+        AVAILABILITY_CONTAINER_CLASS_NEW,
+      );
       if (availabilityButton) {
-        availabilityButton.classList.add(customButtonClass);
+        availabilityButton.classList.add(AVAILABILITY_BUTTON_CLASS_NEW);
       }
-
-      runOutsideCallStack(() => {
-        Shop.ProductAvailability.prototype.initialize({
-          ...Shop.ProductAvailability.prototype.options,
-          selectors: {
-            availabilitynotifier: createSelector(customContainerClass),
-            availabilitynotifier_btn: createSelector(customButtonClass),
-          },
-        });
-      });
     }
 
     return productBox;
@@ -438,12 +416,21 @@ class TemplateManager {
           : PRODUCT_CONTAINER_SELECTOR,
       );
 
-      const productWithEvents = this.getProductWithEvents(modifiedTemplate);
+      const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
       productsWrapper?.insertBefore(
         productWithEvents,
         productsWrapper.firstChild,
       );
     });
+
+    if (!this.wasShoperReinitiated) {
+      reinitNotifyButton();
+      reinitQuickView();
+
+      this.wasShoperReinitiated = true;
+    } else {
+      console.error('Shoper was already reinitiated');
+    }
   };
 }
 
