@@ -9,6 +9,10 @@ import {
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
   CUSTOM_QUICK_VIEW_CLASS,
+  ADD_TO_CART_SELECTOR,
+  AVAILABILITY_CONTAINER_CLASS,
+  AVAILABILITY_BUTTON_CLASS,
+  QUICK_VIEW_SELECTOR,
 } from 'consts/products';
 import {
   BASKET_ID,
@@ -28,12 +32,15 @@ import {
   PRODUCT_PRODUCER_NAME_KEY,
   PRODUCT_PRODUCER_ID_KEY,
 } from 'consts/selectors';
-import { DEFAULT_LANGUAGE } from 'consts/common';
+import { DEFAULT_LANGUAGE, BASIC_TAG } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
   TEMPLATES_MAP,
 } from 'consts/templates';
+import runOutsideCallStack from 'utils/runOutsideCallStack';
+import createCustomClassName from 'utils/createCustomClassName';
+import createSelector from 'utils/createSelector';
 import { TPages } from 'types/pages';
 import {
   EProductAvailability,
@@ -170,7 +177,7 @@ class TemplateManager {
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
   ) => {
-    const copiedProductElement = document.createElement('div');
+    const copiedProductElement = document.createElement(BASIC_TAG);
     copiedProductElement.innerHTML = productElement.outerHTML;
 
     let canInjectTemplate = true;
@@ -313,22 +320,25 @@ class TemplateManager {
   private getProductWithEvents = (
     stringProductElement: string,
   ): HTMLElement => {
-    const elemWrapper = document.createElement('div');
+    const elemWrapper = document.createElement(BASIC_TAG);
     elemWrapper.innerHTML = stringProductElement;
     const productBox = elemWrapper.firstChild as HTMLElement;
     const quickViewButton = productBox.querySelector(
-      '.btn.large.tablet.quickview',
+      QUICK_VIEW_SELECTOR,
     ) as HTMLElement;
     const addToCartForm = productBox.querySelector(
-      'form[method=post][action].basket',
+      ADD_TO_CART_SELECTOR,
     ) as HTMLFormElement;
-    quickViewButton?.classList.add(CUSTOM_QUICK_VIEW_CLASS);
+    const availabilityNotifyContainer = productBox.querySelector(
+      createSelector(AVAILABILITY_CONTAINER_CLASS),
+    ) as HTMLElement;
 
     if (
       quickViewButton &&
       quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
     ) {
-      setTimeout(() => {
+      quickViewButton.classList.add(CUSTOM_QUICK_VIEW_CLASS);
+      runOutsideCallStack(() => {
         Shop.QuickView.prototype.initialize({
           ...Shop.QuickView.prototype.options,
           selectors: {
@@ -336,7 +346,7 @@ class TemplateManager {
             button: `.${CUSTOM_QUICK_VIEW_CLASS}`,
           },
         });
-      }, 0);
+      });
     }
 
     if (
@@ -346,6 +356,32 @@ class TemplateManager {
       addToCartForm.addEventListener('submit', (e) => {
         e.preventDefault();
         Shop.AjaxBasket.prototype.sendAjax(addToCartForm);
+      });
+    }
+
+    if (availabilityNotifyContainer) {
+      const customContainerClass = createCustomClassName(
+        AVAILABILITY_CONTAINER_CLASS,
+      );
+      const customButtonClass = createCustomClassName(
+        AVAILABILITY_BUTTON_CLASS,
+      );
+      const availabilityButton = availabilityNotifyContainer.querySelector(
+        createSelector(AVAILABILITY_BUTTON_CLASS),
+      );
+      availabilityNotifyContainer.classList.add(customContainerClass);
+      if (availabilityButton) {
+        availabilityButton.classList.add(customButtonClass);
+      }
+
+      runOutsideCallStack(() => {
+        Shop.ProductAvailability.prototype.initialize({
+          ...Shop.ProductAvailability.prototype.options,
+          selectors: {
+            availabilitynotifier: createSelector(customContainerClass),
+            availabilitynotifier_btn: createSelector(customButtonClass),
+          },
+        });
       });
     }
 

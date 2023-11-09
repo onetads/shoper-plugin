@@ -17,6 +17,14 @@ type TModalOptions = {
   content: string;
 };
 
+type TProductAvailabilityOptions = {
+  requestUrl: 'string';
+  selectors: {
+    availabilitynotifier: string;
+    availabilitynotifier_btn: string;
+  };
+};
+
 declare global {
   namespace Shop {
     const pageType: string;
@@ -29,6 +37,12 @@ declare global {
     };
     const AjaxBasket: new () => {
       sendAjax: (arg: HTMLFormElement) => void;
+    };
+    const ProductAvailability: {
+      prototype: {
+        options: TProductAvailabilityOptions;
+        initialize: (arg: TProductAvailabilityOptions) => void;
+      };
     };
     const lang: {
       quickview: {
