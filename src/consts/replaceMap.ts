@@ -1,6 +1,9 @@
 import { EProductElements } from 'types/products';
 import { TReplaceContentMap } from 'types/templates';
 
+import prepareImageValue from 'utils/prepareImageValue';
+import prepareProducerLink from 'utils/prepareProducerLink';
+
 const PRODUCT_NAME_KEY = '{{ PRODUCT_NAME_KEY }}';
 const PRODUCT_LINK_KEY = '{{ PRODUCT_LINK_KEY }}';
 const PRODUCT_PRODUCER_NAME_KEY = '{{ PRODUCT_PRODUCER_NAME_KEY }}';
@@ -17,38 +20,6 @@ const PRODUCT_STOCK_ID_KEY = '{{ PRODUCT_STOCK_ID_KEY }}';
 
 const CONTENT = 'CONTENT';
 const BASKET_ID = 'BASKET_ID';
-
-const prepareImageValue = (element: HTMLImageElement) => {
-  let srcValue = element.getAttribute('data-src') || '';
-
-  if (!srcValue) {
-    srcValue = element.getAttribute('src') || '';
-  }
-
-  const replacedString = srcValue.replace(
-    /productGfx_\d+/,
-    `productGfx_${PRODUCT_MAIN_IMAGE_KEY}`,
-  );
-
-  const finalString =
-    replacedString.replace(/\/[^/]+$/, '') + `/${PRODUCT_IMAGE_FILENAME_KEY}`;
-
-  return finalString;
-};
-
-const prepareProducerLink = (element: HTMLImageElement) => {
-  const hrefContent = element.getAttribute('href');
-
-  if (!hrefContent) return '';
-
-  const parts = hrefContent.split('/');
-
-  parts[parts.length - 2] = PRODUCT_PRODUCER_NAME_KEY;
-  parts[parts.length - 1] = PRODUCT_PRODUCER_ID_KEY;
-
-  const modifiedString = parts.join('/');
-  return modifiedString;
-};
 
 const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   [EProductElements.ID]: {
