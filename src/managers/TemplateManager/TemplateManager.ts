@@ -8,6 +8,7 @@ import {
   PRODUCT_INACTIVE,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+  CUSTOM_QUICK_VIEW_CLASS,
 } from 'consts/products';
 import {
   BASKET_ID,
@@ -311,7 +312,6 @@ class TemplateManager {
 
   private getProductWithEvents = (
     stringProductElement: string,
-    product: TProduct,
   ): HTMLElement => {
     const elemWrapper = document.createElement('div');
     elemWrapper.innerHTML = stringProductElement;
@@ -319,33 +319,33 @@ class TemplateManager {
     const quickViewButton = productBox.querySelector(
       '.btn.large.tablet.quickview',
     ) as HTMLElement;
-    const addToCartButton = productBox.querySelector(
-      '.addtobasket.btn',
-    ) as HTMLElement;
+    const addToCartForm = productBox.querySelector(
+      'form[method=post][action].basket',
+    ) as HTMLFormElement;
+    quickViewButton?.classList.add(CUSTOM_QUICK_VIEW_CLASS);
 
     if (
       quickViewButton &&
       quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
     ) {
-      quickViewButton.addEventListener('click', () => {
-        // Little hack, however there is some naming problems in Shoper getProduct method;
-        product.short_description = product.shortDescription;
-        const quickViewInstance = new Shop.QuickView();
-        quickViewInstance.create(product, $(quickViewButton));
-      });
+      setTimeout(() => {
+        Shop.QuickView.prototype.initialize({
+          ...Shop.QuickView.prototype.options,
+          selectors: {
+            ...Shop.QuickView.prototype.options.selectors,
+            button: `.${CUSTOM_QUICK_VIEW_CLASS}`,
+          },
+        });
+      }, 0);
     }
 
     if (
-      addToCartButton &&
+      addToCartForm &&
       Shop.useroptions.ajaxbasket.mode === EBasketModes.NO_REDIRECT_NO_REFRESH
     ) {
-      const productForm = addToCartButton.closest('form');
-      addToCartButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        const ajaxBasketInstance = new Shop.AjaxBasket();
-        if (productForm) {
-          ajaxBasketInstance.sendAjax(productForm);
-        }
+      addToCartForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        Shop.AjaxBasket.prototype.sendAjax(addToCartForm);
       });
     }
 
@@ -402,10 +402,7 @@ class TemplateManager {
           : PRODUCT_CONTAINER_SELECTOR,
       );
 
-      const productWithEvents = this.getProductWithEvents(
-        modifiedTemplate,
-        product,
-      );
+      const productWithEvents = this.getProductWithEvents(modifiedTemplate);
       productsWrapper?.insertBefore(
         productWithEvents,
         productsWrapper.firstChild,
