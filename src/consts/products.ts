@@ -10,6 +10,8 @@ const DATA_PRODUCT_ID = 'data-product-id';
 const DATA_PRODUCT_SELECTOR = `div[${DATA_PRODUCT_ID}]`;
 const MAIN_PRODUCTS_CONTAINER_SELECTOR = '#box_mainproducts';
 const RELATED_PRODUCTS_CONTAINER_SELECTOR = '.product-related';
+const QUICK_VIEW_BUTTON_SELECTOR = '.btn.large.tablet.quickview';
+const ADD_TO_CARD_FORM_SELECTOR = 'form[method=post][action].basket';
 
 const CONTAINER_SELECTORS_TO_DELETE = [
   '.mx_voteStars_container',
@@ -41,4 +43,6 @@ export {
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
   CUSTOM_QUICK_VIEW_CLASS,
+  QUICK_VIEW_BUTTON_SELECTOR,
+  ADD_TO_CARD_FORM_SELECTOR,
 };

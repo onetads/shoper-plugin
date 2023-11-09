@@ -42,18 +42,24 @@ class AdManager {
     document.head.appendChild(adPixelDepsScript);
   };
 
-  public getPromotedProducts = () => {
-    const options = { method: 'GET', headers: { accept: 'application/json' } };
+  public getPromotedProducts = async () => {
+    console.log();
 
-    fetch(
-      `https://csr.onet.pl/1746213/csr-006/csr.json?kvwebsite_id=${this.websiteId}&kvoffer_ids=${this.productsIds}&area=unknown&slot0=rmn-sponsored-product&ems_url=1`,
-      options,
-    )
-      .then((response) => response.json())
-      .then((response) => console.log(response))
-      .catch((err) => console.error(err));
+    await dlApi
+      .fetchNativeAd({
+        slot: 'rmn-sponsored-product',
+        opts: {
+          offer_ids: this.productsIds.join(','),
+        },
+        tplCode: '1746213/Sponsored-Product',
+      })
+      .then((ads) =>
+        ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
+      );
 
-    // just placeholder, fix me later
+    // FIX ME!!
+    // if (fields.length > 0) return [fields[0], fields[1]];
+    // else return [];
     return [31];
   };
 

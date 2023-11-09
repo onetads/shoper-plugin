@@ -1,5 +1,4 @@
 import { TGetProduct } from 'types/frontAPI';
-import { TProduct } from 'types/products';
 
 declare global {
   namespace frontAPI {
@@ -25,4 +24,4 @@ declare global {
   }
 }
 
-export { TProduct };
+export {};

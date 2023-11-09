@@ -10,6 +10,8 @@ import {
   PRODUCT_CLASS,
   DATA_PRODUCT_ID,
   CUSTOM_QUICK_VIEW_CLASS,
+  QUICK_VIEW_BUTTON_SELECTOR,
+  ADD_TO_CARD_FORM_SELECTOR,
 } from 'consts/products';
 import {
   BASKET_ID,
@@ -318,10 +320,10 @@ class TemplateManager {
     elemWrapper.innerHTML = stringProductElement;
     const productBox = elemWrapper.firstChild as HTMLElement;
     const quickViewButton = productBox.querySelector(
-      '.btn.large.tablet.quickview',
+      QUICK_VIEW_BUTTON_SELECTOR,
     ) as HTMLElement;
     const addToCartForm = productBox.querySelector(
-      'form[method=post][action].basket',
+      ADD_TO_CARD_FORM_SELECTOR,
     ) as HTMLFormElement;
     quickViewButton?.classList.add(CUSTOM_QUICK_VIEW_CLASS);
 

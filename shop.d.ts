@@ -28,4 +28,4 @@ declare global {
   }
 }
 
-export { TProduct };
+export {};

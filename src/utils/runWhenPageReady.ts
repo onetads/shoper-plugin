@@ -7,7 +7,13 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction): void => {
     if (currentAttempt > ATTEMPTS_LIMIT) return;
 
     currentAttempt++;
-    if (!Shop.QuickView || !Shop.AjaxBasket || !frontAPI) return;
+    if (
+      !Shop.QuickView ||
+      !Shop.AjaxBasket ||
+      !frontAPI ||
+      !dlApi.fetchNativeAd
+    )
+      return;
     clearInterval(intervalId);
     callback();
   }, ATTEMPT_DELAY);

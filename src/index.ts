@@ -4,16 +4,16 @@ import runWhenPageReady from 'utils/runWhenPageReady';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
 
 window.addEventListener('DOMContentLoaded', () => {
-  runWhenPageReady(() => {
-    const page = getCurrentPageInfo();
-    const AdManager = initAdManager(page);
-    AdManager.injectAdnPixelScript();
+  const page = getCurrentPageInfo();
+  const AdManager = initAdManager(page);
+  AdManager.injectAdnPixelScript();
 
+  runWhenPageReady(async () => {
     if (page) {
       const TemplateManager = initTemplateManager(page);
       TemplateManager.checkDOMforTemplates();
 
-      const promotedProducts = AdManager.getPromotedProducts();
+      const promotedProducts = await AdManager.getPromotedProducts();
       TemplateManager.injectProducts(promotedProducts);
     }
   });
