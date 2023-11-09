@@ -13,4 +13,12 @@ type TModalOptions = {
   content: string;
 };
 
-export type { TModalOptions, TUserOptions };
+type TProductAvailabilityOptions = {
+  requestUrl: 'string';
+  selectors: {
+    availabilitynotifier: string;
+    availabilitynotifier_btn: string;
+  };
+};
+
+export type { TModalOptions, TUserOptions, TProductAvailabilityOptions };

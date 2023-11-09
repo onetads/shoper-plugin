@@ -1,4 +1,8 @@
-import { TModalOptions, TUserOptions } from 'types/shop';
+import {
+  TModalOptions,
+  TProductAvailabilityOptions,
+  TUserOptions,
+} from 'types/shop';
 import { TProduct } from 'types/products';
 
 declare global {
@@ -13,6 +17,12 @@ declare global {
     };
     const AjaxBasket: new () => {
       sendAjax: (arg: HTMLFormElement) => void;
+    };
+    const ProductAvailability: {
+      prototype: {
+        options: TProductAvailabilityOptions;
+        initialize: (arg: TProductAvailabilityOptions) => void;
+      };
     };
     const lang: {
       quickview: {

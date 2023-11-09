@@ -1,3 +1,4 @@
 type TNoParamsNoReturnFunction = () => void;
+type TSelectors = '.' | '#';
 
-export { TNoParamsNoReturnFunction };
+export { TNoParamsNoReturnFunction, TSelectors };
