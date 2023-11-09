@@ -6,11 +6,8 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction): void => {
   const intervalId = setInterval(() => {
     if (currentAttempt > ATTEMPTS_LIMIT) return;
 
-    const shopObject = window.Shop;
-    const frontAPIObject = window.frontAPI;
-
     currentAttempt++;
-    if (!shopObject || !frontAPIObject) return;
+    if (!Shop.QuickView || !Shop.AjaxBasket || !frontAPI) return;
     clearInterval(intervalId);
     callback();
   }, ATTEMPT_DELAY);
