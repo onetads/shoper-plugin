@@ -1,7 +1,7 @@
 import AdManager from 'managers/AdManager/AdManager';
 import { TPages } from 'types/pages';
 import {
-  DATA_PRODUCT_ID,
+  DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_ID_KEY,
 } from 'consts/products';
@@ -14,7 +14,7 @@ const getProductsIds = (page: TPages) => {
   if (!productsContainer) return [];
 
   const productElements = Array.from(
-    productsContainer.querySelectorAll(DATA_PRODUCT_ID),
+    productsContainer.querySelectorAll(DATA_PRODUCT_SELECTOR),
   );
 
   const productsIds = [];

@@ -1,21 +1,5 @@
+import { TModalOptions, TUserOptions } from 'types/shop';
 import { TProduct } from 'types/products';
-
-type TGetProduct = (productId: { id: number }) => TProduct;
-
-type TUserOptions = {
-  ajaxbasket: {
-    mode: number;
-  };
-};
-
-type TModalOptions = {
-  showMask: boolean;
-  position: 'center' | 'top';
-  positionType: 'fixed' | 'absolute';
-  offset: number;
-  header: string;
-  content: string;
-};
 
 declare global {
   namespace Shop {
@@ -39,28 +23,6 @@ declare global {
         exchange: string;
         price: string;
         producer: string;
-      };
-    };
-  }
-
-  namespace frontAPI {
-    const getProduct: TGetProduct;
-    const addToBasket: (arg: {
-      lang?: string;
-      currency?: string;
-      data: {
-        stock_id: number;
-      };
-    }) => {
-      added: string;
-      basket: {
-        count: number;
-      };
-      _flash_messanger: {
-        error: Array<string>;
-        info: Array<string>;
-        success: Array<string>;
-        warning: Array<string>;
       };
     };
   }

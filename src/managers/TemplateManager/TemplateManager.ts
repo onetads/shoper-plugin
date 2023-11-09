@@ -2,12 +2,13 @@ import { PRODUCT_PAGE } from 'consts/pages';
 import {
   CONTAINER_SELECTORS_TO_CLEAR,
   CONTAINER_SELECTORS_TO_DELETE,
-  DATA_PRODUCT_ID,
+  DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+  DATA_PRODUCT_ID,
 } from 'consts/products';
 import {
   BASKET_ID,
@@ -82,7 +83,7 @@ class TemplateManager {
     if (!productsContainer) return;
 
     const productsElements = Array.from(
-      productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
+      productsContainer.querySelectorAll(DATA_PRODUCT_SELECTOR),
     );
 
     const productInnerWrapper = productsContainer.querySelector(
@@ -352,8 +353,20 @@ class TemplateManager {
     return productBox;
   };
 
+  private deleteExistingProductId = (id: number) => {
+    const exisitngProductWithSameId = document.querySelector(
+      `div[${DATA_PRODUCT_ID}="${id}"]`,
+    );
+
+    if (!exisitngProductWithSameId) return;
+
+    exisitngProductWithSameId.remove();
+  };
+
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
+      this.deleteExistingProductId(id);
+
       const product = this.getProduct(id);
       const { isActive, ...mappedProduct } = this.getProductMap(product);
 
