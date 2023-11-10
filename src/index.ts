@@ -2,19 +2,25 @@ import { initTemplateManager } from 'managers/TemplateManager/TemplateManager.ut
 import { initAdManager } from 'managers/AdManager/AdManager.utils';
 import runWhenPageReady from 'utils/runWhenPageReady';
 import getCurrentPageInfo from 'utils/getCurrentPageInfo';
+import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
+
+showLoadingSpinner();
 
 window.addEventListener('DOMContentLoaded', () => {
-  runWhenPageReady(() => {
-    const page = getCurrentPageInfo();
-    const AdManager = initAdManager(page);
-    AdManager.injectAdnPixelScript();
+  const page = getCurrentPageInfo();
 
-    if (page) {
-      const TemplateManager = initTemplateManager(page);
-      TemplateManager.checkDOMforTemplates();
+  if (page)
+    runWhenPageReady(async () => {
+      const AdManager = initAdManager(page);
+      AdManager.injectAdnPixelScript();
 
-      const promotedProducts = AdManager.getPromotedProducts();
-      TemplateManager.injectProducts(promotedProducts);
-    }
-  });
+      if (page) {
+        const TemplateManager = initTemplateManager(page);
+        TemplateManager.checkDOMforTemplates();
+
+        const promotedProducts = await AdManager.getPromotedProducts();
+        TemplateManager.injectProducts(promotedProducts);
+        hideLoadingSpinner(page);
+      }
+    });
 });

@@ -42,10 +42,10 @@ class AdManager {
     document.head.appendChild(adPixelDepsScript);
   };
 
-  public getPromotedProducts = () => {
+  public getPromotedProducts = async () => {
     const options = { method: 'GET', headers: { accept: 'application/json' } };
 
-    fetch(
+    await fetch(
       `https://csr.onet.pl/1746213/csr-006/csr.json?kvwebsite_id=${this.websiteId}&kvoffer_ids=${this.productsIds}&area=unknown&slot0=rmn-sponsored-product&ems_url=1`,
       options,
     )
