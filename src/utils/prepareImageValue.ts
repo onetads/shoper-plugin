@@ -10,6 +10,8 @@ const prepareImageValue = (element: HTMLImageElement) => {
     srcValue = element.getAttribute('src') || '';
   }
 
+  element.loading = 'lazy';
+
   const replacedString = srcValue.replace(
     /productGfx_\d+/,
     `productGfx_${PRODUCT_MAIN_IMAGE_KEY}`,
