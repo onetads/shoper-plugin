@@ -59,6 +59,12 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           selector: '.product',
           replace: ['data-product-id'],
         },
+        {
+          canBeNull: true,
+          forNotActiveOnly: true,
+          selector: '.availability-notifier-btn',
+          replace: ['data-product-id'],
+        },
       ],
     },
   },
@@ -173,6 +179,12 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
         {
           selector: '.details img',
           replace: ['alt'],
+        },
+        {
+          canBeNull: true,
+          forNotActiveOnly: true,
+          selector: '.availability-notifier-btn',
+          replace: ['data-product-name'],
         },
       ],
     },
@@ -405,8 +417,22 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
       ],
       relatedView: [
         {
+          canBeNull: true,
+          forActiveOnly: true,
           selector: '.addtobasket input[name="stock_id"]',
           replace: ['value'],
+        },
+        {
+          canBeNull: true,
+          forActiveOnly: true,
+          selector: '.basket:not(:has(input[name="stock_id"]))',
+          replace: [BASKET_ID],
+        },
+        {
+          canBeNull: true,
+          forNotActiveOnly: true,
+          selector: '.availability-notifier-btn',
+          replace: ['data-stock-id'],
         },
       ],
     },
