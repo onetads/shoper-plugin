@@ -43,8 +43,6 @@ class AdManager {
   };
 
   public getPromotedProducts = async () => {
-    console.log();
-
     await dlApi
       .fetchNativeAd({
         slot: 'rmn-sponsored-product',
