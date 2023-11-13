@@ -4,7 +4,10 @@ import { ATTEMPTS_LIMIT, ATTEMPT_DELAY } from 'consts/common';
 const runWhenPageReady = (callback: TNoParamsNoReturnFunction): void => {
   let currentAttempt = 0;
   const intervalId = setInterval(() => {
-    if (currentAttempt > ATTEMPTS_LIMIT) return;
+    if (currentAttempt > ATTEMPTS_LIMIT) {
+      clearInterval(intervalId);
+      throw Error('ATTEMPTS LIMIT EXCEEDED');
+    }
 
     currentAttempt++;
     if (
