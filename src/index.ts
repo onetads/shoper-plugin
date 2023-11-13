@@ -7,12 +7,11 @@ import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 showLoadingSpinner();
 
 window.addEventListener('DOMContentLoaded', () => {
+  const page = getCurrentPageInfo();
+  const AdManager = initAdManager(page);
+  AdManager.injectAdnPixelScript();
+
   runWhenPageReady(async () => {
-    const page = getCurrentPageInfo();
-
-    const AdManager = initAdManager(page);
-    AdManager.injectAdnPixelScript();
-
     if (page) {
       const TemplateManager = initTemplateManager(page);
       TemplateManager.checkDOMforTemplates();

@@ -6,7 +6,8 @@ const PRODUCT_CLASS = 'product';
 
 const PRODUCT_CONTAINER_SELECTOR = '.products';
 const PRODUCT_OUTER_WRAPPER_SELECTOR = '.innerbox';
-const DATA_PRODUCT_ID = '[data-product-id]';
+const DATA_PRODUCT_ID = 'data-product-id';
+const DATA_PRODUCT_SELECTOR = `div[${DATA_PRODUCT_ID}]`;
 const MAIN_PRODUCTS_CONTAINER_SELECTOR = '#box_mainproducts';
 const RELATED_PRODUCTS_CONTAINER_SELECTOR = '.product-related';
 
@@ -30,6 +31,7 @@ const PRODUCT_CONTAINERS: Record<TPages, string> = {
 
 export {
   DATA_PRODUCT_ID,
+  DATA_PRODUCT_SELECTOR,
   PRODUCT_ID_KEY,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,

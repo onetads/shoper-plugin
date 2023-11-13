@@ -43,17 +43,21 @@ class AdManager {
   };
 
   public getPromotedProducts = async () => {
-    const options = { method: 'GET', headers: { accept: 'application/json' } };
+    await dlApi
+      .fetchNativeAd({
+        slot: 'rmn-sponsored-product',
+        opts: {
+          offer_ids: this.productsIds.join(','),
+        },
+        tplCode: '1746213/Sponsored-Product',
+      })
+      .then((ads) =>
+        ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
+      );
 
-    await fetch(
-      `https://csr.onet.pl/1746213/csr-006/csr.json?kvwebsite_id=${this.websiteId}&kvoffer_ids=${this.productsIds}&area=unknown&slot0=rmn-sponsored-product&ems_url=1`,
-      options,
-    )
-      .then((response) => response.json())
-      .then((response) => console.log(response))
-      .catch((err) => console.error(err));
-
-    // just placeholder, fix me later
+    // FIX ME!!
+    // if (fields.length > 0) return [fields[0], fields[1]];
+    // else return [];
     return [31];
   };
 

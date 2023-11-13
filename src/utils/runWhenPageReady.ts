@@ -10,7 +10,13 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction): void => {
     }
 
     currentAttempt++;
-    if (!Shop.QuickView || !Shop.AjaxBasket || !frontAPI) return;
+    if (
+      !Shop.QuickView ||
+      !Shop.AjaxBasket ||
+      !frontAPI ||
+      !dlApi.fetchNativeAd
+    )
+      return;
     clearInterval(intervalId);
     callback();
   }, ATTEMPT_DELAY);
