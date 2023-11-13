@@ -2,21 +2,22 @@ import { PRODUCT_PAGE } from 'consts/pages';
 import {
   CONTAINER_SELECTORS_TO_CLEAR,
   CONTAINER_SELECTORS_TO_DELETE,
-  DATA_PRODUCT_ID,
+  DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_INACTIVE,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+  DATA_PRODUCT_ID,
 } from 'consts/products';
 import {
-  CUSTOM_QUICK_VIEW_CLASS,
   ADD_TO_CART_SELECTOR,
   AVAILABILITY_CONTAINER_CLASS,
   AVAILABILITY_BUTTON_CLASS,
   QUICK_VIEW_SELECTOR,
   AVAILABILITY_BUTTON_CLASS_NEW,
   AVAILABILITY_CONTAINER_CLASS_NEW,
+  CUSTOM_QUICK_VIEW_CLASS,
 } from 'consts/eventSelectors';
 import {
   BASKET_ID,
@@ -96,7 +97,7 @@ class TemplateManager {
     if (!productsContainer) return;
 
     const productsElements = Array.from(
-      productsContainer.querySelectorAll(`div${DATA_PRODUCT_ID}`),
+      productsContainer.querySelectorAll(DATA_PRODUCT_SELECTOR),
     );
 
     const productInnerWrapper = productsContainer.querySelector(
@@ -146,8 +147,6 @@ class TemplateManager {
       page,
       availability,
     });
-
-    if (this.getTemplate(mappedTemplate)) return;
 
     this.saveTemplateInLocalStorage(productElement, mappedTemplate);
   };
@@ -366,6 +365,16 @@ class TemplateManager {
     return productBox;
   };
 
+  private deleteExistingProductId = (id: number) => {
+    const existingProductWithSameId = document.querySelector(
+      `div[${DATA_PRODUCT_ID}="${id}"]`,
+    );
+
+    if (!existingProductWithSameId) return;
+
+    existingProductWithSameId.remove();
+  };
+
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
       const product = this.getProduct(id);
@@ -417,6 +426,8 @@ class TemplateManager {
       );
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
+
+      this.deleteExistingProductId(id);
       productsWrapper?.insertBefore(
         productWithEvents,
         productsWrapper.firstChild,
