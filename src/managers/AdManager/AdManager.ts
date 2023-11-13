@@ -1,6 +1,9 @@
 import { TPages } from 'types/pages';
 import { EAreas } from 'types/areas';
 import { getProductsIds } from './AdManager.utils';
+import getMessage from 'utils/getMessage';
+import { ERROR_PROMOTED_PRODUCTS_MSG } from 'consts/messages';
+import { hideLoadingSpinner } from 'utils/loadingSpinner';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -53,7 +56,11 @@ class AdManager {
       })
       .then((ads) =>
         ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
-      );
+      )
+      .catch(() => {
+        hideLoadingSpinner();
+        throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+      });
 
     // FIX ME!!
     // if (fields.length > 0) return [fields[0], fields[1]];
