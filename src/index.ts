@@ -10,7 +10,10 @@ window.addEventListener('DOMContentLoaded', () => {
   try {
     const page = getCurrentPageInfo();
 
-    if (!page) return;
+    if (!page) {
+      hideLoadingSpinner();
+      return;
+    }
 
     const AdManager = initAdManager(page);
     AdManager.injectAdnPixelScript();
