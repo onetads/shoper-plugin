@@ -6,31 +6,32 @@ const LOADING_SPINNER_LISTING_CONTAINER_CLASS =
 const LOADING_SPINNER_CLASS = 'loader-onet-ads';
 const LOADING_SPINNER_ADDITIONAL_SPACING = 'loader-onet-ads-additional-spacing';
 
-const LOADING_SPINNER_STYLES = `<style>
-.loader-onet-ads-listing-container {
-  display: flex;
-  align-items: center;
-  top: 0;
-  position: -webkit-sticky;
-  position: sticky;
-  width: 100%;
-}
+const LOADING_SPINNER_STYLES = `
+<style>
+  .loader-onet-ads-listing-container {
+    display: flex;
+    align-items: center;
+    top: 0;
+    position: -webkit-sticky;
+    position: sticky;
+    width: 100%;
+  }
 
-.loader-onet-ads-related-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  visibility: visible;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .loader-onet-ads-related-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.loader-onet-ads-additional-spacing {
-  margin: 24px auto auto auto;
-}
+  .loader-onet-ads-additional-spacing {
+    margin: 24px auto auto auto;
+  }
 
-.loader-onet-ads {
+  .loader-onet-ads {
     width: 36px;
     height: 36px;
     border: 3px solid black;
@@ -39,16 +40,18 @@ const LOADING_SPINNER_STYLES = `<style>
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
     }
 
-    @keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-    } </style>`;
+  }
+</style>`;
 
 export {
   LOADING_SPINNER_STYLES,
