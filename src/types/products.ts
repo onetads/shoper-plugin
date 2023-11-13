@@ -30,6 +30,7 @@ enum EBasketModes {
 }
 
 type TProduct = {
+  error_description?: string;
   id: number;
   can_buy: boolean;
   availability: { name: string };
