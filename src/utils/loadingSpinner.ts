@@ -44,7 +44,7 @@ const showSpinnerInRelatedView = (productsContainer: HTMLElement) => {
   productsContainer.insertAdjacentElement('afterbegin', loadingSpinner);
 };
 
-const showSpinerInListingView = (productsContainer: HTMLElement) => {
+const showSpinnerInListingView = (productsContainer: HTMLElement) => {
   const productsInnerWrapper = productsContainer.querySelector(
     PRODUCT_CONTAINER_SELECTOR,
   ) as HTMLElement;
@@ -81,7 +81,7 @@ const showLoadingSpinner = () => {
 
     showSpinnerInRelatedView(productsContainer);
   } else {
-    showSpinerInListingView(productsContainer);
+    showSpinnerInListingView(productsContainer);
   }
 };
 
