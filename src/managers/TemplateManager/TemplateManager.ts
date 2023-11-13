@@ -366,19 +366,17 @@ class TemplateManager {
   };
 
   private deleteExistingProductId = (id: number) => {
-    const exisitngProductWithSameId = document.querySelector(
+    const existingProductWithSameId = document.querySelector(
       `div[${DATA_PRODUCT_ID}="${id}"]`,
     );
 
-    if (!exisitngProductWithSameId) return;
+    if (!existingProductWithSameId) return;
 
-    exisitngProductWithSameId.remove();
+    existingProductWithSameId.remove();
   };
 
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
-      this.deleteExistingProductId(id);
-
       const product = this.getProduct(id);
       const { isActive, ...mappedProduct } = this.getProductMap(product);
 
@@ -428,6 +426,8 @@ class TemplateManager {
       );
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
+
+      this.deleteExistingProductId(id);
       productsWrapper?.insertBefore(
         productWithEvents,
         productsWrapper.firstChild,
