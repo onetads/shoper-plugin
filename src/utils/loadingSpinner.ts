@@ -1,32 +1,50 @@
 import { BASIC_TAG } from 'consts/common';
 import {
   LOADING_SPINNER_CLASS,
-  LOADING_SPINNER_CONTAINER_CLASS,
+  LOADING_SPINNER_LISTING_CONTAINER_CLASS,
   LOADING_SPINNER_ID,
   LOADING_SPINNER_STYLES,
+  LOADING_SPINNER_RELATED_CONTAINER_CLASS,
+  LOADING_SPINNER_ADDITIONAL_SPACING,
 } from 'consts/loadingSpinner';
 import {
   MAIN_PRODUCTS_CONTAINER_SELECTOR,
-  PRODUCT_CONTAINERS,
   PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_OUTER_WRAPPER_SELECTOR,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
 } from 'consts/products';
-import { TPages } from 'types/pages';
 
-const showLoadingSpinner = () => {
-  let productsContainer = document.querySelector(
-    MAIN_PRODUCTS_CONTAINER_SELECTOR,
-  );
+const createLoadingSpinner = (
+  containerClass: string,
+  ...loadingSpinnerClasses: string[]
+) => {
+  const loadingSpinnerContainer = document.createElement(BASIC_TAG);
+  const loadingSpinner = document.createElement(BASIC_TAG);
 
-  if (!productsContainer) {
-    productsContainer = document.querySelector(
-      RELATED_PRODUCTS_CONTAINER_SELECTOR,
-    );
+  loadingSpinnerContainer.appendChild(loadingSpinner);
+  loadingSpinnerContainer.id = LOADING_SPINNER_ID;
+
+  loadingSpinnerContainer.className = containerClass;
+  for (const className of loadingSpinnerClasses) {
+    loadingSpinner.classList.add(className);
   }
 
-  if (!productsContainer) return;
+  return loadingSpinnerContainer;
+};
 
+const showSpinnerInRelatedView = (productsContainer: HTMLElement) => {
+  productsContainer.style.position = 'relative';
+  productsContainer.style.visibility = 'hidden';
+
+  const loadingSpinner = createLoadingSpinner(
+    LOADING_SPINNER_RELATED_CONTAINER_CLASS,
+    LOADING_SPINNER_CLASS,
+  );
+  productsContainer.insertAdjacentHTML('afterbegin', LOADING_SPINNER_STYLES);
+  productsContainer.insertAdjacentElement('afterbegin', loadingSpinner);
+};
+
+const showSpinerInListingView = (productsContainer: HTMLElement) => {
   const productsInnerWrapper = productsContainer.querySelector(
     PRODUCT_CONTAINER_SELECTOR,
   ) as HTMLElement;
@@ -37,37 +55,58 @@ const showLoadingSpinner = () => {
 
   if (!productsInnerWrapper || !productsOuterWrapper) return;
 
-  const loadingSpinnerContainer = document.createElement(BASIC_TAG);
-  const loadingSpinner = document.createElement(BASIC_TAG);
-
-  loadingSpinnerContainer.appendChild(loadingSpinner);
-  loadingSpinnerContainer.id = LOADING_SPINNER_ID;
-
-  loadingSpinnerContainer.className = LOADING_SPINNER_CONTAINER_CLASS;
-  loadingSpinner.className = LOADING_SPINNER_CLASS;
+  const loadingSpinner = createLoadingSpinner(
+    LOADING_SPINNER_LISTING_CONTAINER_CLASS,
+    LOADING_SPINNER_ADDITIONAL_SPACING,
+    LOADING_SPINNER_CLASS,
+  );
 
   productsInnerWrapper.style.visibility = 'hidden';
 
   productsOuterWrapper.insertAdjacentHTML('afterbegin', LOADING_SPINNER_STYLES);
-  productsOuterWrapper.insertAdjacentElement(
-    'afterbegin',
-    loadingSpinnerContainer,
-  );
+  productsOuterWrapper.insertAdjacentElement('afterbegin', loadingSpinner);
 };
 
-const hideLoadingSpinner = (page: TPages) => {
-  if (!page) return;
-
-  const loadingSpinner = document.getElementById(LOADING_SPINNER_ID);
-
-  const productsContainer = document.querySelector(PRODUCT_CONTAINERS[page]);
-
-  const productsInnerWrapper = productsContainer?.querySelector(
-    PRODUCT_CONTAINER_SELECTOR,
+const showLoadingSpinner = () => {
+  let productsContainer = document.querySelector(
+    MAIN_PRODUCTS_CONTAINER_SELECTOR,
   ) as HTMLElement;
 
-  if (loadingSpinner) {
-    loadingSpinner.remove();
+  if (!productsContainer) {
+    productsContainer = document.querySelector(
+      RELATED_PRODUCTS_CONTAINER_SELECTOR,
+    ) as HTMLElement;
+
+    if (!productsContainer) return;
+
+    showSpinnerInRelatedView(productsContainer);
+  } else {
+    showSpinerInListingView(productsContainer);
+  }
+};
+
+const hideLoadingSpinner = () => {
+  const loadingSpinner = document.getElementById(LOADING_SPINNER_ID);
+  if (!loadingSpinner) return;
+
+  loadingSpinner.remove();
+
+  let productsContainer = document.querySelector(
+    MAIN_PRODUCTS_CONTAINER_SELECTOR,
+  ) as HTMLElement;
+
+  if (!productsContainer) {
+    productsContainer = document.querySelector(
+      RELATED_PRODUCTS_CONTAINER_SELECTOR,
+    ) as HTMLElement;
+
+    if (!productsContainer) return;
+
+    productsContainer.style.visibility = 'visible';
+  } else {
+    const productsInnerWrapper = productsContainer.querySelector(
+      PRODUCT_CONTAINER_SELECTOR,
+    ) as HTMLElement;
     productsInnerWrapper.style.visibility = 'visible';
   }
 };
