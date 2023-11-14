@@ -19,6 +19,7 @@ enum EProductElements {
 }
 
 enum EProductQuickViews {
+  MODAL_CUSTOM = '0',
   MODAL = '1',
   DROPDOWN = '2',
 }
