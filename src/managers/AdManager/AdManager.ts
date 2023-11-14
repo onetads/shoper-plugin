@@ -1,6 +1,12 @@
 import { TPages } from 'types/pages';
 import { EAreas } from 'types/areas';
 import { getProductsIds } from './AdManager.utils';
+import getMessage from 'utils/getMessage';
+import {
+  ERROR_PROMOTED_PRODUCTS_MSG,
+  REQUEST_TIMED_OUT,
+} from 'consts/messages';
+import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -19,6 +25,16 @@ class AdManager {
   public injectAdnPixelScript = () => {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
+    if (window.dlApi && dlApi.fetchNativeAd) {
+      dlApi.area = area || '';
+      dlApi.keyvalues = {
+        offer_ids: this.productsIds.toString(),
+        website_id: this.websiteId,
+      };
+
+      return;
+    }
+
     const adPixelScript = document.createElement('script');
     const adPixelDepsScript = document.createElement('script');
     adPixelScript.type = 'text/javascript';
@@ -34,8 +50,7 @@ class AdManager {
       };
     `;
 
-    adPixelDepsScript.src =
-      'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
+    adPixelDepsScript.src = AD_PIXEL_DEPS_URL;
     adPixelDepsScript.async = true;
 
     document.head.appendChild(adPixelScript);
@@ -43,22 +58,35 @@ class AdManager {
   };
 
   public getPromotedProducts = async () => {
-    await dlApi
-      .fetchNativeAd({
-        slot: 'rmn-sponsored-product',
-        opts: {
-          offer_ids: this.productsIds.join(','),
-        },
-        tplCode: '1746213/Sponsored-Product',
-      })
-      .then((ads) =>
-        ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
-      );
+    if (!dlApi.fetchNativeAd)
+      throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
-    // FIX ME!!
-    // if (fields.length > 0) return [fields[0], fields[1]];
-    // else return [];
-    return [31];
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(getMessage(REQUEST_TIMED_OUT)));
+      }, 2000);
+    });
+
+    await Promise.race([
+      dlApi
+        .fetchNativeAd({
+          slot: SLOT_NAME,
+          opts: {
+            offer_ids: this.productsIds.join(','),
+          },
+          tplCode: TPL_CODE,
+        })
+        .then((ads) =>
+          ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
+        )
+        .catch(() => {
+          throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+        }),
+      timeoutPromise,
+    ]);
+
+    // Add logic to return products from api
+    return [26895];
   };
 
   private mapPageToArea = (page: TPages) => {

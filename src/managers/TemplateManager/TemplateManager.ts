@@ -60,6 +60,13 @@ import {
   reinitNotifyButton,
   reinitQuickView,
 } from './TemplateManager.utils';
+import getMessage from 'utils/getMessage';
+import {
+  PROBLEMATIC_TEMPLATE_MSG,
+  PRODUCT_NOT_FOUND,
+  SELECTOR_NOT_FOUND,
+  SHOPER_REINITIATED_MSG,
+} from 'consts/messages';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -85,8 +92,7 @@ class TemplateManager {
     });
 
     if (hasProblematicTemplates) {
-      console.error('PROBLEMATIC TEMPLATE DETECTED');
-      return;
+      throw new Error(getMessage(PROBLEMATIC_TEMPLATE_MSG));
     }
 
     if (!this.page) return;
@@ -235,10 +241,8 @@ class TemplateManager {
             copiedProductElement.querySelectorAll(selector);
 
           if (!selectedElements.length && !canBeNull) {
-            console.error(`SELECTOR NOT FOUND - ${selector}`);
-
             canInjectTemplate = false;
-            return;
+            throw new Error(getMessage(SELECTOR_NOT_FOUND) + selector);
           }
 
           selectedElements.forEach((element) => {
@@ -344,8 +348,9 @@ class TemplateManager {
     }
 
     if (
-      quickViewButton &&
-      quickViewButton.getAttribute('data-eval') === EProductQuickViews.MODAL
+      quickViewButton?.getAttribute('data-eval') === EProductQuickViews.MODAL ||
+      quickViewButton?.getAttribute('data-eval') ===
+        EProductQuickViews.MODAL_CUSTOM
     ) {
       quickViewButton.classList.add(CUSTOM_QUICK_VIEW_CLASS);
     }
@@ -378,6 +383,11 @@ class TemplateManager {
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
       const product = this.getProduct(id);
+
+      if (product.error_description) {
+        throw new Error(getMessage(PRODUCT_NOT_FOUND));
+      }
+
       const { isActive, ...mappedProduct } = this.getProductMap(product);
 
       let template;
@@ -440,7 +450,7 @@ class TemplateManager {
 
       this.wasShoperReinitiated = true;
     } else {
-      console.error('Shoper was already reinitiated');
+      throw new Error(getMessage(SHOPER_REINITIATED_MSG));
     }
   };
 }

@@ -1,5 +1,7 @@
 import AdManager from 'managers/AdManager/AdManager';
 import { TPages } from 'types/pages';
+import { EMPTY_LIST_WARN } from 'consts/messages';
+import getMessage from 'utils/getMessage';
 import {
   DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINERS,
@@ -32,6 +34,10 @@ const getProductsIds = (page: TPages) => {
     if (!productId) continue;
 
     productsIds.push(+productId);
+  }
+
+  if (!productsIds.length) {
+    console.warn(getMessage(EMPTY_LIST_WARN));
   }
 
   return productsIds;

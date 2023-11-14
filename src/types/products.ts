@@ -19,6 +19,7 @@ enum EProductElements {
 }
 
 enum EProductQuickViews {
+  MODAL_CUSTOM = '0',
   MODAL = '1',
   DROPDOWN = '2',
 }
@@ -30,6 +31,7 @@ enum EBasketModes {
 }
 
 type TProduct = {
+  error_description?: string;
   id: number;
   can_buy: boolean;
   availability: { name: string };
