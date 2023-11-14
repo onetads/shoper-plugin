@@ -74,10 +74,6 @@ class AdManager {
         hideLoadingSpinner();
         throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
       });
-
-    // FIX ME!!
-    // if (fields.length > 0) return [fields[0], fields[1]];
-    // else return [];
     return [26895];
   };
 

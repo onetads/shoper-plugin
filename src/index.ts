@@ -6,27 +6,27 @@ import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
 
 showLoadingSpinner();
 
-// window.addEventListener('DOMContentLoaded', async () => {
-try {
-  const page = getCurrentPageInfo();
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const page = getCurrentPageInfo();
 
-  if (page) {
-    const AdManager = initAdManager(page);
-    AdManager.injectAdnPixelScript();
+    if (page) {
+      const AdManager = initAdManager(page);
+      AdManager.injectAdnPixelScript();
 
-    await runWhenPageReady(async () => {
-      const TemplateManager = initTemplateManager(page);
-      TemplateManager.checkDOMforTemplates();
+      await runWhenPageReady(async () => {
+        const TemplateManager = initTemplateManager(page);
+        TemplateManager.checkDOMforTemplates();
 
-      const promotedProducts = await AdManager.getPromotedProducts();
-      TemplateManager.injectProducts(promotedProducts);
+        const promotedProducts = await AdManager.getPromotedProducts();
+        TemplateManager.injectProducts(promotedProducts);
+        hideLoadingSpinner();
+      });
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
       hideLoadingSpinner();
-    });
+    }
   }
-} catch (e) {
-  if (e instanceof Error) {
-    console.error(e.message);
-    hideLoadingSpinner();
-  }
-}
-// });
+});
