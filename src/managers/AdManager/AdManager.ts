@@ -22,6 +22,16 @@ class AdManager {
   public injectAdnPixelScript = () => {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
+    if (window.dlApi && dlApi.fetchNativeAd) {
+      dlApi.area = 'area';
+      dlApi.keyvalues = {
+        offer_ids: this.productsIds.toString(),
+        website_id: this.websiteId,
+      };
+
+      return;
+    }
+
     const adPixelScript = document.createElement('script');
     const adPixelDepsScript = document.createElement('script');
     adPixelScript.type = 'text/javascript';
@@ -46,6 +56,9 @@ class AdManager {
   };
 
   public getPromotedProducts = async () => {
+    if (!dlApi.fetchNativeAd)
+      throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+
     await dlApi
       .fetchNativeAd({
         slot: 'rmn-sponsored-product',

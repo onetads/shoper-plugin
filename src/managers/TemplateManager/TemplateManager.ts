@@ -67,7 +67,6 @@ import {
   SELECTOR_NOT_FOUND,
   SHOPER_REINITIATED_MSG,
 } from 'consts/messages';
-import { hideLoadingSpinner } from 'utils/loadingSpinner';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -93,7 +92,6 @@ class TemplateManager {
     });
 
     if (hasProblematicTemplates) {
-      hideLoadingSpinner();
       throw new Error(getMessage(PROBLEMATIC_TEMPLATE_MSG));
     }
 
@@ -144,8 +142,6 @@ class TemplateManager {
         }
       });
     }
-
-    console.log(this.templates);
   };
 
   private saveTemplate = (
@@ -388,7 +384,6 @@ class TemplateManager {
       const product = this.getProduct(id);
 
       if (product.error_description) {
-        hideLoadingSpinner();
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
@@ -454,7 +449,6 @@ class TemplateManager {
 
       this.wasShoperReinitiated = true;
     } else {
-      hideLoadingSpinner();
       throw new Error(getMessage(SHOPER_REINITIATED_MSG));
     }
   };
