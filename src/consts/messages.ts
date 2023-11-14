@@ -6,6 +6,7 @@ const SHOPER_REINITIATED_MSG = 'SHOPER_REINITIATED_MSG';
 const PRODUCT_NOT_FOUND = 'PRODUCT_NOT_FOUND';
 const ERROR_PROMOTED_PRODUCTS_MSG = 'ERROR_PROMOTED_PRODUCTS_MSG';
 const EMPTY_LIST_WARN = 'EMPTY_LIST_WARN';
+const REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
 
 const messagesMap = {
   [ATTEMPTS_LIMIT_MSG]: 'Attempts limit exceeded',
@@ -17,6 +18,7 @@ const messagesMap = {
   [ERROR_PROMOTED_PRODUCTS_MSG]:
     'An error occured while fetching promoted products',
   [EMPTY_LIST_WARN]: "List is empty or product selector doesn't match",
+  [REQUEST_TIMED_OUT]: 'Request timed out',
 };
 
 export {
@@ -29,4 +31,5 @@ export {
   PRODUCT_NOT_FOUND,
   ERROR_PROMOTED_PRODUCTS_MSG,
   EMPTY_LIST_WARN,
+  REQUEST_TIMED_OUT,
 };

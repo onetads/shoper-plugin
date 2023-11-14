@@ -2,8 +2,11 @@ import { TPages } from 'types/pages';
 import { EAreas } from 'types/areas';
 import { getProductsIds } from './AdManager.utils';
 import getMessage from 'utils/getMessage';
-import { ERROR_PROMOTED_PRODUCTS_MSG } from 'consts/messages';
-import { hideLoadingSpinner } from 'utils/loadingSpinner';
+import {
+  ERROR_PROMOTED_PRODUCTS_MSG,
+  REQUEST_TIMED_OUT,
+} from 'consts/messages';
+import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -23,7 +26,7 @@ class AdManager {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
     if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.area = 'area';
+      dlApi.area = area || '';
       dlApi.keyvalues = {
         offer_ids: this.productsIds.toString(),
         website_id: this.websiteId,
@@ -47,8 +50,7 @@ class AdManager {
       };
     `;
 
-    adPixelDepsScript.src =
-      'https://lib.onet.pl/s.csr/build/dlApi/minit.boot.min.js';
+    adPixelDepsScript.src = AD_PIXEL_DEPS_URL;
     adPixelDepsScript.async = true;
 
     document.head.appendChild(adPixelScript);
@@ -59,21 +61,31 @@ class AdManager {
     if (!dlApi.fetchNativeAd)
       throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
-    await dlApi
-      .fetchNativeAd({
-        slot: 'rmn-sponsored-product',
-        opts: {
-          offer_ids: this.productsIds.join(','),
-        },
-        tplCode: '1746213/Sponsored-Product',
-      })
-      .then((ads) =>
-        ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
-      )
-      .catch(() => {
-        hideLoadingSpinner();
-        throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
-      });
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(getMessage(REQUEST_TIMED_OUT)));
+      }, 2000);
+    });
+
+    await Promise.race([
+      dlApi
+        .fetchNativeAd({
+          slot: SLOT_NAME,
+          opts: {
+            offer_ids: this.productsIds.join(','),
+          },
+          tplCode: TPL_CODE,
+        })
+        .then((ads) =>
+          ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
+        )
+        .catch(() => {
+          throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+        }),
+      timeoutPromise,
+    ]);
+
+    // Add logic to return products from api
     return [26895];
   };
 
