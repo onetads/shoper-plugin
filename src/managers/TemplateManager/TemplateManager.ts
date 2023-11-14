@@ -348,10 +348,8 @@ class TemplateManager {
     }
 
     if (
-      (quickViewButton &&
-        quickViewButton.getAttribute('data-eval') ===
-          EProductQuickViews.MODAL) ||
-      quickViewButton.getAttribute('data-eval') ===
+      quickViewButton?.getAttribute('data-eval') === EProductQuickViews.MODAL ||
+      quickViewButton?.getAttribute('data-eval') ===
         EProductQuickViews.MODAL_CUSTOM
     ) {
       quickViewButton.classList.add(CUSTOM_QUICK_VIEW_CLASS);
