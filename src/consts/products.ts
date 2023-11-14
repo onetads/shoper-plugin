@@ -12,6 +12,8 @@ const MAIN_PRODUCTS_CONTAINER_SELECTOR = '#box_mainproducts';
 const RELATED_PRODUCTS_CONTAINER_SELECTOR = '.product-related';
 
 const CONTAINER_SELECTORS_TO_DELETE = [
+  '.votecount',
+  '.fx-rate',
   '.mx_voteStars_container',
   '.price__regular',
   '.price__omnibus',

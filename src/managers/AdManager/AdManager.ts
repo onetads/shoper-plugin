@@ -78,7 +78,7 @@ class AdManager {
     // FIX ME!!
     // if (fields.length > 0) return [fields[0], fields[1]];
     // else return [];
-    return [26895];
+    return [397];
   };
 
   private mapPageToArea = (page: TPages) => {
