@@ -280,7 +280,8 @@ class TemplateManager {
           );
         }
       } else {
-        throw new Error(getMessage(PRODUCT_NOT_AVAILABLE));
+        console.warn(getMessage(PRODUCT_NOT_AVAILABLE), `ID: ${product.id}`);
+        return;
       }
 
       if (template === NOT_VALID_TEMPLATE || template === null) return;

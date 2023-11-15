@@ -86,7 +86,7 @@ class AdManager {
     ]);
 
     // Add logic to return products from api
-    return [26895];
+    return [27, 31];
   };
 
   private mapPageToArea = (page: TPages) => {
