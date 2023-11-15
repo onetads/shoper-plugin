@@ -1,6 +1,6 @@
 import { TNoParamsNoReturnFunction } from 'types/common';
 import { ATTEMPTS_LIMIT, ATTEMPT_DELAY } from 'consts/common';
-import getMessage from 'utils/getMessage';
+import getMessage from 'utils/formatters/getMessage';
 import { ATTEMPTS_LIMIT_MSG } from 'consts/messages';
 
 const runWhenPageReady = (callback: TNoParamsNoReturnFunction) => {

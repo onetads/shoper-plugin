@@ -1,8 +1,11 @@
-import { initTemplateManager } from 'managers/TemplateManager/TemplateManager.utils';
-import { initAdManager } from 'managers/AdManager/AdManager.utils';
-import runWhenPageReady from 'utils/runWhenPageReady';
-import getCurrentPageInfo from 'utils/getCurrentPageInfo';
-import { hideLoadingSpinner, showLoadingSpinner } from 'utils/loadingSpinner';
+import { initTemplateManager } from 'managers/TemplateManager/utils';
+import { initAdManager } from 'managers/AdManager/utils';
+import runWhenPageReady from 'utils/helpers/runWhenPageReady';
+import getCurrentPageInfo from 'utils/helpers/getCurrentPageInfo';
+import {
+  hideLoadingSpinner,
+  showLoadingSpinner,
+} from 'utils/components/loadingSpinner';
 
 showLoadingSpinner();
 

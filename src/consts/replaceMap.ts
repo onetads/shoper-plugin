@@ -1,8 +1,8 @@
 import { EProductElements } from 'types/products';
 import { TReplaceContentMap } from 'types/templates';
 
-import prepareImageValue from 'utils/prepareImageValue';
-import prepareProducerLink from 'utils/prepareProducerLink';
+import prepareImageValue from 'utils/formatters/prepareImageValue';
+import prepareProducerLink from 'utils/formatters/prepareProducerLink';
 
 const PRODUCT_NAME_KEY = '{{ PRODUCT_NAME_KEY }}';
 const PRODUCT_LINK_KEY = '{{ PRODUCT_LINK_KEY }}';
@@ -35,34 +35,16 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           canBeNull: true,
           replace: ['data-id'],
         },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-product-id'],
-        },
       ],
       listView: [
         {
           selector: '.product',
           replace: ['data-product-id'],
         },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-product-id'],
-        },
       ],
       relatedView: [
         {
           selector: '.product',
-          replace: ['data-product-id'],
-        },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
           replace: ['data-product-id'],
         },
       ],
@@ -127,12 +109,6 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           selector: '.productname',
           replace: [CONTENT],
         },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-product-name'],
-        },
       ],
       listView: [
         {
@@ -156,12 +132,6 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
           selector: '.productname',
           replace: [CONTENT],
         },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-product-name'],
-        },
       ],
       relatedView: [
         {
@@ -179,12 +149,6 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
         {
           selector: '.details img',
           replace: ['alt'],
-        },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-product-name'],
         },
       ],
     },
@@ -344,7 +308,6 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
     map: {
       gridView: [
         {
-          forActiveOnly: true,
           canBeNull: true,
           selector: '.deliv span:last-child',
           replace: [CONTENT],
@@ -352,7 +315,6 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
       ],
       listView: [
         {
-          forActiveOnly: true,
           canBeNull: true,
           selector: '.deliv span:last-child',
           replace: [CONTENT],
@@ -385,54 +347,31 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
       gridView: [
         {
           canBeNull: true,
-          forActiveOnly: true,
           selector: '.basket input[name="stock_id"]',
           replace: ['value'],
         },
         {
           canBeNull: true,
-          forActiveOnly: true,
           selector: '.basket:not(:has(input[name="stock_id"]))',
           replace: [BASKET_ID],
-        },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-stock-id'],
         },
       ],
       listView: [
         {
-          forActiveOnly: true,
           selector: '.basket input[name="stock_id"]',
           replace: ['value'],
-        },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-stock-id'],
         },
       ],
       relatedView: [
         {
           canBeNull: true,
-          forActiveOnly: true,
           selector: '.addtobasket input[name="stock_id"]',
           replace: ['value'],
         },
         {
           canBeNull: true,
-          forActiveOnly: true,
           selector: '.basket form',
           replace: [BASKET_ID],
-        },
-        {
-          canBeNull: true,
-          forNotActiveOnly: true,
-          selector: '.availability-notifier-btn',
-          replace: ['data-stock-id'],
         },
       ],
     },

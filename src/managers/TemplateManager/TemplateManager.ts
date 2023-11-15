@@ -5,67 +5,43 @@ import {
   DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINER_SELECTOR,
   PRODUCT_CONTAINERS,
-  PRODUCT_INACTIVE,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
-  DATA_PRODUCT_ID,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
-  AVAILABILITY_CONTAINER_CLASS,
-  AVAILABILITY_BUTTON_CLASS,
   QUICK_VIEW_SELECTOR,
-  AVAILABILITY_BUTTON_CLASS_NEW,
-  AVAILABILITY_CONTAINER_CLASS_NEW,
   CUSTOM_QUICK_VIEW_CLASS,
 } from 'consts/eventSelectors';
-import {
-  BASKET_ID,
-  CONTENT,
-  PRODUCT_AVAILABILITY_KEY,
-  PRODUCT_CATEGORY_KEY,
-  PRODUCT_DELIVERY_KEY,
-  PRODUCT_DESCRIPTION_KEY,
-  PRODUCT_LINK_KEY,
-  PRODUCT_NAME_KEY,
-  PRODUCT_PRICE_KEY,
-  PRODUCT_ID_KEY,
-  PRODUCT_STOCK_ID_KEY,
-  REPLACE_CONTENT_MAP,
-  PRODUCT_IMAGE_FILENAME_KEY,
-  PRODUCT_MAIN_IMAGE_KEY,
-  PRODUCT_PRODUCER_NAME_KEY,
-  PRODUCT_PRODUCER_ID_KEY,
-} from 'consts/replaceMap';
+import { BASKET_ID, CONTENT, REPLACE_CONTENT_MAP } from 'consts/replaceMap';
 import { BASIC_TAG } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
   PROBLEMATIC_TEMPLATES,
   TEMPLATES_MAP,
 } from 'consts/templates';
-import createSelector from 'utils/createSelector';
 import { TPages } from 'types/pages';
 import {
-  EProductAvailability,
   EProductElements,
-  TProduct,
   EProductQuickViews,
   EBasketModes,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
 
-import {
-  attachAjaxCartEvent,
-  reinitNotifyButton,
-  reinitQuickView,
-} from './TemplateManager.utils';
-import getMessage from 'utils/getMessage';
+import getMessage from 'utils/formatters/getMessage';
+
+import getProductData from 'utils/product/getProductData';
+import getProductMap from 'utils/product/getProductMap';
+import deleteProductFromDOM from 'utils/product/deleteProductFromDOM';
+import { attachAjaxCartEvent, reinitQuickView } from './utils';
+
 import {
   PROBLEMATIC_TEMPLATE_MSG,
   PRODUCT_NOT_FOUND,
   SELECTOR_NOT_FOUND,
   SHOPER_REINITIATED_MSG,
+  PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
 
 class TemplateManager {
@@ -122,36 +98,17 @@ class TemplateManager {
       if (!(productElement instanceof HTMLElement)) continue;
 
       const elementClasses = productElement.className.split(' ');
-
       elementClasses.forEach((className) => {
-        if (
-          className === PRODUCT_INACTIVE ||
-          !productElement.querySelector('.product .basket .addtobasket')
-        ) {
-          this.saveTemplate(
-            this.page,
-            productElement,
-            EProductAvailability.INACTIVE,
-          );
-        } else if (className === PRODUCT_CLASS) {
-          this.saveTemplate(
-            this.page,
-            productElement,
-            EProductAvailability.ACTIVE,
-          );
+        if (className === PRODUCT_CLASS) {
+          this.saveTemplate(this.page, productElement);
         }
       });
     }
   };
 
-  private saveTemplate = (
-    page: TPages,
-    productElement: HTMLElement,
-    availability: EProductAvailability,
-  ) => {
+  private saveTemplate = (page: TPages, productElement: HTMLElement) => {
     const mappedTemplate = this.getMappedTemplate({
       page,
-      availability,
     });
 
     this.saveTemplateInLocalStorage(productElement, mappedTemplate);
@@ -161,10 +118,7 @@ class TemplateManager {
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
   ) => {
-    const preparedTemplate = this.prepareTemplate(
-      productElement,
-      mappedTemplate,
-    );
+    const preparedTemplate = this.prepareTemplate(productElement);
 
     if (!preparedTemplate) return;
 
@@ -172,22 +126,13 @@ class TemplateManager {
     localStorage.setItem(mappedTemplate, preparedTemplate);
   };
 
-  private getMappedTemplate = ({
-    page,
-    availability,
-  }: {
-    page: TPages;
-    availability: EProductAvailability;
-  }) => {
+  private getMappedTemplate = ({ page }: { page: TPages }) => {
     if (page === PRODUCT_PAGE) {
-      return TEMPLATES_MAP[page][availability];
-    } else return TEMPLATES_MAP[page][this.viewType][availability];
+      return TEMPLATES_MAP[page];
+    } else return TEMPLATES_MAP[page][this.viewType];
   };
 
-  private prepareTemplate = (
-    productElement: HTMLElement,
-    mappedTemplate: ETemplates,
-  ) => {
+  private prepareTemplate = (productElement: HTMLElement) => {
     const copiedProductElement = document.createElement(BASIC_TAG);
     copiedProductElement.innerHTML = productElement.outerHTML;
 
@@ -212,67 +157,44 @@ class TemplateManager {
         }
       }
 
-      contentMap.forEach(
-        ({
-          selector,
-          replace,
-          forActiveOnly,
-          forNotActiveOnly,
-          canBeNull,
-          prepareValue,
-        }) => {
-          if (!canInjectTemplate) return;
+      contentMap.forEach(({ selector, replace, canBeNull, prepareValue }) => {
+        if (!canInjectTemplate) return;
 
-          if (
-            forActiveOnly &&
-            (mappedTemplate === ETemplates.LIST_VIEW_NOT_AVAILABLE ||
-              mappedTemplate === ETemplates.GRID_VIEW_NOT_AVAILABLE)
-          )
-            return;
+        const selectedElements =
+          copiedProductElement.querySelectorAll(selector);
 
-          if (
-            forNotActiveOnly &&
-            (mappedTemplate === ETemplates.LIST_VIEW_AVAILABLE ||
-              mappedTemplate === ETemplates.GRID_VIEW_AVAILABLE)
-          )
-            return;
+        if (!selectedElements.length && !canBeNull) {
+          canInjectTemplate = false;
+          throw new Error(getMessage(SELECTOR_NOT_FOUND) + selector);
+        }
 
-          const selectedElements =
-            copiedProductElement.querySelectorAll(selector);
+        selectedElements.forEach((element) => {
+          replace.forEach((item) => {
+            if (item === CONTENT) {
+              element.innerHTML = key;
+              return;
+            }
 
-          if (!selectedElements.length && !canBeNull) {
-            canInjectTemplate = false;
-            throw new Error(getMessage(SELECTOR_NOT_FOUND) + selector);
-          }
+            if (item === BASKET_ID) {
+              const actionContent = element.getAttribute('action');
 
-          selectedElements.forEach((element) => {
-            replace.forEach((item) => {
-              if (item === CONTENT) {
-                element.innerHTML = key;
-                return;
-              }
+              if (!actionContent) return;
 
-              if (item === BASKET_ID) {
-                const actionContent = element.getAttribute('action');
+              const findNumberRegex = /\d+/;
 
-                if (!actionContent) return;
+              element.setAttribute(
+                'action',
+                actionContent.replace(findNumberRegex, key),
+              );
+              return;
+            }
 
-                const findNumberRegex = /\d+/;
+            const newValue = prepareValue ? prepareValue(element) : key;
 
-                element.setAttribute(
-                  'action',
-                  actionContent.replace(findNumberRegex, key),
-                );
-                return;
-              }
-
-              const newValue = prepareValue ? prepareValue(element) : key;
-
-              element.setAttribute(item, newValue);
-            });
+            element.setAttribute(item, newValue);
           });
-        },
-      );
+        });
+      });
     }
 
     CONTAINER_SELECTORS_TO_CLEAR.forEach((className) => {
@@ -305,27 +227,6 @@ class TemplateManager {
     return this.templates[template];
   };
 
-  private getProduct = (id: number) => frontAPI.getProduct({ id: id });
-
-  private getProductMap = (product: TProduct) => {
-    return {
-      isActive: product.can_buy,
-      [PRODUCT_NAME_KEY]: product.name,
-      [PRODUCT_STOCK_ID_KEY]: product.stockId,
-      [PRODUCT_ID_KEY]: product.id,
-      [PRODUCT_LINK_KEY]: product.url,
-      [PRODUCT_PRODUCER_NAME_KEY]: product.producer.name,
-      [PRODUCT_PRODUCER_ID_KEY]: product.producer.id,
-      [PRODUCT_CATEGORY_KEY]: product.category.name,
-      [PRODUCT_IMAGE_FILENAME_KEY]: product.main_image_filename,
-      [PRODUCT_MAIN_IMAGE_KEY]: product.main_image,
-      [PRODUCT_PRICE_KEY]: product.price.gross.final,
-      [PRODUCT_AVAILABILITY_KEY]: product.availability.name,
-      [PRODUCT_DELIVERY_KEY]: product.delivery.name,
-      [PRODUCT_DESCRIPTION_KEY]: product.shortDescription,
-    };
-  };
-
   private getProductWithCustoms = (productElement: string): HTMLElement => {
     const elemWrapper = document.createElement(BASIC_TAG);
     elemWrapper.innerHTML = productElement;
@@ -336,9 +237,6 @@ class TemplateManager {
     const addToCartForm = productBox.querySelector(
       ADD_TO_CART_SELECTOR,
     ) as HTMLFormElement;
-    const availabilityNotifyContainer = productBox.querySelector(
-      createSelector(AVAILABILITY_CONTAINER_CLASS),
-    ) as HTMLElement;
 
     if (
       addToCartForm &&
@@ -355,69 +253,36 @@ class TemplateManager {
       quickViewButton.classList.add(CUSTOM_QUICK_VIEW_CLASS);
     }
 
-    if (availabilityNotifyContainer) {
-      const availabilityButton = availabilityNotifyContainer.querySelector(
-        createSelector(AVAILABILITY_BUTTON_CLASS),
-      );
-      availabilityNotifyContainer.classList.add(
-        AVAILABILITY_CONTAINER_CLASS_NEW,
-      );
-      if (availabilityButton) {
-        availabilityButton.classList.add(AVAILABILITY_BUTTON_CLASS_NEW);
-      }
-    }
-
     return productBox;
-  };
-
-  private deleteExistingProductId = (id: number) => {
-    const existingProductWithSameId = document.querySelector(
-      `div[${DATA_PRODUCT_ID}="${id}"]`,
-    );
-
-    if (!existingProductWithSameId) return;
-
-    existingProductWithSameId.remove();
   };
 
   public injectProducts = (productsIds: number[]) => {
     productsIds.forEach((id) => {
-      const product = this.getProduct(id);
+      const product = getProductData(id);
 
       if (product.error_description) {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
-      const { isActive, ...mappedProduct } = this.getProductMap(product);
+      const { isActive, ...mappedProduct } = getProductMap(product);
 
       let template;
       const currentPage = this.page;
 
       if (isActive) {
         if (currentPage === PRODUCT_PAGE) {
-          template = this.getTemplate(
-            ETemplates.LIST_RELATED_PRODUCTS_AVAILABLE,
-          );
+          template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
         } else {
           template = this.getTemplate(
             this.viewType === EViews.LIST_VIEW
-              ? ETemplates.LIST_VIEW_AVAILABLE
-              : ETemplates.GRID_VIEW_AVAILABLE,
+              ? ETemplates.LIST_VIEW
+              : ETemplates.GRID_VIEW,
           );
         }
       } else {
-        if (currentPage === PRODUCT_PAGE) {
-          template = this.getTemplate(
-            ETemplates.LIST_RELATED_PRODUCTS_NOT_AVAILABLE,
-          );
-        } else {
-          template = this.getTemplate(
-            this.viewType === EViews.LIST_VIEW
-              ? ETemplates.LIST_VIEW_NOT_AVAILABLE
-              : ETemplates.GRID_VIEW_NOT_AVAILABLE,
-          );
-        }
+        throw new Error(getMessage(PRODUCT_NOT_AVAILABLE));
       }
+
       if (template === NOT_VALID_TEMPLATE || template === null) return;
 
       let modifiedTemplate = template;
@@ -437,7 +302,7 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
-      this.deleteExistingProductId(id);
+      deleteProductFromDOM(id);
       productsWrapper?.insertBefore(
         productWithEvents,
         productsWrapper.firstChild,
@@ -445,7 +310,6 @@ class TemplateManager {
     });
 
     if (!this.wasShoperReinitiated) {
-      reinitNotifyButton();
       reinitQuickView();
 
       this.wasShoperReinitiated = true;

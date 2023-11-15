@@ -1,8 +1,3 @@
-enum EProductAvailability {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-}
-
 enum EProductElements {
   ID = 'ID',
   IMG = 'IMG',
@@ -67,10 +62,4 @@ type TProduct = {
   }[];
 };
 
-export {
-  EProductAvailability,
-  EProductElements,
-  TProduct,
-  EProductQuickViews,
-  EBasketModes,
-};
+export { EProductElements, TProduct, EProductQuickViews, EBasketModes };

@@ -7,6 +7,7 @@ const PRODUCT_NOT_FOUND = 'PRODUCT_NOT_FOUND';
 const ERROR_PROMOTED_PRODUCTS_MSG = 'ERROR_PROMOTED_PRODUCTS_MSG';
 const EMPTY_LIST_WARN = 'EMPTY_LIST_WARN';
 const REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
+const PRODUCT_NOT_AVAILABLE = 'PRODUCT_NOT_AVAILABLE';
 
 const messagesMap = {
   [ATTEMPTS_LIMIT_MSG]: 'Attempts limit exceeded',
@@ -19,6 +20,7 @@ const messagesMap = {
     'An error occured while fetching promoted products',
   [EMPTY_LIST_WARN]: "List is empty or product selector doesn't match",
   [REQUEST_TIMED_OUT]: 'Request timed out',
+  [PRODUCT_NOT_AVAILABLE]: 'Product is not available in shop',
 };
 
 export {
@@ -32,4 +34,5 @@ export {
   ERROR_PROMOTED_PRODUCTS_MSG,
   EMPTY_LIST_WARN,
   REQUEST_TIMED_OUT,
+  PRODUCT_NOT_AVAILABLE,
 };
