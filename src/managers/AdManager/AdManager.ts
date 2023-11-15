@@ -1,12 +1,12 @@
 import { TPages } from 'types/pages';
 import { EAreas } from 'types/areas';
-import { getProductsIds } from './AdManager.utils';
-import getMessage from 'utils/getMessage';
+import getMessage from 'utils/formatters/getMessage';
 import {
   ERROR_PROMOTED_PRODUCTS_MSG,
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
 import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
+import { getProductsIds } from './utils';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -86,7 +86,7 @@ class AdManager {
     ]);
 
     // Add logic to return products from api
-    return [26895];
+    return [27, 31];
   };
 
   private mapPageToArea = (page: TPages) => {

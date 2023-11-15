@@ -1,7 +1,7 @@
 import AdManager from 'managers/AdManager/AdManager';
 import { TPages } from 'types/pages';
 import { EMPTY_LIST_WARN } from 'consts/messages';
-import getMessage from 'utils/getMessage';
+import getMessage from 'utils/formatters/getMessage';
 import {
   DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINERS,
