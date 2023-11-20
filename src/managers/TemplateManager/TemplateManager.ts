@@ -43,6 +43,7 @@ import {
   SHOPER_REINITIATED_MSG,
   PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
+import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -53,7 +54,7 @@ class TemplateManager {
   private templates = Object.keys(ETemplates).reduce(
     (acc, currVal) => ({
       ...acc,
-      [currVal]: localStorage.getItem(currVal),
+      [currVal]: sessionStorage.getItem(currVal),
     }),
     {},
   ) as Record<ETemplates, string | null>;
@@ -94,15 +95,26 @@ class TemplateManager {
       this.viewType = viewType;
     }
 
+    let isScanning = false;
+
     for (const productElement of productsElements) {
+      const currentTemplate = this.getTemplate(
+        this.getMappedTemplate({ page: this.page }),
+      );
+
+      if (isScanning && currentTemplate === NOT_VALID_TEMPLATE) break;
+
       if (!(productElement instanceof HTMLElement)) continue;
 
       const elementClasses = productElement.className.split(' ');
+
       elementClasses.forEach((className) => {
         if (className === PRODUCT_CLASS) {
           this.saveTemplate(this.page, productElement);
         }
       });
+
+      isScanning = true;
     }
   };
 
@@ -111,10 +123,10 @@ class TemplateManager {
       page,
     });
 
-    this.saveTemplateInLocalStorage(productElement, mappedTemplate);
+    this.saveTemplateInSessionStorage(productElement, mappedTemplate);
   };
 
-  private saveTemplateInLocalStorage = (
+  private saveTemplateInSessionStorage = (
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
   ) => {
@@ -123,10 +135,10 @@ class TemplateManager {
     if (!preparedTemplate) return;
 
     this.templates = { ...this.templates, [mappedTemplate]: preparedTemplate };
-    localStorage.setItem(mappedTemplate, preparedTemplate);
+    sessionStorage.setItem(mappedTemplate, preparedTemplate);
   };
 
-  private getMappedTemplate = ({ page }: { page: TPages }) => {
+  public getMappedTemplate = ({ page }: { page: TPages }) => {
     if (page === PRODUCT_PAGE) {
       return TEMPLATES_MAP[page];
     } else return TEMPLATES_MAP[page][this.viewType];
@@ -165,7 +177,8 @@ class TemplateManager {
 
         if (!selectedElements.length && !canBeNull) {
           canInjectTemplate = false;
-          throw new Error(getMessage(SELECTOR_NOT_FOUND) + selector);
+          console.warn(getMessage(SELECTOR_NOT_FOUND) + selector);
+          return;
         }
 
         selectedElements.forEach((element) => {
@@ -303,11 +316,10 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
+      const markedProduct = markProductAsPromoted(productWithEvents);
+
       deleteProductFromDOM(id);
-      productsWrapper?.insertBefore(
-        productWithEvents,
-        productsWrapper.firstChild,
-      );
+      productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
     });
 
     if (!this.wasShoperReinitiated) {

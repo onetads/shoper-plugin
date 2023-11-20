@@ -6,30 +6,44 @@ import {
   hideLoadingSpinner,
   showLoadingSpinner,
 } from 'utils/components/loadingSpinner';
+import { NOT_VALID_TEMPLATE } from 'consts/templates';
+import getIsAnyTemplateInvalid from 'utils/helpers/getIsAnyTemplateInvalid';
 
-showLoadingSpinner();
+const isAnyTemplateInvalid = getIsAnyTemplateInvalid();
 
-window.addEventListener('DOMContentLoaded', async () => {
-  try {
-    const page = getCurrentPageInfo();
+if (!isAnyTemplateInvalid) {
+  showLoadingSpinner();
 
-    if (page) {
-      const AdManager = initAdManager(page);
-      AdManager.injectAdnPixelScript();
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const page = getCurrentPageInfo();
 
-      await runWhenPageReady(async () => {
-        const TemplateManager = initTemplateManager(page);
-        TemplateManager.checkDOMforTemplates();
+      if (page) {
+        const AdManager = initAdManager(page);
+        AdManager.injectAdnPixelScript();
 
-        const promotedProducts = await AdManager.getPromotedProducts();
-        TemplateManager.injectProducts(promotedProducts);
+        await runWhenPageReady(async () => {
+          const TemplateManager = initTemplateManager(page);
+          TemplateManager.checkDOMforTemplates();
+
+          const { getMappedTemplate, getTemplate } = TemplateManager;
+
+          const isInvalidTemplate =
+            getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
+
+          if (!isInvalidTemplate) {
+            const promotedProducts = await AdManager.getPromotedProducts();
+            TemplateManager.injectProducts(promotedProducts);
+          }
+
+          hideLoadingSpinner();
+        });
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e.message);
         hideLoadingSpinner();
-      });
+      }
     }
-  } catch (e) {
-    if (e instanceof Error) {
-      console.error(e.message);
-      hideLoadingSpinner();
-    }
-  }
-});
+  });
+}
