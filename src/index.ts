@@ -7,43 +7,38 @@ import {
   showLoadingSpinner,
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
-import getIsAnyTemplateInvalid from 'utils/helpers/getIsAnyTemplateInvalid';
 
-const isAnyTemplateInvalid = getIsAnyTemplateInvalid();
+showLoadingSpinner();
 
-if (!isAnyTemplateInvalid) {
-  showLoadingSpinner();
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const page = getCurrentPageInfo();
 
-  window.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const page = getCurrentPageInfo();
+    if (page) {
+      const AdManager = initAdManager(page);
+      AdManager.injectAdnPixelScript();
 
-      if (page) {
-        const AdManager = initAdManager(page);
-        AdManager.injectAdnPixelScript();
+      await runWhenPageReady(async () => {
+        const TemplateManager = initTemplateManager(page);
+        TemplateManager.checkDOMforTemplates();
 
-        await runWhenPageReady(async () => {
-          const TemplateManager = initTemplateManager(page);
-          TemplateManager.checkDOMforTemplates();
+        const { getMappedTemplate, getTemplate } = TemplateManager;
 
-          const { getMappedTemplate, getTemplate } = TemplateManager;
+        const isInvalidTemplate =
+          getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
-          const isInvalidTemplate =
-            getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
+        if (!isInvalidTemplate) {
+          const promotedProducts = await AdManager.getPromotedProducts();
+          TemplateManager.injectProducts(promotedProducts);
+        }
+      });
 
-          if (!isInvalidTemplate) {
-            const promotedProducts = await AdManager.getPromotedProducts();
-            TemplateManager.injectProducts(promotedProducts);
-          }
-
-          hideLoadingSpinner();
-        });
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        console.error(e.message);
-        hideLoadingSpinner();
-      }
+      hideLoadingSpinner();
     }
-  });
-}
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(e.message);
+      hideLoadingSpinner();
+    }
+  }
+});

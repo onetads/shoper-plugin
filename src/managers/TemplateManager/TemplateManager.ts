@@ -102,14 +102,10 @@ class TemplateManager {
       this.viewType = viewType;
     }
 
-    let isScanning = false;
-
     for (const productElement of productsElements) {
       const currentTemplate = this.getTemplate(
         this.getMappedTemplate({ page: this.page }),
       );
-
-      if (isScanning && currentTemplate === NOT_VALID_TEMPLATE) break;
 
       if (!(productElement instanceof HTMLElement)) continue;
 
@@ -120,9 +116,8 @@ class TemplateManager {
         !elementClassList.contains(PRODUCT_INACTIVE)
       ) {
         this.saveTemplate(this.page, productElement);
+        if (currentTemplate === NOT_VALID_TEMPLATE) break;
       }
-
-      isScanning = true;
     }
   };
 
@@ -287,7 +282,7 @@ class TemplateManager {
     productsIds.forEach((productData) => {
       const { offerId } = productData;
 
-      const product = getProductData(+offerId);
+      const product = getProductData(Number(offerId));
 
       if (product.error_description) {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
