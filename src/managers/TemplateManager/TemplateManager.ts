@@ -7,13 +7,19 @@ import {
   PRODUCT_CONTAINERS,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+  PRODUCT_INACTIVE,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
   QUICK_VIEW_SELECTOR,
   CUSTOM_QUICK_VIEW_CLASS,
 } from 'consts/eventSelectors';
-import { BASKET_ID, CONTENT, REPLACE_CONTENT_MAP } from 'consts/replaceMap';
+import {
+  BASKET_ID,
+  CONTENT,
+  PRODUCT_IMAGE_URL_KEY,
+  REPLACE_CONTENT_MAP,
+} from 'consts/replaceMap';
 import { BASIC_TAG } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
@@ -25,6 +31,7 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
+  TFormatedProduct,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
@@ -106,13 +113,14 @@ class TemplateManager {
 
       if (!(productElement instanceof HTMLElement)) continue;
 
-      const elementClasses = productElement.className.split(' ');
+      const elementClassList = productElement.classList;
 
-      elementClasses.forEach((className) => {
-        if (className === PRODUCT_CLASS) {
-          this.saveTemplate(this.page, productElement);
-        }
-      });
+      if (
+        elementClassList.contains(PRODUCT_CLASS) &&
+        !elementClassList.contains(PRODUCT_INACTIVE)
+      ) {
+        this.saveTemplate(this.page, productElement);
+      }
 
       isScanning = true;
     }
@@ -202,6 +210,12 @@ class TemplateManager {
               return;
             }
 
+            if (
+              key === PRODUCT_IMAGE_URL_KEY &&
+              element instanceof HTMLImageElement
+            )
+              element.loading = 'lazy';
+
             const newValue = prepareValue ? prepareValue(element) : key;
 
             element.setAttribute(item, newValue);
@@ -269,15 +283,20 @@ class TemplateManager {
     return productBox;
   };
 
-  public injectProducts = (productsIds: number[]) => {
-    productsIds.forEach((id) => {
-      const product = getProductData(id);
+  public injectProducts = (productsIds: TFormatedProduct[]) => {
+    productsIds.forEach((productData) => {
+      const { offerId } = productData;
+
+      const product = getProductData(+offerId);
 
       if (product.error_description) {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
-      const { isActive, ...mappedProduct } = getProductMap(product);
+      const { isActive, ...mappedProduct } = getProductMap({
+        ...product,
+        ...productData,
+      });
 
       let template;
       const currentPage = this.page;
@@ -316,9 +335,9 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
-      const markedProduct = markProductAsPromoted(productWithEvents);
+      const markedProduct = markProductAsPromoted(productWithEvents, this.page);
 
-      deleteProductFromDOM(id);
+      deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
     });
 

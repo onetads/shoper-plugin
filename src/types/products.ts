@@ -47,7 +47,6 @@ type TProduct = {
   };
   shortDescription: string;
   short_description: string;
-  url: string;
   name: string;
   category: {
     name: string;
@@ -62,4 +61,16 @@ type TProduct = {
   }[];
 };
 
-export { EProductElements, TProduct, EProductQuickViews, EBasketModes };
+type TFormatedProduct = {
+  offerId: string;
+  imageUrl: string;
+  offerUrl: string;
+};
+
+export {
+  EProductElements,
+  TProduct,
+  EProductQuickViews,
+  EBasketModes,
+  TFormatedProduct,
+};

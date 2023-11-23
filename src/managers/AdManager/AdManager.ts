@@ -7,6 +7,7 @@ import {
 } from 'consts/messages';
 import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
 import { getProductsIds } from './utils';
+import { TFormatedProduct } from 'types/products';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -67,7 +68,7 @@ class AdManager {
       }, 2000);
     });
 
-    await Promise.race([
+    const products = (await Promise.race([
       dlApi
         .fetchNativeAd({
           slot: SLOT_NAME,
@@ -77,16 +78,23 @@ class AdManager {
           tplCode: TPL_CODE,
         })
         .then((ads) =>
-          ads ? ads.fields.feed.offers.map(({ offer_id }) => offer_id) : [],
+          ads
+            ? ads.fields.feed.offers.map(
+                ({ offer_id, offer_image, offer_url }) => ({
+                  offerId: offer_id,
+                  imageUrl: offer_image,
+                  offerUrl: offer_url,
+                }),
+              )
+            : [],
         )
         .catch(() => {
           throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
         }),
-      timeoutPromise,
-    ]);
+      timeoutPromise.then(() => []),
+    ])) as TFormatedProduct[];
 
-    // Add logic to return products from api
-    return [27, 31];
+    return products;
   };
 
   private mapPageToArea = (page: TPages) => {
