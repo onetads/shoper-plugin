@@ -4,7 +4,8 @@ import {
   LIST_STYLES,
   TAG_ITEM_CLASSNAME,
   TAG_LIST_CLASSNAME,
-  TAG_TEXT_MARK,
+  TAG_TEXT_MARK_PL,
+  TAG_TEXT_MARK_EN,
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
@@ -16,7 +17,10 @@ const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
   applyStyles(tagItem, ITEM_STYLES);
   if (page === PRODUCT_PAGE) applyStyles(tagsList, LIST_STYLES);
 
-  tagItem.textContent = TAG_TEXT_MARK;
+  const { locale } = Shop.getLanguage().list;
+
+  tagItem.textContent =
+    locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
 
   tagsList.className = TAG_LIST_CLASSNAME;
   tagItem.className = TAG_ITEM_CLASSNAME;

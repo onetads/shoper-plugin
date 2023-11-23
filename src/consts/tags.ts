@@ -1,6 +1,7 @@
 const TAG_LIST_CLASSNAME = 'tags';
 const TAG_ITEM_CLASSNAME = 'tags';
-const TAG_TEXT_MARK = 'sponsorowane';
+const TAG_TEXT_MARK_PL = 'sponsorowane';
+const TAG_TEXT_MARK_EN = 'sponsored';
 
 const ITEM_STYLES = {
   'background-color': 'white',
@@ -18,7 +19,8 @@ const LIST_STYLES = {
 export {
   ITEM_STYLES,
   LIST_STYLES,
-  TAG_TEXT_MARK,
+  TAG_TEXT_MARK_PL,
+  TAG_TEXT_MARK_EN,
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
 };
