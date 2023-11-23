@@ -6,6 +6,7 @@ const PROBLEMATIC_TEMPLATES = [
   '#wce_default-skin-translation',
   '#wce_default-js-translation',
 ];
+
 const TEMPLATES_MAP = {
   [PRODUCT_PAGE]: ETemplates.LIST_RELATED_PRODUCTS,
   [LISTING_PAGE]: {

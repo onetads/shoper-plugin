@@ -1,7 +1,6 @@
 import { EProductElements } from 'types/products';
 import { TReplaceContentMap } from 'types/templates';
 
-import prepareImageValue from 'utils/formatters/prepareImageValue';
 import prepareProducerLink from 'utils/formatters/prepareProducerLink';
 
 const PRODUCT_NAME_KEY = '{{ PRODUCT_NAME_KEY }}';
@@ -10,8 +9,7 @@ const PRODUCT_PRODUCER_NAME_KEY = '{{ PRODUCT_PRODUCER_NAME_KEY }}';
 const PRODUCT_PRODUCER_ID_KEY = '{{ PRODUCT_PRODUCER_ID_KEY }}';
 const PRODUCT_ID_KEY = '{{ PRODUCT_ID_KEY }}';
 const PRODUCT_CATEGORY_KEY = '{{ PRODUCT_CATEGORY_KEY }}';
-const PRODUCT_MAIN_IMAGE_KEY = '{{ PRODUCT_MAIN_IMAGE_KEY }}';
-const PRODUCT_IMAGE_FILENAME_KEY = '{{ PRODUCT_IMAGE_FILENAME_KEY }}';
+const PRODUCT_IMAGE_URL_KEY = '{{ PRODUCT_IMAGE_URL_KEY }}';
 const PRODUCT_PRICE_KEY = '{{ PRODUCT_PRICE_KEY }}';
 const PRODUCT_AVAILABILITY_KEY = '{{ PRODUCT_AVAILABILITY_KEY }}';
 const PRODUCT_DELIVERY_KEY = '{{ PRODUCT_DELIVERY_KEY }}';
@@ -52,39 +50,34 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
   },
 
   [EProductElements.IMG]: {
-    key: PRODUCT_MAIN_IMAGE_KEY,
+    key: PRODUCT_IMAGE_URL_KEY,
     map: {
       gridView: [
         {
           selector: '.img-wrap img',
           replace: ['data-src', 'src'],
-          prepareValue: prepareImageValue,
         },
         {
           canBeNull: true,
           selector: '.img-wrap img[srcset]',
           replace: ['srcset'],
-          prepareValue: prepareImageValue,
         },
       ],
       listView: [
         {
           selector: '.img-wrap img',
           replace: ['src', 'data-src'],
-          prepareValue: prepareImageValue,
         },
         {
           canBeNull: true,
           selector: '.img-wrap img[srcset]',
           replace: ['srcset'],
-          prepareValue: prepareImageValue,
         },
       ],
       relatedView: [
         {
           selector: '.details img',
           replace: ['src'],
-          prepareValue: prepareImageValue,
         },
       ],
     },
@@ -386,8 +379,7 @@ export {
   PRODUCT_NAME_KEY,
   PRODUCT_LINK_KEY,
   PRODUCT_CATEGORY_KEY,
-  PRODUCT_MAIN_IMAGE_KEY,
-  PRODUCT_IMAGE_FILENAME_KEY,
+  PRODUCT_IMAGE_URL_KEY,
   PRODUCT_PRICE_KEY,
   PRODUCT_AVAILABILITY_KEY,
   PRODUCT_DELIVERY_KEY,

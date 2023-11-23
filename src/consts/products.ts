@@ -7,7 +7,7 @@ const PRODUCT_CLASS = 'product';
 const PRODUCT_CONTAINER_SELECTOR = '.products';
 const PRODUCT_OUTER_WRAPPER_SELECTOR = '.innerbox';
 const DATA_PRODUCT_ID = 'data-product-id';
-const DATA_PRODUCT_SELECTOR = `div[${DATA_PRODUCT_ID}]`;
+const DATA_PRODUCT_SELECTOR = `[${DATA_PRODUCT_ID}]`;
 const MAIN_PRODUCTS_CONTAINER_SELECTOR = '#box_mainproducts';
 const RELATED_PRODUCTS_CONTAINER_SELECTOR = '.product-related';
 

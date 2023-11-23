@@ -1,5 +1,7 @@
 type TFetchNativeAdProductItem = {
   offer_id: number;
+  offer_image: string;
+  offer_url: string;
 };
 
 type TFetchNativeAdOptions = {

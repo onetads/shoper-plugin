@@ -6,6 +6,7 @@ import {
   hideLoadingSpinner,
   showLoadingSpinner,
 } from 'utils/components/loadingSpinner';
+import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
 showLoadingSpinner();
 
@@ -21,10 +22,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         const TemplateManager = initTemplateManager(page);
         TemplateManager.checkDOMforTemplates();
 
-        const promotedProducts = await AdManager.getPromotedProducts();
-        TemplateManager.injectProducts(promotedProducts);
-        hideLoadingSpinner();
+        const { getMappedTemplate, getTemplate } = TemplateManager;
+
+        const isInvalidTemplate =
+          getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
+
+        if (!isInvalidTemplate) {
+          const promotedProducts = await AdManager.getPromotedProducts();
+          TemplateManager.injectProducts(promotedProducts);
+        }
       });
+
+      hideLoadingSpinner();
     }
   } catch (e) {
     if (e instanceof Error) {

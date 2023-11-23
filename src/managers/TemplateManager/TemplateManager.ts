@@ -7,13 +7,19 @@ import {
   PRODUCT_CONTAINERS,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
+  PRODUCT_INACTIVE,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
   QUICK_VIEW_SELECTOR,
   CUSTOM_QUICK_VIEW_CLASS,
 } from 'consts/eventSelectors';
-import { BASKET_ID, CONTENT, REPLACE_CONTENT_MAP } from 'consts/replaceMap';
+import {
+  BASKET_ID,
+  CONTENT,
+  PRODUCT_IMAGE_URL_KEY,
+  REPLACE_CONTENT_MAP,
+} from 'consts/replaceMap';
 import { BASIC_TAG } from 'consts/common';
 import {
   NOT_VALID_TEMPLATE,
@@ -25,6 +31,7 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
+  TFormatedProduct,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
@@ -43,6 +50,7 @@ import {
   SHOPER_REINITIATED_MSG,
   PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
+import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -53,7 +61,7 @@ class TemplateManager {
   private templates = Object.keys(ETemplates).reduce(
     (acc, currVal) => ({
       ...acc,
-      [currVal]: localStorage.getItem(currVal),
+      [currVal]: sessionStorage.getItem(currVal),
     }),
     {},
   ) as Record<ETemplates, string | null>;
@@ -95,14 +103,21 @@ class TemplateManager {
     }
 
     for (const productElement of productsElements) {
+      const currentTemplate = this.getTemplate(
+        this.getMappedTemplate({ page: this.page }),
+      );
+
       if (!(productElement instanceof HTMLElement)) continue;
 
-      const elementClasses = productElement.className.split(' ');
-      elementClasses.forEach((className) => {
-        if (className === PRODUCT_CLASS) {
-          this.saveTemplate(this.page, productElement);
-        }
-      });
+      const elementClassList = productElement.classList;
+
+      if (
+        elementClassList.contains(PRODUCT_CLASS) &&
+        !elementClassList.contains(PRODUCT_INACTIVE)
+      ) {
+        this.saveTemplate(this.page, productElement);
+        if (currentTemplate === NOT_VALID_TEMPLATE) break;
+      }
     }
   };
 
@@ -111,10 +126,10 @@ class TemplateManager {
       page,
     });
 
-    this.saveTemplateInLocalStorage(productElement, mappedTemplate);
+    this.saveTemplateInSessionStorage(productElement, mappedTemplate);
   };
 
-  private saveTemplateInLocalStorage = (
+  private saveTemplateInSessionStorage = (
     productElement: HTMLElement,
     mappedTemplate: ETemplates,
   ) => {
@@ -123,10 +138,10 @@ class TemplateManager {
     if (!preparedTemplate) return;
 
     this.templates = { ...this.templates, [mappedTemplate]: preparedTemplate };
-    localStorage.setItem(mappedTemplate, preparedTemplate);
+    sessionStorage.setItem(mappedTemplate, preparedTemplate);
   };
 
-  private getMappedTemplate = ({ page }: { page: TPages }) => {
+  public getMappedTemplate = ({ page }: { page: TPages }) => {
     if (page === PRODUCT_PAGE) {
       return TEMPLATES_MAP[page];
     } else return TEMPLATES_MAP[page][this.viewType];
@@ -165,7 +180,8 @@ class TemplateManager {
 
         if (!selectedElements.length && !canBeNull) {
           canInjectTemplate = false;
-          throw new Error(getMessage(SELECTOR_NOT_FOUND) + selector);
+          console.warn(getMessage(SELECTOR_NOT_FOUND) + selector);
+          return;
         }
 
         selectedElements.forEach((element) => {
@@ -188,6 +204,12 @@ class TemplateManager {
               );
               return;
             }
+
+            if (
+              key === PRODUCT_IMAGE_URL_KEY &&
+              element instanceof HTMLImageElement
+            )
+              element.loading = 'lazy';
 
             const newValue = prepareValue ? prepareValue(element) : key;
 
@@ -256,15 +278,20 @@ class TemplateManager {
     return productBox;
   };
 
-  public injectProducts = (productsIds: number[]) => {
-    productsIds.forEach((id) => {
-      const product = getProductData(id);
+  public injectProducts = (productsIds: TFormatedProduct[]) => {
+    productsIds.forEach((productData) => {
+      const { offerId } = productData;
+
+      const product = getProductData(Number(offerId));
 
       if (product.error_description) {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
-      const { isActive, ...mappedProduct } = getProductMap(product);
+      const { isActive, ...mappedProduct } = getProductMap({
+        ...product,
+        ...productData,
+      });
 
       let template;
       const currentPage = this.page;
@@ -303,11 +330,10 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
-      deleteProductFromDOM(id);
-      productsWrapper?.insertBefore(
-        productWithEvents,
-        productsWrapper.firstChild,
-      );
+      const markedProduct = markProductAsPromoted(productWithEvents, this.page);
+
+      deleteProductFromDOM(+offerId);
+      productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
     });
 
     if (!this.wasShoperReinitiated) {
