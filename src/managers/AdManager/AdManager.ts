@@ -91,7 +91,7 @@ class AdManager {
         .catch(() => {
           throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
         }),
-      timeoutPromise.then(() => []),
+      timeoutPromise,
     ])) as TFormatedProduct[];
 
     return products;
