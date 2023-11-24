@@ -10,6 +10,7 @@ declare global {
     const pageType: string;
     const useroptions: TUserOptions;
     const lang: {
+      name: string;
       quickview: {
         addtobasket: string;
         availability: string;
@@ -35,10 +36,6 @@ declare global {
     };
     const AjaxBasket: new () => {
       sendAjax: (arg: HTMLFormElement) => void;
-    };
-
-    const getLanguage: () => {
-      list: { locale: string };
     };
   }
 }

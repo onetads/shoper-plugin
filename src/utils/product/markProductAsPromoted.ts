@@ -17,7 +17,7 @@ const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
   applyStyles(tagItem, ITEM_STYLES);
   if (page === PRODUCT_PAGE) applyStyles(tagsList, LIST_STYLES);
 
-  const { locale } = Shop.getLanguage().list;
+  const locale = Shop.lang.name ? Shop.lang.name : 'pl_PL';
 
   tagItem.textContent =
     locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
