@@ -7,6 +7,7 @@ import {
   LOADING_SPINNER_RELATED_CONTAINER_CLASS,
   LOADING_SPINNER_ADDITIONAL_SPACING,
 } from 'consts/loadingSpinner';
+import { INDEX_PAGE } from 'consts/pages';
 import {
   MAIN_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CONTAINER_SELECTOR,
@@ -68,6 +69,10 @@ const showSpinnerInListingView = (productsContainer: HTMLElement) => {
 };
 
 const showLoadingSpinner = () => {
+  const isIndexPage = document.body.classList.contains(INDEX_PAGE);
+
+  if (isIndexPage) return;
+
   let productsContainer = document.querySelector(
     MAIN_PRODUCTS_CONTAINER_SELECTOR,
   ) as HTMLElement;

@@ -27,7 +27,6 @@ const CONTAINER_SELECTORS_TO_CLEAR = ['.price__additional-info'];
 
 const PRODUCT_CONTAINERS: Record<TPages, string> = {
   shop_product_list: MAIN_PRODUCTS_CONTAINER_SELECTOR,
-  shop_index: MAIN_PRODUCTS_CONTAINER_SELECTOR,
   shop_product: RELATED_PRODUCTS_CONTAINER_SELECTOR,
 };
 

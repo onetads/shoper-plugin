@@ -32,9 +32,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           TemplateManager.injectProducts(promotedProducts);
         }
       });
-
-      hideLoadingSpinner();
     }
+    hideLoadingSpinner();
   } catch (e) {
     if (e instanceof Error) {
       console.error(e.message);

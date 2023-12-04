@@ -100,7 +100,6 @@ class AdManager {
   private mapPageToArea = (page: TPages) => {
     const areas: Record<TPages, EAreas> = {
       shop_product_list: EAreas.LISTING,
-      shop_index: EAreas.MAIN_PAGE,
       shop_product: EAreas.PRODUCT_CARD,
     };
 
