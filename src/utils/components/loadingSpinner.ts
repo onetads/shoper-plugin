@@ -69,6 +69,15 @@ const showSpinnerInListingView = (productsContainer: HTMLElement) => {
 };
 
 const showLoadingSpinner = () => {
+  const onetAdsConfig = window.OnetAdsConfig;
+
+  const shouldShowLoader =
+    onetAdsConfig && 'shouldShowLoader' in onetAdsConfig
+      ? onetAdsConfig.shouldShowLoader
+      : true;
+
+  if (!shouldShowLoader) return;
+
   const isIndexPage = document.body.classList.contains(INDEX_PAGE);
 
   if (isIndexPage) return;

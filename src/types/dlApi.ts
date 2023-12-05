@@ -13,6 +13,9 @@ type TFetchNativeAdOptions = {
 };
 
 type TFetchNativeAdResponse = {
+  meta: {
+    adclick: string;
+  };
   fields: {
     feed: {
       offers: TFetchNativeAdProductItem[];
