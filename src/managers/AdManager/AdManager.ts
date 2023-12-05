@@ -77,17 +77,19 @@ class AdManager {
           },
           tplCode: TPL_CODE,
         })
-        .then((ads) =>
-          ads
+        .then((ads) => {
+          const trackingAdLink = ads.meta.adclick;
+
+          return ads
             ? ads.fields.feed.offers.map(
                 ({ offer_id, offer_image, offer_url }) => ({
                   offerId: offer_id,
                   imageUrl: offer_image,
-                  offerUrl: offer_url,
+                  offerUrl: trackingAdLink + offer_url,
                 }),
               )
-            : [],
-        )
+            : [];
+        })
         .catch(() => {
           throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
         }),
