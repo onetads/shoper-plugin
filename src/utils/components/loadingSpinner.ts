@@ -69,7 +69,7 @@ const showSpinnerInListingView = (productsContainer: HTMLElement) => {
 };
 
 const showLoadingSpinner = () => {
-  const isLoaderVisible = window.OnetAdsConfig.isLoaderVisible;
+  const isLoaderVisible = window.OnetAdsConfig.shouldShowLoader;
 
   if (!isLoaderVisible) return;
 

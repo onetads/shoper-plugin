@@ -11,3 +11,11 @@ Yarn: v1.22.19
 
 yarn build - builds minified js (code is bundled to dist/bundle.js file) <br/>
 yarn eslint - checks for eslint errors
+
+# Config
+
+```javascript
+window.OnetAdsConfig = {
+    shouldShowLoader: true // boolean
+}
+```

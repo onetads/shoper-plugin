@@ -1,5 +1,5 @@
 type TOnetAdsConfig = {
-  isLoaderVisible: boolean;
+  shouldShowLoader: boolean;
 };
 
 export type { TOnetAdsConfig };
