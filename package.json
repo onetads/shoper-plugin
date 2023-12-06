@@ -2,7 +2,6 @@
   "name": "ras-shoper-front",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "repository": "git@git.fingoweb.com:ringier-axel-springer/ras-shoper-front.git",
   "author": "Przemysław Czachor <przemyslaw.czachor@fingoweb.com>",
   "license": "MIT",
   "scripts": {
