@@ -12,7 +12,6 @@ import { TFormatedProduct } from 'types/products';
 class AdManager {
   constructor(page: TPages | null) {
     this.page = page;
-    this.websiteId = 17200;
 
     if (this.page) {
       this.productsIds = getProductsIds(this.page);
@@ -44,7 +43,6 @@ class AdManager {
         area: '${area || ''}',
         cmd: [],
         keyvalues: {
-          website_id: ${this.websiteId},
           offer_ids: ${JSON.stringify(this.productsIds)},
         },
         autoslot: 1,
