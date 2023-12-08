@@ -8,6 +8,7 @@ import {
 import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
 import { getProductsIds } from './utils';
 import { TFormatedProduct } from 'types/products';
+import { PRODUCT_IMAGE_PATH } from 'consts/products';
 
 class AdManager {
   constructor(page: TPages | null) {
@@ -58,7 +59,22 @@ class AdManager {
     document.head.appendChild(adPixelDepsScript);
   };
 
-  public getPromotedProducts = async () => {
+  public getPromotedProducts = async (isTestingEnvironment: boolean) => {
+    if (isTestingEnvironment) {
+      const product = frontAPI.getProduct({ id: this.productsIds[0] });
+
+      return [
+        {
+          offerId: product.id.toString(),
+          imageUrl:
+            window.location.origin +
+            PRODUCT_IMAGE_PATH +
+            product.main_image_filename,
+          offerUrl: product.url,
+        },
+      ];
+    }
+
     if (!dlApi.fetchNativeAd)
       throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
