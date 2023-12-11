@@ -11,6 +11,11 @@ declare global {
     const fetchNativeAd:
       | undefined
       | ((options: TFetchNativeAdOptions) => Promise<TFetchNativeAdResponse>);
+
+    const addKeyValue: (
+      key: string,
+      value: string | Record<string, string>,
+    ) => void;
   }
 }
 
