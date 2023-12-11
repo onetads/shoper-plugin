@@ -20,17 +20,15 @@ class AdManager {
 
   private page: TPages | null;
   private productsIds: ReturnType<typeof getProductsIds> | [];
-  private websiteId: number;
 
   public injectAdnPixelScript = () => {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
     if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.area = area || '';
-      dlApi.keyvalues = {
+      dlApi.addKeyValue('area', area || '');
+      dlApi.addKeyValue('keyvalues', {
         offer_ids: this.productsIds.toString(),
-        website_id: this.websiteId,
-      };
+      });
 
       return;
     }
