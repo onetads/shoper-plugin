@@ -63,7 +63,7 @@ type TProduct = {
 };
 
 type TFormatedProduct = {
-  offerId: number;
+  offerId: string;
   imageUrl: string;
   offerUrl: string;
 };

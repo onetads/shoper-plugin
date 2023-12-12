@@ -81,16 +81,18 @@ class AdManager {
     if (!dlApi.fetchNativeAd)
       throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error(getMessage(REQUEST_TIMED_OUT)));
-      }, MAX_TIMEOUT_MS);
+    let products: TFormatedProduct[] | null | Error = null;
+    let resolveQueueCompletion: () => void;
+    const queueCompleted = new Promise<void>((resolve) => {
+      resolveQueueCompletion = resolve;
     });
 
-    let products: TFormatedProduct[] | null = null;
-    let resolveQueueCompletion: () => void;
-    const queueCompleted: Promise<void> = new Promise((resolve) => {
-      resolveQueueCompletion = resolve;
+    const timeoutPromise = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        products = new Error(getMessage(REQUEST_TIMED_OUT));
+        resolveQueueCompletion();
+        resolve();
+      }, MAX_TIMEOUT_MS);
     });
 
     (dlApi.cmd = dlApi.cmd || []).push(async (dlApiObj) => {
@@ -118,7 +120,8 @@ class AdManager {
             resolveQueueCompletion();
           })
           .catch(() => {
-            throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+            products = new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+            resolveQueueCompletion();
           }),
         timeoutPromise,
       ]);
@@ -126,7 +129,12 @@ class AdManager {
 
     const waitForProducts = async () => {
       await queueCompleted;
-      return products;
+
+      if (products instanceof Error) {
+        throw new Error(products.message);
+      }
+
+      return products as TFormatedProduct[];
     };
 
     return waitForProducts();
