@@ -1,6 +1,12 @@
 const path = require('path');
+const webpack = require('webpack');
 
-module.exports = {
+module.exports = (env) => ({
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.IS_TEST_ENV': JSON.stringify(env.IS_TEST_ENV),
+    }),
+  ],
   entry: './src/index.ts',
   module: {
     rules: [
@@ -25,4 +31,4 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-};
+});

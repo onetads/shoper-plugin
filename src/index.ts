@@ -8,9 +8,11 @@ import {
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
+const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
+
 showLoadingSpinner();
 
-window.addEventListener('DOMContentLoaded', async () => {
+const runApp = async () => {
   try {
     const page = getCurrentPageInfo();
 
@@ -28,7 +30,9 @@ window.addEventListener('DOMContentLoaded', async () => {
           getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
         if (!isInvalidTemplate) {
-          const promotedProducts = await AdManager.getPromotedProducts();
+          const promotedProducts =
+            await AdManager.getPromotedProducts(isTestingEnvironment);
+
           TemplateManager.injectProducts(promotedProducts);
         }
       });
@@ -40,4 +44,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       hideLoadingSpinner();
     }
   }
-});
+};
+
+if (isTestingEnvironment) {
+  runApp();
+} else {
+  window.addEventListener('DOMContentLoaded', async () => {
+    await runApp();
+  });
+}

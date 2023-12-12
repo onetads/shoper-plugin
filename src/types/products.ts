@@ -36,6 +36,7 @@ type TProduct = {
   main_image_filename: string;
   main_image: string;
   rate: number;
+  url: string;
   price: {
     gross: {
       final: string;
