@@ -8,7 +8,7 @@ import {
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
-const isTestingEnvironment = process.env.TEST_ENV === 'true';
+const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
 
 showLoadingSpinner();
 

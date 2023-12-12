@@ -59,7 +59,9 @@ class AdManager {
 
   public getPromotedProducts = async (isTestingEnvironment: boolean) => {
     if (isTestingEnvironment) {
-      const product = frontAPI.getProduct({ id: this.productsIds[0] });
+      const product = frontAPI.getProduct({
+        id: this.productsIds[this.productsIds.length - 1],
+      });
 
       return [
         {

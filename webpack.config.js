@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = (env) => ({
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.TEST_ENV': JSON.stringify(env.TEST_ENV),
+      'process.env.IS_TEST_ENV': JSON.stringify(env.IS_TEST_ENV),
     }),
   ],
   entry: './src/index.ts',

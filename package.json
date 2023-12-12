@@ -7,7 +7,7 @@
   "scripts": {
     "eslint": "eslint --ext .js,.ts ./src",
     "build": "webpack --config webpack.config.js --mode=production",
-    "test": "webpack --config webpack.config.js --mode=production --env TEST_ENV=true",
+    "test": "webpack --config webpack.config.js --mode=production --env IS_TEST_ENV=true",
     "prepare": "rimraf .husky/ && husky install && npx husky add .husky/pre-push \"yarn eslint\""
   },
   "devDependencies": {
