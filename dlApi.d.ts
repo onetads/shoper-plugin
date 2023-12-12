@@ -5,7 +5,10 @@ declare global {
     let area: string;
     let keyvalues: {
       offer_ids: string;
-      website_id: number;
+    };
+
+    let cmd: {
+      push: (fn: (dlApiObj: typeof dlApi) => void) => void;
     };
 
     const fetchNativeAd:
