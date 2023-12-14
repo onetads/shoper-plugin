@@ -16,10 +16,11 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction) => {
 
         currentAttempt++;
         if (
-          !Shop.QuickView ||
-          !Shop.AjaxBasket ||
-          !frontAPI ||
-          !dlApi.fetchNativeAd
+          !window.Shop.QuickView ||
+          !window.Shop.AjaxBasket ||
+          !window.frontAPI ||
+          !window.dlApi ||
+          !window.dlApi.fetchNativeAd
         )
           return;
 
