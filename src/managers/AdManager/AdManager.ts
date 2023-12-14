@@ -5,7 +5,12 @@ import {
   ERROR_PROMOTED_PRODUCTS_MSG,
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
-import { AD_PIXEL_DEPS_URL, TPL_CODE, SLOT_NAME } from 'consts/dlApi';
+import {
+  AD_PIXEL_DEPS_URL,
+  TPL_CODE,
+  SLOT_NAME,
+  MAX_TIMEOUT_MS,
+} from 'consts/dlApi';
 import { getProductsIds } from './utils';
 import { TFormatedProduct } from 'types/products';
 import { PRODUCT_IMAGE_PATH } from 'consts/products';
@@ -76,41 +81,49 @@ class AdManager {
     if (!dlApi.fetchNativeAd)
       throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
-    const timeoutPromise = new Promise((_, reject) => {
+    let products: TFormatedProduct[] | null | Error = null;
+
+    const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => {
-        reject(new Error(getMessage(REQUEST_TIMED_OUT)));
-      }, 2000);
+        reject(getMessage(REQUEST_TIMED_OUT));
+      }, MAX_TIMEOUT_MS);
     });
 
-    const products = (await Promise.race([
-      dlApi
-        .fetchNativeAd({
-          slot: SLOT_NAME,
-          opts: {
-            offer_ids: this.productsIds.join(','),
-          },
-          tplCode: TPL_CODE,
-        })
-        .then((ads) => {
+    const fetchNativeAd = new Promise<TFormatedProduct[]>((resolve, reject) => {
+      dlApi.cmd = dlApi.cmd || [];
+      dlApi.cmd.push(async (dlApiObj) => {
+        try {
+          const ads = await dlApiObj.fetchNativeAd!({
+            slot: SLOT_NAME,
+            opts: {
+              offer_ids: this.productsIds.join(','),
+            },
+            tplCode: TPL_CODE,
+          });
+
           const trackingAdLink = ads.meta.adclick;
+          const { offers = [] } = ads.fields.feed;
 
-          return ads
-            ? ads.fields.feed.offers.map(
-                ({ offer_id, offer_image, offer_url }) => ({
-                  offerId: offer_id,
-                  imageUrl: offer_image,
-                  offerUrl: trackingAdLink + offer_url,
-                }),
-              )
-            : [];
-        })
-        .catch(() => {
-          throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
-        }),
-      timeoutPromise,
-    ])) as TFormatedProduct[];
+          products = offers.map(({ offer_id, offer_image, offer_url }) => ({
+            offerId: offer_id,
+            imageUrl: offer_image,
+            offerUrl: trackingAdLink + offer_url,
+          }));
 
-    return products;
+          resolve(products);
+        } catch (_) {
+          reject(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+        }
+      });
+    });
+
+    return (await Promise.race([fetchNativeAd, timeoutPromise])
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        throw new Error(error);
+      })) as TFormatedProduct[];
   };
 
   private mapPageToArea = (page: TPages) => {
