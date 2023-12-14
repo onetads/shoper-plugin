@@ -82,62 +82,48 @@ class AdManager {
       throw new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
 
     let products: TFormatedProduct[] | null | Error = null;
-    let resolveQueueCompletion: () => void;
-    const queueCompleted = new Promise<void>((resolve) => {
-      resolveQueueCompletion = resolve;
-    });
 
-    const timeoutPromise = new Promise<void>((resolve) => {
+    const timeoutPromise = new Promise<void>((_, reject) => {
       setTimeout(() => {
-        products = new Error(getMessage(REQUEST_TIMED_OUT));
-        resolveQueueCompletion();
-        resolve();
+        reject(getMessage(REQUEST_TIMED_OUT));
       }, MAX_TIMEOUT_MS);
     });
 
-    (dlApi.cmd = dlApi.cmd || []).push(async (dlApiObj) => {
-      await Promise.race([
-        dlApiObj.fetchNativeAd!({
-          slot: SLOT_NAME,
-          opts: {
-            offer_ids: this.productsIds.join(','),
-          },
-          tplCode: TPL_CODE,
-        })
-          .then((ads) => {
-            const trackingAdLink = ads.meta.adclick;
+    const fetchNativeAd = new Promise<TFormatedProduct[]>((resolve, reject) => {
+      dlApi.cmd = dlApi.cmd || [];
+      dlApi.cmd.push(async (dlApiObj) => {
+        try {
+          const ads = await dlApiObj.fetchNativeAd!({
+            slot: SLOT_NAME,
+            opts: {
+              offer_ids: this.productsIds.join(','),
+            },
+            tplCode: TPL_CODE,
+          });
 
-            products = ads
-              ? ads.fields.feed.offers.map(
-                  ({ offer_id, offer_image, offer_url }) => ({
-                    offerId: offer_id,
-                    imageUrl: offer_image,
-                    offerUrl: trackingAdLink + offer_url,
-                  }),
-                )
-              : [];
+          const trackingAdLink = ads.meta.adclick;
+          const { offers = [] } = ads.fields.feed;
 
-            resolveQueueCompletion();
-          })
-          .catch(() => {
-            products = new Error(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
-            resolveQueueCompletion();
-          }),
-        timeoutPromise,
-      ]);
+          products = offers.map(({ offer_id, offer_image, offer_url }) => ({
+            offerId: offer_id,
+            imageUrl: offer_image,
+            offerUrl: trackingAdLink + offer_url,
+          }));
+
+          resolve(products);
+        } catch (_) {
+          reject(getMessage(ERROR_PROMOTED_PRODUCTS_MSG));
+        }
+      });
     });
 
-    const waitForProducts = async () => {
-      await queueCompleted;
-
-      if (products instanceof Error) {
-        throw new Error(products.message);
-      }
-
-      return products as TFormatedProduct[];
-    };
-
-    return waitForProducts();
+    return (await Promise.race([fetchNativeAd, timeoutPromise])
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        throw new Error(error);
+      })) as TFormatedProduct[];
   };
 
   private mapPageToArea = (page: TPages) => {
