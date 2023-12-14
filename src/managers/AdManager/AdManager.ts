@@ -34,24 +34,11 @@ class AdManager {
       return;
     }
 
-    const adPixelScript = document.createElement('script');
     const adPixelDepsScript = document.createElement('script');
-    adPixelScript.type = 'text/javascript';
-    adPixelScript.innerHTML = `
-      dlApi={
-        area: '${area || ''}',
-        cmd: [],
-        keyvalues: {
-          offer_ids: ${JSON.stringify(this.productsIds)},
-        },
-        autoslot: 1,
-      };
-    `;
 
     adPixelDepsScript.src = AD_PIXEL_DEPS_URL;
     adPixelDepsScript.async = true;
 
-    document.head.appendChild(adPixelScript);
     document.head.appendChild(adPixelDepsScript);
   };
 
