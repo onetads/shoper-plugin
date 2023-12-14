@@ -18,8 +18,9 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction) => {
         if (
           !Shop.QuickView ||
           !Shop.AjaxBasket ||
-          !frontAPI ||
-          !dlApi.fetchNativeAd
+          !window.frontAPI ||
+          !window.dlApi ||
+          !window.dlApi.fetchNativeAd
         )
           return;
 
