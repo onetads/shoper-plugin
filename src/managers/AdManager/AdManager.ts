@@ -31,7 +31,7 @@ class AdManager {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
     if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.area = area || '';
+      dlApi.area = area || 'ros';
       dlApi.addKeyValue('offer_ids', this.productsIds.toString());
 
       return;
