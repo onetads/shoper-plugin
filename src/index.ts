@@ -46,7 +46,7 @@ const runApp = async () => {
   }
 };
 
-if (isTestingEnvironment || document.readyState !== 'loading') {
+if (document.readyState !== 'loading') {
   await runApp();
 } else {
   window.addEventListener('DOMContentLoaded', async () => {
