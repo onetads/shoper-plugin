@@ -49,7 +49,11 @@ const runApp = async () => {
 if (isTestingEnvironment) {
   runApp();
 } else {
-  window.addEventListener('DOMContentLoaded', async () => {
+  if (document.readyState !== 'loading') {
     await runApp();
-  });
+  } else {
+    window.addEventListener('DOMContentLoaded', async () => {
+      await runApp();
+    });
+  }
 }
