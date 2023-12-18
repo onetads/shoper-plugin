@@ -46,14 +46,10 @@ const runApp = async () => {
   }
 };
 
-if (isTestingEnvironment) {
-  runApp();
+if (isTestingEnvironment || document.readyState !== 'loading') {
+  await runApp();
 } else {
-  if (document.readyState !== 'loading') {
+  window.addEventListener('DOMContentLoaded', async () => {
     await runApp();
-  } else {
-    window.addEventListener('DOMContentLoaded', async () => {
-      await runApp();
-    });
-  }
+  });
 }
