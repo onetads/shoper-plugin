@@ -31,10 +31,8 @@ class AdManager {
     const area = this.page ? this.mapPageToArea(this.page) : null;
 
     if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.addKeyValue('area', area || '');
-      dlApi.addKeyValue('keyvalues', {
-        offer_ids: this.productsIds.toString(),
-      });
+      dlApi.area = area || 'ros';
+      dlApi.addKeyValue('offer_ids', this.productsIds.toString());
 
       return;
     }
