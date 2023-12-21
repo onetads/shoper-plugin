@@ -29,8 +29,6 @@ const runApp = async () => {
         const isInvalidTemplate =
           getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
-        console.log(doesContainerExisits);
-
         if (!isInvalidTemplate && doesContainerExisits !== null) {
           const promotedProducts =
             await AdManager.getPromotedProducts(isTestingEnvironment);
