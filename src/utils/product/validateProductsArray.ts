@@ -1,4 +1,4 @@
-import { SHOPER_REINITIATED_MSG } from 'consts/messages';
+import { BODY_ID_NOT_FOUND } from 'consts/messages';
 import { TFormatedProduct } from 'types/products';
 import getMessage from 'utils/formatters/getMessage';
 
@@ -9,7 +9,7 @@ const validateProductsArray = (productsIds: TFormatedProduct[]) => {
   const [foundId = null] = bodyId.match(findNumberRegex) || [];
 
   if (typeof foundId !== 'string') {
-    throw new Error(getMessage(SHOPER_REINITIATED_MSG));
+    throw new Error(getMessage(BODY_ID_NOT_FOUND));
   }
 
   return productsIds.filter(({ offerId }) => offerId !== foundId);
