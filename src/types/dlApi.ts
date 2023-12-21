@@ -1,5 +1,5 @@
 type TFetchNativeAdProductItem = {
-  offer_id: number;
+  offer_id: string;
   offer_image: string;
   offer_url: string;
 };

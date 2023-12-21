@@ -345,12 +345,13 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
         },
         {
           canBeNull: true,
-          selector: '.basket:not(:has(input[name="stock_id"]))',
+          selector: '.basket',
           replace: [BASKET_ID],
         },
       ],
       listView: [
         {
+          canBeNull: true,
           selector: '.basket input[name="stock_id"]',
           replace: ['value'],
         },

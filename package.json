@@ -2,12 +2,12 @@
   "name": "ras-shoper-front",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "repository": "git@git.fingoweb.com:ringier-axel-springer/ras-shoper-front.git",
   "author": "Przemysław Czachor <przemyslaw.czachor@fingoweb.com>",
   "license": "MIT",
   "scripts": {
     "eslint": "eslint --ext .js,.ts ./src",
     "build": "webpack --config webpack.config.js --mode=production",
+    "test": "webpack --config webpack.config.js --mode=production --env IS_TEST_ENV=true",
     "prepare": "rimraf .husky/ && husky install && npx husky add .husky/pre-push \"yarn eslint\""
   },
   "devDependencies": {

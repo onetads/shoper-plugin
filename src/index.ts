@@ -8,9 +8,11 @@ import {
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
+const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
+
 showLoadingSpinner();
 
-window.addEventListener('DOMContentLoaded', async () => {
+const runApp = async () => {
   try {
     const page = getCurrentPageInfo();
 
@@ -20,15 +22,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
       await runWhenPageReady(async () => {
         const TemplateManager = initTemplateManager(page);
-        TemplateManager.checkDOMforTemplates();
+        const doesContainerExists = TemplateManager.checkDOMforTemplates();
 
         const { getMappedTemplate, getTemplate } = TemplateManager;
 
         const isInvalidTemplate =
           getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
-        if (!isInvalidTemplate) {
-          const promotedProducts = await AdManager.getPromotedProducts();
+        if (!isInvalidTemplate && doesContainerExists !== null) {
+          const promotedProducts =
+            await AdManager.getPromotedProducts(isTestingEnvironment);
+
           TemplateManager.injectProducts(promotedProducts);
         }
       });
@@ -40,4 +44,12 @@ window.addEventListener('DOMContentLoaded', async () => {
       hideLoadingSpinner();
     }
   }
-});
+};
+
+if (document.readyState !== 'loading') {
+  await runApp();
+} else {
+  window.addEventListener('DOMContentLoaded', async () => {
+    await runApp();
+  });
+}

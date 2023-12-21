@@ -10,6 +10,7 @@ Yarn: v1.22.19
 # Scripts
 
 yarn build - builds minified js (code is bundled to dist/bundle.js file) <br/>
+yarn test - build minified js (code is bundled to dist/bundle.js file). This code is intended for testing in shops <br/>
 yarn eslint - checks for eslint errors
 
 # Config
@@ -19,3 +20,9 @@ window.OnetAdsConfig = {
     shouldShowLoader: true // boolean
 }
 ```
+
+# How to test code in shops
+
+- Build code intended for testing `yarn test` then copy the bundled code from `dist/bundle.js`
+- Go to any shop
+- Open console and paste the bundled code

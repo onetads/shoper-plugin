@@ -51,6 +51,7 @@ import {
   PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
+import validateProductsArray from 'utils/product/validateProductsArray';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -84,7 +85,7 @@ class TemplateManager {
       PRODUCT_CONTAINERS[this.page],
     );
 
-    if (!productsContainer) return;
+    if (!productsContainer) return null;
 
     const productsElements = Array.from(
       productsContainer.querySelectorAll(DATA_PRODUCT_SELECTOR),
@@ -279,7 +280,14 @@ class TemplateManager {
   };
 
   public injectProducts = (productsIds: TFormatedProduct[]) => {
-    productsIds.forEach((productData) => {
+    const currentPage = this.page;
+
+    const preparedProductsIds =
+      currentPage === PRODUCT_PAGE
+        ? validateProductsArray(productsIds)
+        : productsIds;
+
+    preparedProductsIds.forEach((productData) => {
       const { offerId } = productData;
 
       const product = getProductData(Number(offerId));
@@ -294,7 +302,6 @@ class TemplateManager {
       });
 
       let template;
-      const currentPage = this.page;
 
       if (isActive) {
         if (currentPage === PRODUCT_PAGE) {
