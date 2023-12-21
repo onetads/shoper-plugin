@@ -22,14 +22,16 @@ const runApp = async () => {
 
       await runWhenPageReady(async () => {
         const TemplateManager = initTemplateManager(page);
-        TemplateManager.checkDOMforTemplates();
+        const doesContainerExisits = TemplateManager.checkDOMforTemplates();
 
         const { getMappedTemplate, getTemplate } = TemplateManager;
 
         const isInvalidTemplate =
           getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
-        if (!isInvalidTemplate) {
+        console.log(doesContainerExisits);
+
+        if (!isInvalidTemplate && doesContainerExisits !== null) {
           const promotedProducts =
             await AdManager.getPromotedProducts(isTestingEnvironment);
 
