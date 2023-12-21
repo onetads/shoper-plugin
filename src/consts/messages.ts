@@ -23,7 +23,7 @@ const messagesMap = {
   [REQUEST_TIMED_OUT]: 'Request timed out',
   [PRODUCT_NOT_AVAILABLE]: 'Product is not available in shop',
   [BODY_ID_NOT_FOUND]:
-    'Body does not have id following pattern: shop_product{number}',
+    'HTML body does not have an id with the following pattern: shop_productd{number}',
 };
 
 export {
