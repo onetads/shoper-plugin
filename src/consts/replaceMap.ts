@@ -345,7 +345,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
         },
         {
           canBeNull: true,
-          selector: '.basket',
+          selector: '.basket:not(:has(input[name="stock_id"]))',
           replace: [BASKET_ID],
         },
       ],
