@@ -27,22 +27,12 @@ class AdManager {
   private page: TPages | null;
   private productsIds: ReturnType<typeof getProductsIds> | [];
 
-  public injectAdnPixelScript = () => {
-    const area = this.page ? this.mapPageToArea(this.page) : null;
-
+  public initialData = () => {
     if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.area = area || 'ros';
       dlApi.addKeyValue('offer_ids', this.productsIds.toString());
 
       return;
     }
-
-    const adPixelDepsScript = document.createElement('script');
-
-    adPixelDepsScript.src = AD_PIXEL_DEPS_URL;
-    adPixelDepsScript.async = true;
-
-    document.head.appendChild(adPixelDepsScript);
   };
 
   public getPromotedProducts = async (isTestingEnvironment: boolean) => {
@@ -109,15 +99,6 @@ class AdManager {
       .catch((error) => {
         throw new Error(error);
       })) as TFormatedProduct[];
-  };
-
-  private mapPageToArea = (page: TPages) => {
-    const areas: Record<TPages, EAreas> = {
-      shop_product_list: EAreas.LISTING,
-      shop_product: EAreas.PRODUCT_CARD,
-    };
-
-    return areas[page];
   };
 }
 

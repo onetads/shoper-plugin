@@ -31,7 +31,7 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
-  TFormatedProduct,
+  TFormatedProduct, TProduct
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
@@ -282,18 +282,33 @@ class TemplateManager {
   public injectProducts = (productsIds: TFormatedProduct[]) => {
     const currentPage = this.page;
 
-    const preparedProductsIds =
+    const notFoundIds = [];
+
+    let preparedProductsIds =
       currentPage === PRODUCT_PAGE
         ? validateProductsArray(productsIds)
         : productsIds;
 
-    preparedProductsIds.forEach((productData) => {
+    console.log('id', preparedProductsIds)
+
+    preparedProductsIds = [preparedProductsIds[3], preparedProductsIds[4]]
+
+    for(let i = 0; i < preparedProductsIds.length; i++) {
+      let productData = preparedProductsIds[i];
+
       const { offerId } = productData;
 
       const product = getProductData(Number(offerId));
 
-      if (product.error_description) {
+      if (notFoundIds.length === preparedProductsIds.length) {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
+      }
+
+      if (product.error_description) {
+        console.log()
+        notFoundIds.push(offerId);
+        continue;
+        // throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
       const { isActive, ...mappedProduct } = getProductMap({
@@ -341,7 +356,8 @@ class TemplateManager {
 
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
-    });
+      break;
+    }
 
     if (!this.wasShoperReinitiated) {
       reinitQuickView();
