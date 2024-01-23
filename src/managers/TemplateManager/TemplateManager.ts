@@ -289,10 +289,6 @@ class TemplateManager {
         ? validateProductsArray(productsIds)
         : productsIds;
 
-    console.log('id', preparedProductsIds)
-
-    preparedProductsIds = [preparedProductsIds[3], preparedProductsIds[4]]
-
     for(let i = 0; i < preparedProductsIds.length; i++) {
       let productData = preparedProductsIds[i];
 
@@ -305,7 +301,6 @@ class TemplateManager {
       }
 
       if (product.error_description) {
-        console.log()
         notFoundIds.push(offerId);
         continue;
         // throw new Error(getMessage(PRODUCT_NOT_FOUND));

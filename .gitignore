@@ -2,7 +2,10 @@
 /node_modules
 
 # production
-/dist2
+/dist
 
 # Misc
 .husky
+
+#other
+**/.DS_Store
