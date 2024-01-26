@@ -8,6 +8,7 @@ const ERROR_PROMOTED_PRODUCTS_MSG = 'ERROR_PROMOTED_PRODUCTS_MSG';
 const EMPTY_LIST_WARN = 'EMPTY_LIST_WARN';
 const REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
 const PRODUCT_NOT_AVAILABLE = 'PRODUCT_NOT_AVAILABLE';
+const BODY_ID_NOT_FOUND = 'BODY_ID_NOT_FOUND';
 
 const messagesMap = {
   [ATTEMPTS_LIMIT_MSG]: 'Attempts limit exceeded',
@@ -21,6 +22,8 @@ const messagesMap = {
   [EMPTY_LIST_WARN]: "List is empty or product selector doesn't match",
   [REQUEST_TIMED_OUT]: 'Request timed out',
   [PRODUCT_NOT_AVAILABLE]: 'Product is not available in shop',
+  [BODY_ID_NOT_FOUND]:
+    'HTML body does not have an id with the following pattern: shop_productd{number}',
 };
 
 export {
@@ -35,4 +38,5 @@ export {
   EMPTY_LIST_WARN,
   REQUEST_TIMED_OUT,
   PRODUCT_NOT_AVAILABLE,
+  BODY_ID_NOT_FOUND,
 };

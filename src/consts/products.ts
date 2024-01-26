@@ -1,5 +1,7 @@
 import { TPages } from 'types/pages';
 
+const PRODUCT_IMAGE_PATH = '/userdata/gfx/';
+
 const PRODUCT_ID_KEY = 'productId';
 const PRODUCT_INACTIVE = 'product_inactive';
 const PRODUCT_CLASS = 'product';
@@ -43,4 +45,5 @@ export {
   MAIN_PRODUCTS_CONTAINER_SELECTOR,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_OUTER_WRAPPER_SELECTOR,
+  PRODUCT_IMAGE_PATH,
 };

@@ -4,6 +4,7 @@ const TAG_TEXT_MARK_PL = 'sponsorowane';
 const TAG_TEXT_MARK_EN = 'sponsored';
 
 const ITEM_STYLES = {
+  'margin-top': '4px',
   'background-color': 'white',
   color: 'black',
   opacity: '0.5',

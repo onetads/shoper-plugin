@@ -351,6 +351,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
       ],
       listView: [
         {
+          canBeNull: true,
           selector: '.basket input[name="stock_id"]',
           replace: ['value'],
         },
