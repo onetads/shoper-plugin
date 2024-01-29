@@ -303,7 +303,6 @@ class TemplateManager {
       if (product.error_description) {
         notFoundIds.push(offerId);
         continue;
-        // throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
       const { isActive, ...mappedProduct } = getProductMap({
