@@ -12,7 +12,11 @@ import {
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
 
-const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
+const markProductAsPromoted = (
+  product: HTMLElement,
+  link: string,
+  page: TPages,
+) => {
   const tagsList = document.createElement('ul');
   const tagItem = document.createElement('li');
 
@@ -34,6 +38,14 @@ const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
 
   tagsList.className = TAG_LIST_CLASSNAME;
   tagItem.className = TAG_ITEM_CLASSNAME;
+
+  const sponsoredProductLink = document.createElement('a');
+  sponsoredProductLink.href = link;
+  sponsoredProductLink.target = '_blank';
+  sponsoredProductLink.innerHTML = 'ⓘ';
+
+  tagItem.innerHTML = locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
+  tagItem.insertAdjacentElement('beforeend', sponsoredProductLink);
 
   tagsList.appendChild(tagItem);
   product.prepend(tagsList);

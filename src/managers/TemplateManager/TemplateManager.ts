@@ -337,7 +337,11 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
-      const markedProduct = markProductAsPromoted(productWithEvents, this.page);
+      const markedProduct = markProductAsPromoted(
+        productWithEvents,
+        'https://www.google.pl',
+        this.page,
+      );
 
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
