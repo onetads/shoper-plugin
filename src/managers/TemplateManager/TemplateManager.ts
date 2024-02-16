@@ -288,7 +288,7 @@ class TemplateManager {
         : productsIds;
 
     preparedProductsIds.forEach((productData) => {
-      const { offerId } = productData;
+      const { offerId, dsaUrl } = productData;
 
       const product = getProductData(Number(offerId));
 
@@ -339,7 +339,7 @@ class TemplateManager {
 
       const markedProduct = markProductAsPromoted(
         productWithEvents,
-        'https://www.google.pl',
+        dsaUrl,
         this.page,
       );
 

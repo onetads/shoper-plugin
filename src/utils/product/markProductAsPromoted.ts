@@ -14,7 +14,7 @@ import applyStyles from 'utils/helpers/applyStyles';
 
 const markProductAsPromoted = (
   product: HTMLElement,
-  link: string,
+  dsaUrl: string,
   page: TPages,
 ) => {
   const tagsList = document.createElement('ul');
@@ -40,7 +40,7 @@ const markProductAsPromoted = (
   tagItem.className = TAG_ITEM_CLASSNAME;
 
   const sponsoredProductLink = document.createElement('a');
-  sponsoredProductLink.href = link;
+  sponsoredProductLink.href = dsaUrl;
   sponsoredProductLink.target = '_blank';
   sponsoredProductLink.innerHTML = 'ⓘ';
 
