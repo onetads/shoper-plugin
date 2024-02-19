@@ -10,6 +10,8 @@ const ITEM_STYLES = {
   opacity: '0.5',
   padding: '0',
   'z-index': '1000',
+  display: 'flex',
+  gap: '4px',
 };
 
 const LIST_STYLES = {
