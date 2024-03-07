@@ -300,15 +300,22 @@ class TemplateManager {
         throw new Error(getMessage(PRODUCT_NOT_FOUND));
       }
 
-      if (product.error_description) {
-        notFoundIds.push(offerId);
-        continue;
+      let isActive, mappedProduct;
+
+      try {
+          ({ isActive, ...mappedProduct } = getProductMap({
+            ...product,
+            ...productData,
+          }));
+      } catch (error) {
+          notFoundIds.push(offerId);
+          continue;
       }
 
-      const { isActive, ...mappedProduct } = getProductMap({
-        ...product,
-        ...productData,
-      });
+      if (!isActive) {
+          notFoundIds.push(offerId);
+          continue;
+      }
 
       let template;
 
