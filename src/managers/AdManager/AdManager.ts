@@ -27,14 +27,6 @@ class AdManager {
   private page: TPages | null;
   private productsIds: ReturnType<typeof getProductsIds> | [];
 
-  public initialData = () => {
-    if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.addKeyValue('offer_ids', this.productsIds.toString());
-
-      return;
-    }
-  };
-
   public getPromotedProducts = async (isTestingEnvironment: boolean) => {
     if (isTestingEnvironment) {
       const product = frontAPI.getProduct({

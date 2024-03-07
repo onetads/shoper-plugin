@@ -18,7 +18,6 @@ const runApp = async () => {
 
     if (page) {
       const AdManager = initAdManager(page);
-      AdManager.initialData();
 
       await runWhenPageReady(async () => {
         const TemplateManager = initTemplateManager(page);
