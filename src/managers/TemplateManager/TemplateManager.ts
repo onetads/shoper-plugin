@@ -296,10 +296,6 @@ class TemplateManager {
 
       const product = getProductData(Number(offerId));
 
-      if (notFoundIds.length === preparedProductsIds.length) {
-        throw new Error(getMessage(PRODUCT_NOT_FOUND));
-      }
-
       let isActive, mappedProduct;
 
       try {
@@ -358,6 +354,10 @@ class TemplateManager {
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
       break;
+    }
+
+    if (notFoundIds.length === preparedProductsIds.length) {
+      throw new Error(getMessage(PRODUCT_NOT_FOUND));
     }
 
     if (!this.wasShoperReinitiated) {
