@@ -4,9 +4,6 @@ const TAG_TEXT_MARK_PL = 'sponsorowane';
 const TAG_TEXT_MARK_EN = 'sponsored';
 
 const ITEM_STYLES = {
-  'margin-top': '4px',
-  margin: '2px',
-  'z-index': '1000',
   position: 'relative'
 };
 
