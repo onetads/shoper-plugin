@@ -1,7 +1,7 @@
 const TAG_LIST_CLASSNAME = 'tags';
 const TAG_ITEM_CLASSNAME = 'promo new rmn-tag-spons';
-const TAG_TEXT_MARK_PL = 'sponsorowane';
-const TAG_TEXT_MARK_EN = 'sponsored';
+const TAG_TEXT_MARK_PL = 'promowane';
+const TAG_TEXT_MARK_EN = 'promoted';
 
 const ITEM_STYLES = {
   position: 'relative'
