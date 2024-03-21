@@ -15,6 +15,7 @@ type TFetchNativeAdOptions = {
 type TFetchNativeAdResponse = {
   meta: {
     adclick: string;
+    dsaurl: string;
   };
   fields: {
     feed: {
