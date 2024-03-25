@@ -4,14 +4,25 @@ const TAG_TEXT_MARK_PL = 'promowane';
 const TAG_TEXT_MARK_EN = 'promoted';
 
 const ITEM_STYLES = {
-  position: 'relative'
+  position: 'relative',
+  display: 'inline-flex',
+  gap: '4px',
+  'z-index': '999',
+  'align-items': 'center'
 };
 
 const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
+  'z-index': '2',
+  'pointer-events': 'auto'
 };
+
+const SPONSORED_STYLES = {
+  'line-height': '1',
+  color: 'inherit'
+}
 
 const pseudoClassName = TAG_ITEM_CLASSNAME.split(' ').join('.');
 
@@ -39,10 +50,11 @@ const MEDIA_QUERIES_TAG_PRODUCT_PAGE = `
 export {
   ITEM_STYLES,
   LIST_STYLES,
+  SPONSORED_STYLES,
   TAG_TEXT_MARK_PL,
   TAG_TEXT_MARK_EN,
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
   PSEUDOCLASS_STYLES,
-  MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+  MEDIA_QUERIES_TAG_PRODUCT_PAGE
 };

@@ -69,12 +69,14 @@ class AdManager {
           });
 
           const trackingAdLink = ads.meta.adclick;
+          const dsaUrl = ads.meta.dsaurl;
           const { offers = [] } = ads.fields.feed;
 
           products = offers.map(({ offer_id, offer_image, offer_url }) => ({
             offerId: offer_id,
             imageUrl: offer_image,
             offerUrl: trackingAdLink + offer_url,
+            dsaUrl: dsaUrl,
           }));
 
           resolve(products);
