@@ -1,34 +1,37 @@
 const TAG_LIST_CLASSNAME = 'tags';
-const TAG_ITEM_CLASSNAME = 'tags';
-const TAG_TEXT_MARK_PL = 'sponsorowane';
-const TAG_TEXT_MARK_EN = 'sponsored';
+const TAG_ITEM_CLASSNAME = 'promo new rmn-tag-spons';
+const TAG_TEXT_MARK_PL = 'promowane';
+const TAG_TEXT_MARK_EN = 'promoted';
 
 const ITEM_STYLES = {
-  'margin-top': '4px',
-  'background-color': 'white',
-  color: 'black',
-  opacity: '0.5',
-  padding: '0',
-  'z-index': '1000',
+  position: 'relative',
+  display: 'inline-flex',
+  gap: '4px',
+  'z-index': '999',
+  'align-items': 'center'
 };
 
 const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
+  'z-index': '2',
+  'pointer-events': 'auto'
 };
 
-const ITEM_STYLES_PRODUCT_PAGE = {
-  'background-color': 'rgba(255,255,255,0.85)',
-  'text-transform': 'lowercase',
-  'font-weight': 'normal',
-  color: 'rgba(0,0,0,0.5)',
-  'letter-spacing': '0',
-  'line-height': '1em',
-  padding: '0',
-  'font-size': '11px',
-  position: 'relative',
-};
+const SPONSORED_STYLES = {
+  'line-height': '1',
+  color: 'inherit'
+}
+
+const pseudoClassName = TAG_ITEM_CLASSNAME.split(' ').join('.');
+
+const PSEUDOCLASS_STYLES = `
+    li.${pseudoClassName}::before,
+    li.${pseudoClassName}::after {
+      display: none !important;
+    }
+  `;
 
 const MEDIA_QUERIES_TAG_PRODUCT_PAGE = `
 @media screen and (min-width: 768px) {
@@ -47,10 +50,11 @@ const MEDIA_QUERIES_TAG_PRODUCT_PAGE = `
 export {
   ITEM_STYLES,
   LIST_STYLES,
+  SPONSORED_STYLES,
   TAG_TEXT_MARK_PL,
   TAG_TEXT_MARK_EN,
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
-  ITEM_STYLES_PRODUCT_PAGE,
-  MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+  PSEUDOCLASS_STYLES,
+  MEDIA_QUERIES_TAG_PRODUCT_PAGE
 };

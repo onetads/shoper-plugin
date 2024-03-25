@@ -1,30 +1,33 @@
 import { PRODUCT_PAGE } from 'consts/pages';
 import {
-  ITEM_STYLES,
-  LIST_STYLES,
-  TAG_ITEM_CLASSNAME,
-  TAG_LIST_CLASSNAME,
-  TAG_TEXT_MARK_PL,
-  TAG_TEXT_MARK_EN,
-  ITEM_STYLES_PRODUCT_PAGE,
-  MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+    ITEM_STYLES,
+    LIST_STYLES,
+    TAG_ITEM_CLASSNAME,
+    TAG_LIST_CLASSNAME,
+    TAG_TEXT_MARK_PL,
+    TAG_TEXT_MARK_EN,
+    MEDIA_QUERIES_TAG_PRODUCT_PAGE, PSEUDOCLASS_STYLES, SPONSORED_STYLES
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
+import { dsaInfoIcon } from 'utils/icons/dsainfo';
 
-const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
+const markProductAsPromoted = (
+  product: HTMLElement,
+  dsaUrl: string,
+  page: TPages,
+) => {
   const tagsList = document.createElement('ul');
   const tagItem = document.createElement('li');
 
   applyStyles(tagItem, ITEM_STYLES);
 
   if (page === PRODUCT_PAGE) {
-    const styles = document.createElement('style');
-    styles.innerHTML = MEDIA_QUERIES_TAG_PRODUCT_PAGE;
-    product.appendChild(styles);
+    const mediaQueryStyles = document.createElement('style');
+    mediaQueryStyles.innerHTML = MEDIA_QUERIES_TAG_PRODUCT_PAGE;
+    product.appendChild(mediaQueryStyles);
 
     applyStyles(tagsList, LIST_STYLES);
-    applyStyles(tagItem, ITEM_STYLES_PRODUCT_PAGE);
   }
 
   const locale = Shop.lang.name ? Shop.lang.name : 'pl_PL';
@@ -35,7 +38,22 @@ const markProductAsPromoted = (product: HTMLElement, page: TPages) => {
   tagsList.className = TAG_LIST_CLASSNAME;
   tagItem.className = TAG_ITEM_CLASSNAME;
 
+  if (dsaUrl) {
+    const sponsoredProductLink = document.createElement('a');
+    sponsoredProductLink.href = dsaUrl;
+    sponsoredProductLink.target = '_blank';
+    sponsoredProductLink.innerHTML = dsaInfoIcon;
+    applyStyles(sponsoredProductLink, SPONSORED_STYLES);
+
+    tagItem.innerHTML = locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
+    tagItem.insertAdjacentElement('beforeend', sponsoredProductLink);
+  }
+
+  const styles = document.createElement('style');
+  styles.innerHTML = PSEUDOCLASS_STYLES;
+  tagsList.appendChild(styles);
   tagsList.appendChild(tagItem);
+
   product.prepend(tagsList);
 
   return product;

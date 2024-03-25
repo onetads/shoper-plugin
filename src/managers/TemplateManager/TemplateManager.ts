@@ -292,7 +292,7 @@ class TemplateManager {
     for(let i = 0; i < preparedProductsIds.length; i++) {
       let productData = preparedProductsIds[i];
 
-      const { offerId } = productData;
+      const { offerId, dsaUrl } = productData;
 
       const product = getProductData(Number(offerId));
 
@@ -349,7 +349,11 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
-      const markedProduct = markProductAsPromoted(productWithEvents, this.page);
+      const markedProduct = markProductAsPromoted(
+        productWithEvents,
+        dsaUrl,
+        this.page,
+      );
 
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
