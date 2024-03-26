@@ -6,7 +6,7 @@ import {
     TAG_LIST_CLASSNAME,
     TAG_TEXT_MARK_PL,
     TAG_TEXT_MARK_EN,
-    MEDIA_QUERIES_TAG_PRODUCT_PAGE, PSEUDOCLASS_STYLES, SPONSORED_STYLES
+    MEDIA_QUERIES_TAG_PRODUCT_PAGE, PSEUDOCLASS_STYLES, SPONSORED_STYLES, LIST_STYLES_ALL
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
@@ -28,6 +28,8 @@ const markProductAsPromoted = (
     product.appendChild(mediaQueryStyles);
 
     applyStyles(tagsList, LIST_STYLES);
+  } else {
+    applyStyles(tagsList, LIST_STYLES_ALL);
   }
 
   const locale = Shop.lang.name ? Shop.lang.name : 'pl_PL';

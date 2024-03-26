@@ -7,7 +7,6 @@ const ITEM_STYLES = {
   position: 'relative',
   display: 'inline-flex',
   gap: '4px',
-  'z-index': '999',
   'align-items': 'center'
 };
 
@@ -15,9 +14,13 @@ const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
-  'z-index': '2',
-  'pointer-events': 'auto'
+  'z-index': '3'
 };
+
+const LIST_STYLES_ALL = {
+  'pointer-events': 'initial',
+  'z-index': '11'
+}
 
 const SPONSORED_STYLES = {
   'line-height': '1',
@@ -50,6 +53,7 @@ const MEDIA_QUERIES_TAG_PRODUCT_PAGE = `
 export {
   ITEM_STYLES,
   LIST_STYLES,
+  LIST_STYLES_ALL,
   SPONSORED_STYLES,
   TAG_TEXT_MARK_PL,
   TAG_TEXT_MARK_EN,
