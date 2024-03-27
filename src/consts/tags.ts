@@ -14,12 +14,12 @@ const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
-  'z-index': '3'
+  'z-index': '2'
 };
 
 const LIST_STYLES_ALL = {
   'pointer-events': 'initial',
-  'z-index': '11'
+  'z-index': '2'
 }
 
 const SPONSORED_STYLES = {
@@ -29,7 +29,7 @@ const SPONSORED_STYLES = {
 
 const pseudoClassName = TAG_ITEM_CLASSNAME.split(' ').join('.');
 
-const PSEUDOCLASS_STYLES = `
+const ADDITIONAL_STYLES = `
     li.${pseudoClassName}::before,
     li.${pseudoClassName}::after {
       display: none !important;
@@ -59,6 +59,6 @@ export {
   TAG_TEXT_MARK_EN,
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
-  PSEUDOCLASS_STYLES,
+  ADDITIONAL_STYLES,
   MEDIA_QUERIES_TAG_PRODUCT_PAGE
 };
