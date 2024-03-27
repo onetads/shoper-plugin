@@ -7,7 +7,7 @@ import {
   PRODUCT_CONTAINERS,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
-  PRODUCT_INACTIVE,
+  PRODUCT_INACTIVE, PRODUCT_STYLES, LAYERS_STYLES
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
@@ -52,6 +52,7 @@ import {
 } from 'consts/messages';
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 import validateProductsArray from 'utils/product/validateProductsArray';
+import applyStyles from 'utils/helpers/applyStyles';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -354,6 +355,8 @@ class TemplateManager {
         dsaUrl,
         this.page,
       );
+
+      applyStyles(markedProduct?.children?.[1] as HTMLElement, LAYERS_STYLES);
 
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);

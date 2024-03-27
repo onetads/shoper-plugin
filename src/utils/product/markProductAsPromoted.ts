@@ -6,7 +6,10 @@ import {
     TAG_LIST_CLASSNAME,
     TAG_TEXT_MARK_PL,
     TAG_TEXT_MARK_EN,
-    MEDIA_QUERIES_TAG_PRODUCT_PAGE, PSEUDOCLASS_STYLES, SPONSORED_STYLES, LIST_STYLES_ALL
+    MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+    ADDITIONAL_STYLES,
+    SPONSORED_STYLES,
+    LIST_STYLES_ALL, LAYERS_STYLES
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
@@ -52,7 +55,7 @@ const markProductAsPromoted = (
   }
 
   const styles = document.createElement('style');
-  styles.innerHTML = PSEUDOCLASS_STYLES;
+  styles.innerHTML = ADDITIONAL_STYLES;
   tagsList.appendChild(styles);
   tagsList.appendChild(tagItem);
 
