@@ -356,7 +356,10 @@ class TemplateManager {
         this.page,
       );
 
-      applyStyles(markedProduct?.children?.[1] as HTMLElement, LAYERS_STYLES);
+      // children[0] - sponsored text, children[1] product area with image
+      const productArea = markedProduct?.children?.[1] as HTMLElement
+
+      applyStyles(productArea, LAYERS_STYLES);
 
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
