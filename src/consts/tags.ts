@@ -31,8 +31,8 @@ const SPONSORED_STYLES = {
 }
 
 const SPONSORED_PSEUDOCLASS_STYLES = `
-    a::before,
-    a::after {
+    .rmn-tag-spons a::before,
+    .rmn-tag-spons a::after {
       display: none !important;
     }
   `;
