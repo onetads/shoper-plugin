@@ -6,7 +6,10 @@ import {
     TAG_LIST_CLASSNAME,
     TAG_TEXT_MARK_PL,
     TAG_TEXT_MARK_EN,
-    MEDIA_QUERIES_TAG_PRODUCT_PAGE, PSEUDOCLASS_STYLES, SPONSORED_STYLES, LIST_STYLES_ALL
+    MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+    ADDITIONAL_STYLES,
+    SPONSORED_STYLES,
+    LIST_STYLES_ALL, SPONSORED_PSEUDOCLASS_STYLES
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
@@ -47,12 +50,16 @@ const markProductAsPromoted = (
     sponsoredProductLink.innerHTML = dsaInfoIcon;
     applyStyles(sponsoredProductLink, SPONSORED_STYLES);
 
+    const sponsoredStyles = document.createElement('style');
+    sponsoredStyles.innerHTML = SPONSORED_PSEUDOCLASS_STYLES;
+    sponsoredProductLink.appendChild(sponsoredStyles);
+
     tagItem.innerHTML = locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
     tagItem.insertAdjacentElement('beforeend', sponsoredProductLink);
   }
 
   const styles = document.createElement('style');
-  styles.innerHTML = PSEUDOCLASS_STYLES;
+  styles.innerHTML = ADDITIONAL_STYLES;
   tagsList.appendChild(styles);
   tagsList.appendChild(tagItem);
 

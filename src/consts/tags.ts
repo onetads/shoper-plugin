@@ -14,22 +14,32 @@ const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
-  'z-index': '3'
+  'z-index': '2'
 };
 
 const LIST_STYLES_ALL = {
   'pointer-events': 'initial',
-  'z-index': '11'
+  'z-index': '2'
 }
 
 const SPONSORED_STYLES = {
   'line-height': '1',
-  color: 'inherit'
+  color: 'inherit',
+  background: 'none',
+  padding: 'initial',
+  margin: 'initial'
 }
+
+const SPONSORED_PSEUDOCLASS_STYLES = `
+    .rmn-tag-spons a::before,
+    .rmn-tag-spons a::after {
+      display: none !important;
+    }
+  `;
 
 const pseudoClassName = TAG_ITEM_CLASSNAME.split(' ').join('.');
 
-const PSEUDOCLASS_STYLES = `
+const ADDITIONAL_STYLES = `
     li.${pseudoClassName}::before,
     li.${pseudoClassName}::after {
       display: none !important;
@@ -55,10 +65,11 @@ export {
   LIST_STYLES,
   LIST_STYLES_ALL,
   SPONSORED_STYLES,
+  SPONSORED_PSEUDOCLASS_STYLES,
   TAG_TEXT_MARK_PL,
   TAG_TEXT_MARK_EN,
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
-  PSEUDOCLASS_STYLES,
+  ADDITIONAL_STYLES,
   MEDIA_QUERIES_TAG_PRODUCT_PAGE
 };
