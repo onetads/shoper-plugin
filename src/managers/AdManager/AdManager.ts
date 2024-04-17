@@ -1,16 +1,10 @@
 import { TPages } from 'types/pages';
-import { EAreas } from 'types/areas';
 import getMessage from 'utils/formatters/getMessage';
 import {
   ERROR_PROMOTED_PRODUCTS_MSG,
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
-import {
-  AD_PIXEL_DEPS_URL,
-  TPL_CODE,
-  SLOT_NAME,
-  MAX_TIMEOUT_MS,
-} from 'consts/dlApi';
+import { TPL_CODE, SLOT_NAME, MAX_TIMEOUT_MS } from 'consts/dlApi';
 import { getProductsIds } from './utils';
 import { TFormatedProduct } from 'types/products';
 import { PRODUCT_IMAGE_PATH } from 'consts/products';
