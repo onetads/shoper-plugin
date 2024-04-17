@@ -7,7 +7,8 @@ import {
   PRODUCT_CONTAINERS,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
-  PRODUCT_INACTIVE, PRODUCT_STYLES, LAYERS_STYLES
+  PRODUCT_INACTIVE,
+  LAYERS_STYLES,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
@@ -31,7 +32,7 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
-  TFormatedProduct, TProduct
+  TFormatedProduct,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
@@ -285,13 +286,13 @@ class TemplateManager {
 
     const notFoundIds = [];
 
-    let preparedProductsIds =
+    const preparedProductsIds =
       currentPage === PRODUCT_PAGE
         ? validateProductsArray(productsIds)
         : productsIds;
 
-    for(let i = 0; i < preparedProductsIds.length; i++) {
-      let productData = preparedProductsIds[i];
+    for (let i = 0; i < preparedProductsIds.length; i++) {
+      const productData = preparedProductsIds[i];
 
       const { offerId, dsaUrl } = productData;
 
@@ -300,18 +301,18 @@ class TemplateManager {
       let isActive, mappedProduct;
 
       try {
-          ({ isActive, ...mappedProduct } = getProductMap({
-            ...product,
-            ...productData,
-          }));
+        ({ isActive, ...mappedProduct } = getProductMap({
+          ...product,
+          ...productData,
+        }));
       } catch (error) {
-          notFoundIds.push(offerId);
-          continue;
+        notFoundIds.push(offerId);
+        continue;
       }
 
       if (!isActive) {
-          notFoundIds.push(offerId);
-          continue;
+        notFoundIds.push(offerId);
+        continue;
       }
 
       let template;

@@ -67,6 +67,7 @@ type TFormatedProduct = {
   dsaUrl: string;
   imageUrl: string;
   offerUrl: string;
+  dsaUrl: string;
 };
 
 export {

@@ -7,28 +7,28 @@ const ITEM_STYLES = {
   position: 'relative',
   display: 'inline-flex',
   gap: '4px',
-  'align-items': 'center'
+  'align-items': 'center',
 };
 
 const LIST_STYLES = {
   position: 'relative',
   'line-height': '1em',
   marginBottom: '10px',
-  'z-index': '2'
+  'z-index': '2',
 };
 
 const LIST_STYLES_ALL = {
   'pointer-events': 'initial',
-  'z-index': '2'
-}
+  'z-index': '2',
+};
 
 const SPONSORED_STYLES = {
   'line-height': '1',
   color: 'inherit',
   background: 'none',
   padding: 'initial',
-  margin: 'initial'
-}
+  margin: 'initial',
+};
 
 const SPONSORED_PSEUDOCLASS_STYLES = `
     .rmn-tag-spons a::before,
@@ -71,5 +71,5 @@ export {
   TAG_LIST_CLASSNAME,
   TAG_ITEM_CLASSNAME,
   ADDITIONAL_STYLES,
-  MEDIA_QUERIES_TAG_PRODUCT_PAGE
+  MEDIA_QUERIES_TAG_PRODUCT_PAGE,
 };

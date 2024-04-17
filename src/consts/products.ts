@@ -33,8 +33,8 @@ const PRODUCT_CONTAINERS: Record<TPages, string> = {
 };
 
 const LAYERS_STYLES = {
-    'z-index': '1'
-}
+  'z-index': '1',
+};
 
 export {
   DATA_PRODUCT_ID,
@@ -50,5 +50,5 @@ export {
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_OUTER_WRAPPER_SELECTOR,
   PRODUCT_IMAGE_PATH,
-  LAYERS_STYLES
+  LAYERS_STYLES,
 };
