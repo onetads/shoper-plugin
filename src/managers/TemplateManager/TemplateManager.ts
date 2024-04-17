@@ -8,6 +8,7 @@ import {
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
   PRODUCT_INACTIVE,
+  LAYERS_STYLES,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
@@ -52,6 +53,7 @@ import {
 } from 'consts/messages';
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 import validateProductsArray from 'utils/product/validateProductsArray';
+import applyStyles from 'utils/helpers/applyStyles';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -282,24 +284,36 @@ class TemplateManager {
   public injectProducts = (productsIds: TFormatedProduct[]) => {
     const currentPage = this.page;
 
+    const notFoundIds = [];
+
     const preparedProductsIds =
       currentPage === PRODUCT_PAGE
         ? validateProductsArray(productsIds)
         : productsIds;
 
-    preparedProductsIds.forEach((productData) => {
+    for (let i = 0; i < preparedProductsIds.length; i++) {
+      const productData = preparedProductsIds[i];
+
       const { offerId, dsaUrl } = productData;
 
       const product = getProductData(Number(offerId));
 
-      if (product.error_description) {
-        throw new Error(getMessage(PRODUCT_NOT_FOUND));
+      let isActive, mappedProduct;
+
+      try {
+        ({ isActive, ...mappedProduct } = getProductMap({
+          ...product,
+          ...productData,
+        }));
+      } catch (error) {
+        notFoundIds.push(offerId);
+        continue;
       }
 
-      const { isActive, ...mappedProduct } = getProductMap({
-        ...product,
-        ...productData,
-      });
+      if (!isActive) {
+        notFoundIds.push(offerId);
+        continue;
+      }
 
       let template;
 
@@ -343,9 +357,19 @@ class TemplateManager {
         this.page,
       );
 
+      // children[0] - sponsored text, children[1] product area with image
+      const productArea = markedProduct?.children?.[1] as HTMLElement;
+
+      applyStyles(productArea, LAYERS_STYLES);
+
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
-    });
+      break;
+    }
+
+    if (notFoundIds.length === preparedProductsIds.length) {
+      throw new Error(getMessage(PRODUCT_NOT_FOUND));
+    }
 
     if (!this.wasShoperReinitiated) {
       reinitQuickView();

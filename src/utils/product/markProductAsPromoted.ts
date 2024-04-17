@@ -6,11 +6,15 @@ import {
   TAG_LIST_CLASSNAME,
   TAG_TEXT_MARK_PL,
   TAG_TEXT_MARK_EN,
-  ITEM_STYLES_PRODUCT_PAGE,
   MEDIA_QUERIES_TAG_PRODUCT_PAGE,
+  ADDITIONAL_STYLES,
+  SPONSORED_STYLES,
+  LIST_STYLES_ALL,
+  SPONSORED_PSEUDOCLASS_STYLES,
 } from 'consts/tags';
 import { TPages } from 'types/pages';
 import applyStyles from 'utils/helpers/applyStyles';
+import { dsaInfoIcon } from 'utils/icons/dsainfo';
 
 const markProductAsPromoted = (
   product: HTMLElement,
@@ -23,12 +27,13 @@ const markProductAsPromoted = (
   applyStyles(tagItem, ITEM_STYLES);
 
   if (page === PRODUCT_PAGE) {
-    const styles = document.createElement('style');
-    styles.innerHTML = MEDIA_QUERIES_TAG_PRODUCT_PAGE;
-    product.appendChild(styles);
+    const mediaQueryStyles = document.createElement('style');
+    mediaQueryStyles.innerHTML = MEDIA_QUERIES_TAG_PRODUCT_PAGE;
+    product.appendChild(mediaQueryStyles);
 
     applyStyles(tagsList, LIST_STYLES);
-    applyStyles(tagItem, ITEM_STYLES_PRODUCT_PAGE);
+  } else {
+    applyStyles(tagsList, LIST_STYLES_ALL);
   }
 
   const locale = Shop.lang.name ? Shop.lang.name : 'pl_PL';
@@ -39,15 +44,27 @@ const markProductAsPromoted = (
   tagsList.className = TAG_LIST_CLASSNAME;
   tagItem.className = TAG_ITEM_CLASSNAME;
 
-  const sponsoredProductLink = document.createElement('a');
-  sponsoredProductLink.href = dsaUrl;
-  sponsoredProductLink.target = '_blank';
-  sponsoredProductLink.innerHTML = 'ⓘ';
+  if (dsaUrl) {
+    const sponsoredProductLink = document.createElement('a');
+    sponsoredProductLink.href = dsaUrl;
+    sponsoredProductLink.target = '_blank';
+    sponsoredProductLink.innerHTML = dsaInfoIcon;
+    applyStyles(sponsoredProductLink, SPONSORED_STYLES);
 
-  tagItem.innerHTML = locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
-  tagItem.insertAdjacentElement('beforeend', sponsoredProductLink);
+    const sponsoredStyles = document.createElement('style');
+    sponsoredStyles.innerHTML = SPONSORED_PSEUDOCLASS_STYLES;
+    sponsoredProductLink.appendChild(sponsoredStyles);
 
+    tagItem.innerHTML =
+      locale === 'pl_PL' ? TAG_TEXT_MARK_PL : TAG_TEXT_MARK_EN;
+    tagItem.insertAdjacentElement('beforeend', sponsoredProductLink);
+  }
+
+  const styles = document.createElement('style');
+  styles.innerHTML = ADDITIONAL_STYLES;
+  tagsList.appendChild(styles);
   tagsList.appendChild(tagItem);
+
   product.prepend(tagsList);
 
   return product;

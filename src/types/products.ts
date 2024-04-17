@@ -64,6 +64,7 @@ type TProduct = {
 
 type TFormatedProduct = {
   offerId: string;
+  dsaUrl: string;
   imageUrl: string;
   offerUrl: string;
   dsaUrl: string;

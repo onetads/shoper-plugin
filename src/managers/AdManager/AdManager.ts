@@ -1,16 +1,10 @@
 import { TPages } from 'types/pages';
-import { EAreas } from 'types/areas';
 import getMessage from 'utils/formatters/getMessage';
 import {
   ERROR_PROMOTED_PRODUCTS_MSG,
   REQUEST_TIMED_OUT,
 } from 'consts/messages';
-import {
-  AD_PIXEL_DEPS_URL,
-  TPL_CODE,
-  SLOT_NAME,
-  MAX_TIMEOUT_MS,
-} from 'consts/dlApi';
+import { TPL_CODE, SLOT_NAME, MAX_TIMEOUT_MS } from 'consts/dlApi';
 import { getProductsIds } from './utils';
 import { TFormatedProduct } from 'types/products';
 import { PRODUCT_IMAGE_PATH } from 'consts/products';
@@ -26,24 +20,6 @@ class AdManager {
 
   private page: TPages | null;
   private productsIds: ReturnType<typeof getProductsIds> | [];
-
-  public injectAdnPixelScript = () => {
-    const area = this.page ? this.mapPageToArea(this.page) : null;
-
-    if (window.dlApi && dlApi.fetchNativeAd) {
-      dlApi.area = area || 'ros';
-      dlApi.addKeyValue('offer_ids', this.productsIds.toString());
-
-      return;
-    }
-
-    const adPixelDepsScript = document.createElement('script');
-
-    adPixelDepsScript.src = AD_PIXEL_DEPS_URL;
-    adPixelDepsScript.async = true;
-
-    document.head.appendChild(adPixelDepsScript);
-  };
 
   public getPromotedProducts = async (isTestingEnvironment: boolean) => {
     if (isTestingEnvironment) {
@@ -111,15 +87,6 @@ class AdManager {
       .catch((error) => {
         throw new Error(error);
       })) as TFormatedProduct[];
-  };
-
-  private mapPageToArea = (page: TPages) => {
-    const areas: Record<TPages, EAreas> = {
-      shop_product_list: EAreas.LISTING,
-      shop_product: EAreas.PRODUCT_CARD,
-    };
-
-    return areas[page];
   };
 }
 
