@@ -9,10 +9,12 @@ type TFetchNativeAdOptions = {
   tplCode: string;
   opts: {
     offer_ids: string;
+    div: string;
   };
 };
 
 type TFetchNativeAdResponse = {
+  render: () => void;
   meta: {
     adclick: string;
     dsaurl: string;

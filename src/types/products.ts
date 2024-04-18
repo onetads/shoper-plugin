@@ -1,3 +1,5 @@
+import getProductMap from 'utils/product/getProductMap';
+
 enum EProductElements {
   ID = 'ID',
   IMG = 'IMG',
@@ -64,11 +66,16 @@ type TProduct = {
 
 type TFormatedProduct = {
   offerId: string;
-  dsaUrl: string;
+  dsaUrl: string | undefined;
   imageUrl: string;
   offerUrl: string;
-  dsaUrl: string;
 };
+
+type TFinalProductData = {
+  dsaUrl: string | undefined;
+  offerId: string;
+  renderAd: () => void;
+} & ReturnType<typeof getProductMap>;
 
 export {
   EProductElements,
@@ -76,4 +83,5 @@ export {
   EProductQuickViews,
   EBasketModes,
   TFormatedProduct,
+  TFinalProductData,
 };
