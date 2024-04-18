@@ -26,7 +26,9 @@ const reinitQuickView = () => {
 };
 
 const overrideProductStyles = (productElement: HTMLElement) => {
-  const productImage = productElement.querySelector('img');
+  const productImage = productElement.querySelector(
+    '.img-wrap img',
+  ) as HTMLElement;
 
   if (productImage) {
     productImage.style.opacity = '1';

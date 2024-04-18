@@ -8,6 +8,10 @@ import {
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
+window.OnetAdsConfig = window.OnetAdsConfig || {
+  shouldShowLoader: true,
+};
+
 const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
 
 showLoadingSpinner();
@@ -49,7 +53,7 @@ const runApp = async (isFromBFCache?: boolean) => {
   }
 };
 
-if (/complete|interactive|loaded/.test(document.readyState)) {
+if (/complete|interactive/.test(document.readyState)) {
   await runApp();
 } else {
   document.addEventListener('DOMContentLoaded', async () => {
@@ -59,12 +63,7 @@ if (/complete|interactive|loaded/.test(document.readyState)) {
 
 window.addEventListener('pageshow', async (event) => {
   if (event.persisted) {
-    const onetAdsConfig = window.OnetAdsConfig;
-
-    const shouldShowLoader =
-      onetAdsConfig && 'shouldShowLoader' in onetAdsConfig
-        ? onetAdsConfig.shouldShowLoader
-        : true;
+    const shouldShowLoader = window.OnetAdsConfig.shouldShowLoader;
 
     if (shouldShowLoader) {
       showLoadingSpinner();
