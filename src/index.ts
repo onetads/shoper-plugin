@@ -59,7 +59,14 @@ if (/complete|interactive|loaded/.test(document.readyState)) {
 
 window.addEventListener('pageshow', async (event) => {
   if (event.persisted) {
-    if (window.OnetAdsConfig.shouldShowLoader) {
+    const onetAdsConfig = window.OnetAdsConfig;
+
+    const shouldShowLoader =
+      onetAdsConfig && 'shouldShowLoader' in onetAdsConfig
+        ? onetAdsConfig.shouldShowLoader
+        : true;
+
+    if (shouldShowLoader) {
       showLoadingSpinner();
     }
 
