@@ -25,4 +25,21 @@ const reinitQuickView = () => {
   });
 };
 
-export { initTemplateManager, attachAjaxCartEvent, reinitQuickView };
+const overrideProductStyles = (productElement: HTMLElement) => {
+  const productImage = productElement.querySelector(
+    '.img-wrap img',
+  ) as HTMLElement;
+
+  if (productImage) {
+    productImage.style.opacity = '1';
+  }
+
+  return productElement;
+};
+
+export {
+  initTemplateManager,
+  attachAjaxCartEvent,
+  reinitQuickView,
+  overrideProductStyles,
+};

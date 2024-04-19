@@ -18,7 +18,7 @@ import { dsaInfoIcon } from 'utils/icons/dsainfo';
 
 const markProductAsPromoted = (
   product: HTMLElement,
-  dsaUrl: string,
+  dsaUrl: string | undefined,
   page: TPages,
 ) => {
   const tagsList = document.createElement('ul');

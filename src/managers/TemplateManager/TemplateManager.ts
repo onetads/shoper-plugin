@@ -9,6 +9,7 @@ import {
   PRODUCT_CLASS,
   PRODUCT_INACTIVE,
   LAYERS_STYLES,
+  ONET_PRODUCT_CLASS,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
@@ -32,28 +33,28 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
-  TFormatedProduct,
+  TFinalProductData,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
 
 import getMessage from 'utils/formatters/getMessage';
 
-import getProductData from 'utils/product/getProductData';
-import getProductMap from 'utils/product/getProductMap';
 import deleteProductFromDOM from 'utils/product/deleteProductFromDOM';
-import { attachAjaxCartEvent, reinitQuickView } from './utils';
+import {
+  attachAjaxCartEvent,
+  overrideProductStyles,
+  reinitQuickView,
+} from './utils';
 
 import {
   PROBLEMATIC_TEMPLATE_MSG,
-  PRODUCT_NOT_FOUND,
   SELECTOR_NOT_FOUND,
   SHOPER_REINITIATED_MSG,
-  PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
-import validateProductsArray from 'utils/product/validateProductsArray';
 import applyStyles from 'utils/helpers/applyStyles';
+import { ONET_SPONSORED_DIV } from 'consts/dlApi';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -281,55 +282,24 @@ class TemplateManager {
     return productBox;
   };
 
-  public injectProducts = (productsIds: TFormatedProduct[]) => {
+  public injectProducts = (products: TFinalProductData[]) => {
     const currentPage = this.page;
 
-    const notFoundIds = [];
+    for (let i = 0; i < products.length; i++) {
+      const productData = products[i];
 
-    const preparedProductsIds =
-      currentPage === PRODUCT_PAGE
-        ? validateProductsArray(productsIds)
-        : productsIds;
-
-    for (let i = 0; i < preparedProductsIds.length; i++) {
-      const productData = preparedProductsIds[i];
-
-      const { offerId, dsaUrl } = productData;
-
-      const product = getProductData(Number(offerId));
-
-      let isActive, mappedProduct;
-
-      try {
-        ({ isActive, ...mappedProduct } = getProductMap({
-          ...product,
-          ...productData,
-        }));
-      } catch (error) {
-        notFoundIds.push(offerId);
-        continue;
-      }
-
-      if (!isActive) {
-        notFoundIds.push(offerId);
-        continue;
-      }
+      const { offerId, dsaUrl, ...mappedProduct } = productData;
 
       let template;
 
-      if (isActive) {
-        if (currentPage === PRODUCT_PAGE) {
-          template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
-        } else {
-          template = this.getTemplate(
-            this.viewType === EViews.LIST_VIEW
-              ? ETemplates.LIST_VIEW
-              : ETemplates.GRID_VIEW,
-          );
-        }
+      if (currentPage === PRODUCT_PAGE) {
+        template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
       } else {
-        console.warn(getMessage(PRODUCT_NOT_AVAILABLE), `ID: ${product.id}`);
-        return;
+        template = this.getTemplate(
+          this.viewType === EViews.LIST_VIEW
+            ? ETemplates.LIST_VIEW
+            : ETemplates.GRID_VIEW,
+        );
       }
 
       if (template === NOT_VALID_TEMPLATE || template === null) return;
@@ -357,18 +327,22 @@ class TemplateManager {
         this.page,
       );
 
+      markedProduct.id = ONET_SPONSORED_DIV;
+      markedProduct.classList.add(ONET_PRODUCT_CLASS);
+
       // children[0] - sponsored text, children[1] product area with image
       const productArea = markedProduct?.children?.[1] as HTMLElement;
-
       applyStyles(productArea, LAYERS_STYLES);
 
       deleteProductFromDOM(+offerId);
-      productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
-      break;
-    }
+      productsWrapper?.insertBefore(
+        overrideProductStyles(markedProduct),
+        productsWrapper.firstChild,
+      );
 
-    if (notFoundIds.length === preparedProductsIds.length) {
-      throw new Error(getMessage(PRODUCT_NOT_FOUND));
+      productData.renderAd();
+
+      break;
     }
 
     if (!this.wasShoperReinitiated) {
@@ -379,6 +353,16 @@ class TemplateManager {
       throw new Error(getMessage(SHOPER_REINITIATED_MSG));
     }
   };
+
+  public deleteExistingSponsoredProducts() {
+    const sponsoredProducts = document.querySelectorAll(
+      `.${ONET_PRODUCT_CLASS}`,
+    );
+
+    sponsoredProducts.forEach((product) => {
+      product.remove();
+    });
+  }
 }
 
 export default TemplateManager;

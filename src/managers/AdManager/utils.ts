@@ -6,7 +6,10 @@ import {
   DATA_PRODUCT_SELECTOR,
   PRODUCT_CONTAINERS,
   PRODUCT_ID_KEY,
+  PRODUCT_IMAGE_PATH,
 } from 'consts/products';
+import { TProduct } from 'types/products';
+import getProductMap from 'utils/product/getProductMap';
 
 const initAdManager = (page: TPages | null) => new AdManager(page);
 
@@ -43,4 +46,24 @@ const getProductsIds = (page: TPages) => {
   return productsIds;
 };
 
-export { getProductsIds, initAdManager };
+const getTestData = (product: TProduct) => {
+  return [
+    {
+      ...getProductMap({
+        ...product,
+        offerId: product.id.toString(),
+        imageUrl:
+          window.location.origin +
+          PRODUCT_IMAGE_PATH +
+          product.main_image_filename,
+        offerUrl: product.url,
+        dsaUrl: product.url,
+      }),
+      offerId: product.id.toString(),
+      dsaUrl: product.url,
+      renderAd: () => {},
+    },
+  ];
+};
+
+export { getProductsIds, initAdManager, getTestData };
