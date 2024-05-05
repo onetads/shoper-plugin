@@ -1,8 +1,8 @@
 import { BODY_ID_NOT_FOUND } from 'consts/messages';
-import { TFormatedProduct } from 'types/products';
+import { TFinalProductData } from 'types/products';
 import getMessage from 'utils/formatters/getMessage';
 
-const validateProductsArray = (productsIds: TFormatedProduct[]) => {
+const validateProductsArray = (productsIds: TFinalProductData[]) => {
   const bodyId = document.body.id;
 
   const findNumberRegex = /\d+/; // Check for nummber in strings like this: "shop_product22" -> 22

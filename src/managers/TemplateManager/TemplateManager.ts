@@ -55,6 +55,7 @@ import {
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 import applyStyles from 'utils/helpers/applyStyles';
 import { ONET_SPONSORED_DIV } from 'consts/dlApi';
+import validateProductsArray from 'utils/product/validateProductsArray';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -285,8 +286,11 @@ class TemplateManager {
   public injectProducts = (products: TFinalProductData[]) => {
     const currentPage = this.page;
 
-    for (let i = 0; i < products.length; i++) {
-      const productData = products[i];
+    const preparedProducts =
+      this.page === PRODUCT_PAGE ? validateProductsArray(products) : products;
+
+    for (let i = 0; i < preparedProducts.length; i++) {
+      const productData = preparedProducts[i];
 
       const { offerId, dsaUrl, ...mappedProduct } = productData;
 
@@ -341,8 +345,6 @@ class TemplateManager {
       );
 
       productData.renderAd();
-
-      break;
     }
 
     if (!this.wasShoperReinitiated) {

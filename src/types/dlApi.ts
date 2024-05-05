@@ -7,9 +7,11 @@ type TFetchNativeAdProductItem = {
 type TFetchNativeAdOptions = {
   slot: string;
   tplCode: string;
+  div: string;
+  asyncRender: boolean;
   opts: {
     offer_ids: string;
-    div: string;
+    pos: number;
   };
 };
 
