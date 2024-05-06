@@ -9,6 +9,8 @@ const EMPTY_LIST_WARN = 'EMPTY_LIST_WARN';
 const REQUEST_TIMED_OUT = 'REQUEST_TIMED_OUT';
 const PRODUCT_NOT_AVAILABLE = 'PRODUCT_NOT_AVAILABLE';
 const BODY_ID_NOT_FOUND = 'BODY_ID_NOT_FOUND';
+const NO_ADS_IN_RESPONSE = 'NO_ADS_IN_RESPONSE';
+const EMPTY_ADS_ARRAY = 'EMPTY_ADS_ARRAY';
 
 const messagesMap = {
   [ATTEMPTS_LIMIT_MSG]: 'Attempts limit exceeded',
@@ -24,6 +26,8 @@ const messagesMap = {
   [PRODUCT_NOT_AVAILABLE]: 'Product is not available in shop',
   [BODY_ID_NOT_FOUND]:
     'HTML body does not have an id with the following pattern: shop_productd{number}',
+  [NO_ADS_IN_RESPONSE]: 'No ads in fetchNativeAd response',
+  [EMPTY_ADS_ARRAY]: 'Empty ads array',
 };
 
 export {
@@ -39,4 +43,6 @@ export {
   REQUEST_TIMED_OUT,
   PRODUCT_NOT_AVAILABLE,
   BODY_ID_NOT_FOUND,
+  NO_ADS_IN_RESPONSE,
+  EMPTY_ADS_ARRAY,
 };
