@@ -337,10 +337,12 @@ class TemplateManager {
       for (const key in mappedProduct) {
         const objKey = key as keyof typeof mappedProduct;
 
-        modifiedTemplate = modifiedTemplate?.replaceAll(
-          new RegExp(key, 'g'),
-          mappedProduct[objKey].toString(),
-        );
+        if (mappedProduct[objKey]) {
+            modifiedTemplate = modifiedTemplate?.replaceAll(
+            new RegExp(key, 'g'),
+            mappedProduct[objKey].toString(),
+          );
+        }
       }
       const productsWrapper = document.querySelector(
         this.page === PRODUCT_PAGE
