@@ -50,7 +50,7 @@ class AdManager {
       }, MAX_TIMEOUT_MS);
     });
 
-    const productsCount = window.OnetAdsConfig.productsCount;
+    const productsCount = window.OnetAdsConfig.productsCount || 1;
 
     const fetchNativeAd = new Promise<TFinalProductData[]>(
       (resolve, reject) => {
@@ -77,46 +77,51 @@ class AdManager {
                 ads.fields.feed.offers &&
                 ads.fields.feed.offers.length
               ) {
-                const trackingAdLink = ads.meta.adclick;
-                const dsaUrl = ads.meta.dsaurl;
-                const { offers = [] } = ads.fields.feed;
+                let isAdAvailable = false;
+                let adIndex = 0;
 
-                if (offers.length > 0) {
-                  const {
-                    offer_id: productId,
-                    offer_image: productImageUrl,
-                    offer_url: productUrl,
-                  } = offers[0];
+                do {
+                  const trackingAdLink = ads.meta.adclick;
+                  const dsaUrl = ads.meta.dsaurl;
+                  const { offers = [] } = ads.fields.feed;
 
-                  const product = getProductData(Number(productId));
+                  if (offers.length > 0) {
+                    const {
+                      offer_id: productId,
+                      offer_image: productImageUrl,
+                      offer_url: productUrl,
+                    } = offers[adIndex];
 
-                  const { isActive, ...mappedProduct } = getProductMap({
-                    ...product,
-                    offerId: productId,
-                    imageUrl: productImageUrl,
-                    offerUrl: trackingAdLink + productUrl,
-                    dsaUrl: dsaUrl,
-                  });
+                    const product = getProductData(Number(productId));
 
-                  if (isActive) {
-                    finalProducts.push({
-                      renderAd: ads.render,
-                      ...mappedProduct,
-                      isActive,
+                    const { isActive, ...mappedProduct } = getProductMap({
+                      ...product,
                       offerId: productId,
+                      imageUrl: productImageUrl,
+                      offerUrl: trackingAdLink + productUrl,
                       dsaUrl: dsaUrl,
                     });
-                  } else {
-                    console.warn(
-                      getMessage(PRODUCT_NOT_AVAILABLE),
-                      `ID: ${productId}`,
-                    );
-                  }
 
-                  resolve(finalProducts);
-                } else {
-                  reject(getMessage(EMPTY_ADS_ARRAY));
-                }
+                    if (isActive) {
+                      isAdAvailable = true;
+                      finalProducts.push({
+                        renderAd: ads.render,
+                        ...mappedProduct,
+                        isActive,
+                        offerId: productId,
+                        dsaUrl: dsaUrl,
+                      });
+                    } else {
+                      adIndex++;
+                      console.warn(
+                        getMessage(PRODUCT_NOT_AVAILABLE),
+                        `ID: ${productId}`,
+                      );
+                    }
+                  } else {
+                    reject(getMessage(EMPTY_ADS_ARRAY));
+                  }
+                } while (!isAdAvailable);
               } else {
                 console.warn(getMessage(NO_ADS_IN_RESPONSE));
               }

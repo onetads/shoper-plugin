@@ -17,7 +17,8 @@ yarn eslint - checks for eslint errors
 
 ```javascript
 window.OnetAdsConfig = {
-    shouldShowLoader: true // boolean
+    shouldShowLoader: true, // boolean
+    productsCount: 1 // number
 }
 ```
 
