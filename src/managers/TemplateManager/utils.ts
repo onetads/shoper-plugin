@@ -54,8 +54,6 @@ const updateIModulesAttributesIfExist = (
   const attributes = mappedProduct.attributes;
   if (!attributes) return;
 
-  console.log(attributes);
-
   const attributesElements = Array.from(
     productElement.querySelectorAll('.attr-item'),
   ) as HTMLElement[];

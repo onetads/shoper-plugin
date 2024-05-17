@@ -22,8 +22,6 @@ const prepareReplaceMap = (defaultReplaceMap: TReplaceMap) => {
 
         for (const replaceItem of replaceItems) {
           if (replaceItem.selector === changeFrom) {
-            console.log('TESTTESTTEST');
-
             replaceItem.selector = changeTo;
           }
         }
