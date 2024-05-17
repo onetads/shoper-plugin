@@ -17,7 +17,13 @@ yarn eslint - checks for eslint errors
 
 ```javascript
 window.OnetAdsConfig = {
-    shouldShowLoader: true // boolean
+    shouldShowLoader: true, // boolean
+    selectors: [
+        {
+            changeFrom: '.dummy-selector',
+            changeTo: '.changed-dummy-selector'
+        }
+    ] // Optional, example structure
 }
 ```
 

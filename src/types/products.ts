@@ -27,15 +27,23 @@ enum EBasketModes {
   NO_REDIRECT_REFRESH = 3,
 }
 
+type TAttribute = {
+  name: string;
+  type: number;
+  value: string;
+};
+
 type TProduct = {
   error_description?: string;
   id: number;
   can_buy: boolean;
+  attributes?: TAttribute[];
   availability: { name: string };
   delivery: { name: string };
   description: string;
   stockId: number;
   main_image_filename: string;
+  images_filename?: string[];
   main_image: string;
   rate: number;
   url: string;

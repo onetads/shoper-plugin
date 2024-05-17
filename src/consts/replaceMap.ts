@@ -1,5 +1,5 @@
 import { EProductElements } from 'types/products';
-import { TReplaceContentMap } from 'types/templates';
+import { TReplaceMap } from 'types/templates';
 
 import prepareProducerLink from 'utils/formatters/prepareProducerLink';
 
@@ -19,7 +19,7 @@ const PRODUCT_STOCK_ID_KEY = '{{ PRODUCT_STOCK_ID_KEY }}';
 const CONTENT = 'CONTENT';
 const BASKET_ID = 'BASKET_ID';
 
-const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
+const REPLACE_CONTENT_MAP: TReplaceMap = {
   [EProductElements.ID]: {
     key: PRODUCT_ID_KEY,
     map: {
@@ -322,6 +322,7 @@ const REPLACE_CONTENT_MAP: Record<EProductElements, TReplaceContentMap> = {
       gridView: [],
       listView: [
         {
+          canBeNull: true,
           selector: '.product-short-description',
           replace: [CONTENT],
         },

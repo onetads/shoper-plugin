@@ -17,6 +17,8 @@ import { TProduct, TFormatedProduct } from 'types/products';
 const getProductMap = (product: TProduct & TFormatedProduct) => {
   return {
     isActive: product.can_buy,
+    attributes: product.attributes,
+    images: product.images_filename,
     [PRODUCT_NAME_KEY]: product.name,
     [PRODUCT_STOCK_ID_KEY]: product.stockId,
     [PRODUCT_ID_KEY]: product.id,
