@@ -45,6 +45,8 @@ import {
   attachAjaxCartEvent,
   overrideProductStyles,
   reinitQuickView,
+  updateIModulesAttributesIfExist,
+  updateIModulesImagesIfExist,
 } from './utils';
 
 import {
@@ -56,6 +58,7 @@ import markProductAsPromoted from 'utils/product/markProductAsPromoted';
 import applyStyles from 'utils/helpers/applyStyles';
 import { ONET_SPONSORED_DIV } from 'consts/dlApi';
 import validateProductsArray from 'utils/product/validateProductsArray';
+import prepareReplaceMap from 'utils/helpers/prepareReplaceMap';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -157,11 +160,12 @@ class TemplateManager {
     copiedProductElement.innerHTML = productElement.outerHTML;
 
     let canInjectTemplate = true;
+    const replaceMap = prepareReplaceMap(REPLACE_CONTENT_MAP);
 
-    for (const property in REPLACE_CONTENT_MAP) {
+    for (const property in replaceMap) {
       if (!canInjectTemplate) break;
 
-      const { key, map } = REPLACE_CONTENT_MAP[property as EProductElements];
+      const { key, map } = replaceMap[property as EProductElements];
 
       const contentMap = [];
 
@@ -312,9 +316,13 @@ class TemplateManager {
       for (const key in mappedProduct) {
         const objKey = key as keyof typeof mappedProduct;
 
+        const value = mappedProduct[objKey];
+
+        if (!value) continue;
+
         modifiedTemplate = modifiedTemplate?.replaceAll(
           new RegExp(key, 'g'),
-          mappedProduct[objKey].toString(),
+          value.toString(),
         );
       }
       const productsWrapper = document.querySelector(
@@ -324,6 +332,9 @@ class TemplateManager {
       );
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
+
+      updateIModulesAttributesIfExist(productWithEvents, mappedProduct);
+      updateIModulesImagesIfExist(productWithEvents, mappedProduct);
 
       const markedProduct = markProductAsPromoted(
         productWithEvents,

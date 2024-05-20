@@ -11,6 +11,7 @@ import { NOT_VALID_TEMPLATE } from 'consts/templates';
 window.OnetAdsConfig = window.OnetAdsConfig || {
   shouldShowLoader: true,
   productsCount: 1,
+  selectors: [],
 };
 
 const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
