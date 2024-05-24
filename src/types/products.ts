@@ -52,9 +52,9 @@ type TProduct = {
       final: string;
     };
   };
-  producer: {
-    name: string;
-    id: string;
+  producer?: {
+    name?: string;
+    id?: string;
   };
   shortDescription: string;
   short_description: string;

@@ -24,7 +24,10 @@ window.OnetAdsConfig = {
             changeFrom: '.dummy-selector',
             changeTo: '.changed-dummy-selector'
         }
-    ] // Optional, example structure
+    ], // Optional, example structure
+    listingElementsToDelete: [
+        '.dummy-element'
+    ] // Optional, string array of selectors
 }
 ```
 
