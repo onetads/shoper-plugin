@@ -12,6 +12,7 @@ window.OnetAdsConfig = window.OnetAdsConfig || {
   shouldShowLoader: true,
   productsCount: 1,
   selectors: [],
+  listingElementsToDelete: [],
 };
 
 const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';

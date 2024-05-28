@@ -356,6 +356,18 @@ class TemplateManager {
       );
 
       productData.renderAd();
+
+      const listingElementsToDelete =
+        window.OnetAdsConfig?.listingElementsToDelete;
+
+      if (listingElementsToDelete && listingElementsToDelete.length > 0) {
+        listingElementsToDelete.forEach((selector) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.remove();
+          }
+        });
+      }
     }
 
     if (!this.wasShoperReinitiated) {

@@ -7,6 +7,7 @@ type TOnetAdsConfig = {
   shouldShowLoader: boolean;
   productsCount: number;
   selectors?: TSelectorReplace[];
+  listingElementsToDelete?: string[];
 };
 
 export type { TOnetAdsConfig };
