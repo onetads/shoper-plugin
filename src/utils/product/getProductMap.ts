@@ -29,7 +29,7 @@ const getProductMap = (product: TProduct & TFormatedProduct) => {
     [PRODUCT_IMAGE_URL_KEY]: product.imageUrl,
     [PRODUCT_PRICE_KEY]: product.price.gross.final,
     [PRODUCT_AVAILABILITY_KEY]: product.availability.name,
-    [PRODUCT_DELIVERY_KEY]: product.delivery.name,
+    [PRODUCT_DELIVERY_KEY]: product.delivery?.name || '',
     [PRODUCT_DESCRIPTION_KEY]: product.shortDescription,
   };
 };
