@@ -8,11 +8,18 @@ import {
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
+window.OnetAdsConfig = window.OnetAdsConfig || {
+  shouldShowLoader: true,
+  productsCount: 1,
+  selectors: [],
+  listingElementsToDelete: [],
+};
+
 const isTestingEnvironment = process.env.IS_TEST_ENV === 'true';
 
 showLoadingSpinner();
 
-const runApp = async () => {
+const runApp = async (isFromBFCache?: boolean) => {
   try {
     const page = getCurrentPageInfo();
 
@@ -22,6 +29,10 @@ const runApp = async () => {
       await runWhenPageReady(async () => {
         const TemplateManager = initTemplateManager(page);
         const doesContainerExists = TemplateManager.checkDOMforTemplates();
+
+        if (isFromBFCache) {
+          TemplateManager.deleteExistingSponsoredProducts();
+        }
 
         const { getMappedTemplate, getTemplate } = TemplateManager;
 
@@ -45,10 +56,22 @@ const runApp = async () => {
   }
 };
 
-if (document.readyState !== 'loading') {
+if (/complete|interactive/.test(document.readyState)) {
   await runApp();
 } else {
-  window.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     await runApp();
   });
 }
+
+window.addEventListener('pageshow', async (event) => {
+  if (event.persisted) {
+    const shouldShowLoader = window.OnetAdsConfig.shouldShowLoader;
+
+    if (shouldShowLoader) {
+      showLoadingSpinner();
+    }
+
+    await runApp(true);
+  }
+});

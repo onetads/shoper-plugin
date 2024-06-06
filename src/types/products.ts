@@ -1,3 +1,5 @@
+import getProductMap from 'utils/product/getProductMap';
+
 enum EProductElements {
   ID = 'ID',
   IMG = 'IMG',
@@ -25,15 +27,23 @@ enum EBasketModes {
   NO_REDIRECT_REFRESH = 3,
 }
 
+type TAttribute = {
+  name: string;
+  type: number;
+  value: string;
+};
+
 type TProduct = {
   error_description?: string;
   id: number;
   can_buy: boolean;
+  attributes?: TAttribute[];
   availability: { name: string };
   delivery: { name: string };
   description: string;
   stockId: number;
   main_image_filename: string;
+  images_filename?: string[];
   main_image: string;
   rate: number;
   url: string;
@@ -42,9 +52,9 @@ type TProduct = {
       final: string;
     };
   };
-  producer: {
-    name: string;
-    id: string;
+  producer?: {
+    name?: string;
+    id?: string;
   };
   shortDescription: string;
   short_description: string;
@@ -64,10 +74,16 @@ type TProduct = {
 
 type TFormatedProduct = {
   offerId: string;
-  dsaUrl: string;
+  dsaUrl: string | undefined;
   imageUrl: string;
   offerUrl: string;
 };
+
+type TFinalProductData = {
+  dsaUrl: string | undefined;
+  offerId: string;
+  renderAd: () => void;
+} & ReturnType<typeof getProductMap>;
 
 export {
   EProductElements,
@@ -75,4 +91,5 @@ export {
   EProductQuickViews,
   EBasketModes,
   TFormatedProduct,
+  TFinalProductData,
 };

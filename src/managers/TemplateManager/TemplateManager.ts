@@ -7,7 +7,9 @@ import {
   PRODUCT_CONTAINERS,
   RELATED_PRODUCTS_CONTAINER_SELECTOR,
   PRODUCT_CLASS,
-  PRODUCT_INACTIVE, PRODUCT_STYLES, LAYERS_STYLES
+  PRODUCT_INACTIVE,
+  LAYERS_STYLES,
+  ONET_PRODUCT_CLASS,
 } from 'consts/products';
 import {
   ADD_TO_CART_SELECTOR,
@@ -31,28 +33,32 @@ import {
   EProductElements,
   EProductQuickViews,
   EBasketModes,
-  TFormatedProduct, TProduct
+  TFinalProductData,
 } from 'types/products';
 import { ETemplates } from 'types/templates';
 import { EViews } from 'types/views';
 
 import getMessage from 'utils/formatters/getMessage';
 
-import getProductData from 'utils/product/getProductData';
-import getProductMap from 'utils/product/getProductMap';
 import deleteProductFromDOM from 'utils/product/deleteProductFromDOM';
-import { attachAjaxCartEvent, reinitQuickView } from './utils';
+import {
+  attachAjaxCartEvent,
+  overrideProductStyles,
+  reinitQuickView,
+  updateIModulesAttributesIfExist,
+  updateIModulesImagesIfExist,
+} from './utils';
 
 import {
   PROBLEMATIC_TEMPLATE_MSG,
-  PRODUCT_NOT_FOUND,
   SELECTOR_NOT_FOUND,
   SHOPER_REINITIATED_MSG,
-  PRODUCT_NOT_AVAILABLE,
 } from 'consts/messages';
 import markProductAsPromoted from 'utils/product/markProductAsPromoted';
-import validateProductsArray from 'utils/product/validateProductsArray';
 import applyStyles from 'utils/helpers/applyStyles';
+import { ONET_SPONSORED_DIV } from 'consts/dlApi';
+import validateProductsArray from 'utils/product/validateProductsArray';
+import prepareReplaceMap from 'utils/helpers/prepareReplaceMap';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -154,11 +160,12 @@ class TemplateManager {
     copiedProductElement.innerHTML = productElement.outerHTML;
 
     let canInjectTemplate = true;
+    const replaceMap = prepareReplaceMap(REPLACE_CONTENT_MAP);
 
-    for (const property in REPLACE_CONTENT_MAP) {
+    for (const property in replaceMap) {
       if (!canInjectTemplate) break;
 
-      const { key, map } = REPLACE_CONTENT_MAP[property as EProductElements];
+      const { key, map } = replaceMap[property as EProductElements];
 
       const contentMap = [];
 
@@ -280,55 +287,27 @@ class TemplateManager {
     return productBox;
   };
 
-  public injectProducts = (productsIds: TFormatedProduct[]) => {
+  public injectProducts = (products: TFinalProductData[]) => {
     const currentPage = this.page;
 
-    const notFoundIds = [];
+    const preparedProducts =
+      this.page === PRODUCT_PAGE ? validateProductsArray(products) : products;
 
-    let preparedProductsIds =
-      currentPage === PRODUCT_PAGE
-        ? validateProductsArray(productsIds)
-        : productsIds;
+    for (let i = 0; i < preparedProducts.length; i++) {
+      const productData = preparedProducts[i];
 
-    for(let i = 0; i < preparedProductsIds.length; i++) {
-      let productData = preparedProductsIds[i];
-
-      const { offerId, dsaUrl } = productData;
-
-      const product = getProductData(Number(offerId));
-
-      let isActive, mappedProduct;
-
-      try {
-          ({ isActive, ...mappedProduct } = getProductMap({
-            ...product,
-            ...productData,
-          }));
-      } catch (error) {
-          notFoundIds.push(offerId);
-          continue;
-      }
-
-      if (!isActive) {
-          notFoundIds.push(offerId);
-          continue;
-      }
+      const { offerId, dsaUrl, ...mappedProduct } = productData;
 
       let template;
 
-      if (isActive) {
-        if (currentPage === PRODUCT_PAGE) {
-          template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
-        } else {
-          template = this.getTemplate(
-            this.viewType === EViews.LIST_VIEW
-              ? ETemplates.LIST_VIEW
-              : ETemplates.GRID_VIEW,
-          );
-        }
+      if (currentPage === PRODUCT_PAGE) {
+        template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
       } else {
-        console.warn(getMessage(PRODUCT_NOT_AVAILABLE), `ID: ${product.id}`);
-        return;
+        template = this.getTemplate(
+          this.viewType === EViews.LIST_VIEW
+            ? ETemplates.LIST_VIEW
+            : ETemplates.GRID_VIEW,
+        );
       }
 
       if (template === NOT_VALID_TEMPLATE || template === null) return;
@@ -337,12 +316,14 @@ class TemplateManager {
       for (const key in mappedProduct) {
         const objKey = key as keyof typeof mappedProduct;
 
-        if (mappedProduct[objKey]) {
-            modifiedTemplate = modifiedTemplate?.replaceAll(
-            new RegExp(key, 'g'),
-            mappedProduct[objKey].toString(),
-          );
-        }
+        const value = mappedProduct[objKey];
+
+        if (!value) continue;
+
+        modifiedTemplate = modifiedTemplate?.replaceAll(
+          new RegExp(key, 'g'),
+          value.toString(),
+        );
       }
       const productsWrapper = document.querySelector(
         this.page === PRODUCT_PAGE
@@ -352,24 +333,41 @@ class TemplateManager {
 
       const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
 
+      updateIModulesAttributesIfExist(productWithEvents, mappedProduct);
+      updateIModulesImagesIfExist(productWithEvents, mappedProduct);
+
       const markedProduct = markProductAsPromoted(
         productWithEvents,
         dsaUrl,
         this.page,
       );
 
+      markedProduct.id = ONET_SPONSORED_DIV;
+      markedProduct.classList.add(ONET_PRODUCT_CLASS);
+
       // children[0] - sponsored text, children[1] product area with image
       const productArea = markedProduct?.children?.[1] as HTMLElement;
-
       applyStyles(productArea, LAYERS_STYLES);
 
       deleteProductFromDOM(+offerId);
-      productsWrapper?.insertBefore(markedProduct, productsWrapper.firstChild);
-      break;
-    }
+      productsWrapper?.insertBefore(
+        overrideProductStyles(markedProduct),
+        productsWrapper.firstChild,
+      );
 
-    if (notFoundIds.length === preparedProductsIds.length) {
-      throw new Error(getMessage(PRODUCT_NOT_FOUND));
+      productData.renderAd();
+
+      const listingElementsToDelete =
+        window.OnetAdsConfig?.listingElementsToDelete;
+
+      if (listingElementsToDelete && listingElementsToDelete.length > 0) {
+        listingElementsToDelete.forEach((selector) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.remove();
+          }
+        });
+      }
     }
 
     if (!this.wasShoperReinitiated) {
@@ -380,6 +378,16 @@ class TemplateManager {
       throw new Error(getMessage(SHOPER_REINITIATED_MSG));
     }
   };
+
+  public deleteExistingSponsoredProducts() {
+    const sponsoredProducts = document.querySelectorAll(
+      `.${ONET_PRODUCT_CLASS}`,
+    );
+
+    sponsoredProducts.forEach((product) => {
+      product.remove();
+    });
+  }
 }
 
 export default TemplateManager;

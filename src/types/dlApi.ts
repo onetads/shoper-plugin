@@ -7,12 +7,16 @@ type TFetchNativeAdProductItem = {
 type TFetchNativeAdOptions = {
   slot: string;
   tplCode: string;
+  div: string;
+  asyncRender: boolean;
   opts: {
     offer_ids: string;
+    pos: number;
   };
 };
 
 type TFetchNativeAdResponse = {
+  render: () => void;
   meta: {
     adclick: string;
     dsaurl: string;

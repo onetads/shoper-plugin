@@ -20,7 +20,10 @@ const runWhenPageReady = (callback: TNoParamsNoReturnFunction) => {
           !window.Shop.AjaxBasket ||
           !window.frontAPI ||
           !window.dlApi ||
-          !window.dlApi.fetchNativeAd
+          !window.dlApi.fetchNativeAd ||
+          !window.dlApi.cmd ||
+          !window.dlApi.keyvalues ||
+          !window.dlApi.keyvalues.website_id
         )
           return;
 

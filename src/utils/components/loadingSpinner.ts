@@ -69,12 +69,7 @@ const showSpinnerInListingView = (productsContainer: HTMLElement) => {
 };
 
 const showLoadingSpinner = () => {
-  const onetAdsConfig = window.OnetAdsConfig;
-
-  const shouldShowLoader =
-    onetAdsConfig && 'shouldShowLoader' in onetAdsConfig
-      ? onetAdsConfig.shouldShowLoader
-      : true;
+  const shouldShowLoader = window.OnetAdsConfig.shouldShowLoader;
 
   if (!shouldShowLoader) return;
 

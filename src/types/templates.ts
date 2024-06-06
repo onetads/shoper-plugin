@@ -1,3 +1,5 @@
+import { EProductElements } from 'types/products';
+
 enum ETemplates {
   LIST_VIEW = 'LIST_VIEW',
   GRID_VIEW = 'GRID_VIEW',
@@ -20,5 +22,7 @@ type TReplaceContentMap = {
   };
 };
 
+type TReplaceMap = Record<EProductElements, TReplaceContentMap>;
+
 export { ETemplates };
-export { TReplaceContentMap };
+export type { TReplaceContentMap, TReplaceMap };
