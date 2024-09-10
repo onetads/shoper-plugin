@@ -314,6 +314,10 @@ class TemplateManager {
 
       let modifiedTemplate = template;
       for (const key in mappedProduct) {
+        // mappedProduct contains more keys than the ones we should replace
+        // filter them to prevent accidentally replacing vital template parts
+        if (!key.match(/^\{\{.*}}$/i)) continue;
+
         const objKey = key as keyof typeof mappedProduct;
 
         const value = mappedProduct[objKey];
