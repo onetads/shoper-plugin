@@ -10,7 +10,7 @@ import { NOT_VALID_TEMPLATE } from 'consts/templates';
 
 window.OnetAdsConfig = window.OnetAdsConfig || {
   shouldShowLoader: true,
-  shouldRemoveDecimalFromPrice: false,
+  shouldRemoveDecimalFromProductPrice: false,
   productsCount: 1,
   selectors: [],
   listingElementsToDelete: [],
