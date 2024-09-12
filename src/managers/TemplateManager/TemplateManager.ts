@@ -20,6 +20,7 @@ import {
   BASKET_ID,
   CONTENT,
   PRODUCT_IMAGE_URL_KEY,
+  PRODUCT_PRICE_KEY,
   REPLACE_CONTENT_MAP,
 } from 'consts/replaceMap';
 import { BASIC_TAG } from 'consts/common';
@@ -43,6 +44,7 @@ import getMessage from 'utils/formatters/getMessage';
 import deleteProductFromDOM from 'utils/product/deleteProductFromDOM';
 import {
   attachAjaxCartEvent,
+  removeDecimalFromPrice,
   overrideProductStyles,
   reinitQuickView,
   updateIModulesAttributesIfExist,
@@ -313,6 +315,13 @@ class TemplateManager {
       if (template === NOT_VALID_TEMPLATE || template === null) return;
 
       let modifiedTemplate = template;
+
+      const shouldRemoveDecimalFromProductPrice= window.OnetAdsConfig.shouldRemoveDecimalFromProductPrice ?? false;
+
+      if (shouldRemoveDecimalFromProductPrice) {
+        mappedProduct[PRODUCT_PRICE_KEY] = removeDecimalFromPrice(mappedProduct[PRODUCT_PRICE_KEY]);
+      }
+
       for (const key in mappedProduct) {
         // mappedProduct contains more keys than the ones we should replace
         // filter them to prevent accidentally replacing vital template parts

@@ -18,6 +18,7 @@ yarn eslint - checks for eslint errors
 ```javascript
 window.OnetAdsConfig = {
     shouldShowLoader: true, // boolean
+    shouldRemoveDecimalFromPrice: false, // boolean
     productsCount: 1, // number
     selectors: [
         {
