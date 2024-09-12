@@ -316,10 +316,13 @@ class TemplateManager {
 
       let modifiedTemplate = template;
 
-      const shouldRemoveDecimalFromProductPrice= window.OnetAdsConfig.shouldRemoveDecimalFromProductPrice ?? false;
+      const shouldRemoveDecimalFromProductPrice =
+        window.OnetAdsConfig.shouldRemoveDecimalFromProductPrice ?? false;
 
       if (shouldRemoveDecimalFromProductPrice) {
-        mappedProduct[PRODUCT_PRICE_KEY] = removeDecimalFromPrice(mappedProduct[PRODUCT_PRICE_KEY]);
+        mappedProduct[PRODUCT_PRICE_KEY] = removeDecimalFromPrice(
+          mappedProduct[PRODUCT_PRICE_KEY],
+        );
       }
 
       for (const key in mappedProduct) {
