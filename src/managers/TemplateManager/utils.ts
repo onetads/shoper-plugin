@@ -143,6 +143,21 @@ const updateIModulesImagesIfExist = (
   }
 };
 
+const removeDecimalFromPrice = (price: string): string => {
+  const regex = /^\d+\s?[a-zA-Z]+$/;
+
+  if (regex.test(price)) {
+    return price;
+  }
+
+  const parts = price.split(/[.,]/);
+  const currencySign = parts[1] ? parts[1].replace(/\d{1,2}\s?/, '') : '';
+  const priceWithoutDecimal =
+    parts[0].replace(/\u00A0/g, ' ') + ' ' + currencySign.trim();
+
+  return priceWithoutDecimal;
+};
+
 export {
   initTemplateManager,
   attachAjaxCartEvent,
@@ -150,4 +165,5 @@ export {
   overrideProductStyles,
   updateIModulesAttributesIfExist,
   updateIModulesImagesIfExist,
+  removeDecimalFromPrice,
 };

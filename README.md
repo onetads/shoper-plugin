@@ -18,6 +18,7 @@ yarn eslint - checks for eslint errors
 ```javascript
 window.OnetAdsConfig = {
     shouldShowLoader: true, // boolean
+    shouldRemoveDecimalFromProductPrice: false, // boolean - e.g. format price from '100,00 zł' to '100 zł'
     productsCount: 1, // number
     selectors: [
         {
