@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "eslint": "eslint --ext .js,.ts ./src",
+    "dev": "webpack serve --config webpack.config.js --mode=development",
     "build": "webpack --config webpack.config.js --mode=production",
     "test": "webpack --config webpack.config.js --mode=production --env IS_TEST_ENV=true",
     "prepare": "rimraf .husky/ && husky install && npx husky add .husky/pre-push \"yarn eslint\""
@@ -29,7 +30,7 @@
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {}
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
+  }
 }
