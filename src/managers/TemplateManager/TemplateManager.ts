@@ -252,7 +252,9 @@ class TemplateManager {
 
     // clear productContainer to only have product innerwraper without any other items like tags
     const productContainer = copiedProductElement.children[0];
-    const allowedChildren = Array.from(productContainer.children).filter(el => !new RegExp(TAG_LIST_CLASSNAME, 'gi').test(el.className));
+    const allowedChildren = Array.from(productContainer.children).filter(
+      (el) => !new RegExp(TAG_LIST_CLASSNAME, 'gi').test(el.className),
+    );
     productContainer.replaceChildren(...allowedChildren);
 
     return productContainer.outerHTML;
