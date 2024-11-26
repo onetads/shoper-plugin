@@ -61,6 +61,7 @@ import applyStyles from 'utils/helpers/applyStyles';
 import { ONET_SPONSORED_DIV } from 'consts/dlApi';
 import validateProductsArray from 'utils/product/validateProductsArray';
 import prepareReplaceMap from 'utils/helpers/prepareReplaceMap';
+import { TAG_LIST_CLASSNAME } from 'consts/tags';
 
 class TemplateManager {
   constructor(page: TPages) {
@@ -251,7 +252,10 @@ class TemplateManager {
 
     // clear productContainer to only have product innerwraper without any other items like tags
     const productContainer = copiedProductElement.children[0];
-    productContainer.replaceChildren(productContainer.children[0]);
+    const allowedChildren = Array.from(productContainer.children).filter(
+      (el) => !new RegExp(TAG_LIST_CLASSNAME, 'gi').test(el.className),
+    );
+    productContainer.replaceChildren(...allowedChildren);
 
     return productContainer.outerHTML;
   };
