@@ -38,9 +38,7 @@ module.exports = (env) => ({
         compress: true, 
         port: 9090, 
         open: false,
-        allowedHosts: [
-            'adtemplate-dev.commercial.onetapi.pl'
-        ]
+        allowedHosts: ['all']
     },
      devtool: 'eval-source-map' 
 });
