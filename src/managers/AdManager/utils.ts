@@ -46,7 +46,7 @@ const getProductsIds = (page: TPages) => {
   return productsIds;
 };
 
-const getTestData = (product: TProduct) => {
+const getTestData = (product: TProduct, targetPosition: number) => {
   return [
     {
       ...getProductMap({
@@ -61,6 +61,7 @@ const getTestData = (product: TProduct) => {
       }),
       offerId: product.id.toString(),
       dsaUrl: product.url,
+      targetPosition,
       renderAd: () => {},
     },
   ];

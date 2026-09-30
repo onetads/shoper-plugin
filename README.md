@@ -19,7 +19,8 @@ yarn eslint - checks for eslint errors
 window.OnetAdsConfig = {
     shouldShowLoader: true, // boolean
     shouldRemoveDecimalFromProductPrice: false, // boolean - e.g. format price from '100,00 zł' to '100 zł'
-    productsCount: 1, // number
+    productsCount: 1, // number - max number of sponsored products
+    itemNumbers: [6, 2, 1], // Optional, number array (or comma separated string e.g. '6,2,1') - dedicated positions of sponsored products, see below
     selectors: [
         {
             changeFrom: '.dummy-selector',
