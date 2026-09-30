@@ -293,95 +293,6 @@ class TemplateManager {
     return productBox;
   };
 
-  private getProductsWrapper = () =>
-    document.querySelector(
-      this.page === PRODUCT_PAGE
-        ? RELATED_PRODUCTS_CONTAINER_SELECTOR
-        : PRODUCT_CONTAINER_SELECTOR,
-    );
-
-  private createProductElement = (productData: TFinalProductData) => {
-    const currentPage = this.page;
-
-    const { dsaUrl, ...mappedProduct } = productData;
-
-    let template;
-
-    if (currentPage === PRODUCT_PAGE) {
-      template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
-    } else {
-      template = this.getTemplate(
-        this.viewType === EViews.LIST_VIEW
-          ? ETemplates.LIST_VIEW
-          : ETemplates.GRID_VIEW,
-      );
-    }
-
-    if (template === NOT_VALID_TEMPLATE || template === null) return null;
-
-    let modifiedTemplate = template;
-
-    const shouldRemoveDecimalFromProductPrice =
-      window.OnetAdsConfig.shouldRemoveDecimalFromProductPrice ?? false;
-
-    if (shouldRemoveDecimalFromProductPrice) {
-      mappedProduct[PRODUCT_PRICE_KEY] = removeDecimalFromPrice(
-        mappedProduct[PRODUCT_PRICE_KEY],
-      );
-    }
-
-    for (const key in mappedProduct) {
-      // mappedProduct contains more keys than the ones we should replace
-      // filter them to prevent accidentally replacing vital template parts
-      if (!key.match(/^\{\{.*}}$/i)) continue;
-
-      const objKey = key as keyof typeof mappedProduct;
-
-      const value = mappedProduct[objKey];
-
-      if (!value) continue;
-
-      modifiedTemplate = modifiedTemplate?.replaceAll(
-        new RegExp(key, 'g'),
-        value.toString(),
-      );
-    }
-
-    const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
-
-    updateIModulesAttributesIfExist(productWithEvents, mappedProduct);
-    updateIModulesImagesIfExist(productWithEvents, mappedProduct);
-
-    const markedProduct = markProductAsPromoted(
-      productWithEvents,
-      dsaUrl,
-      this.page,
-    );
-
-    markedProduct.id = ONET_SPONSORED_DIV;
-    markedProduct.classList.add(ONET_PRODUCT_CLASS);
-
-    // children[0] - sponsored text, children[1] product area with image
-    const productArea = markedProduct?.children?.[1] as HTMLElement;
-    applyStyles(productArea, LAYERS_STYLES);
-
-    return overrideProductStyles(markedProduct);
-  };
-
-  private deleteListingElements = () => {
-    const listingElementsToDelete =
-      window.OnetAdsConfig?.listingElementsToDelete;
-
-    if (listingElementsToDelete && listingElementsToDelete.length > 0) {
-      listingElementsToDelete.forEach((selector) => {
-        const element = document.querySelector(selector);
-        if (element) {
-          element.remove();
-        }
-      });
-    }
-  };
-
   private getProductTiles = (productsWrapper: Element) => {
     const productElements = Array.from(
       productsWrapper.querySelectorAll(DATA_PRODUCT_SELECTOR),
@@ -425,10 +336,18 @@ class TemplateManager {
     productsWrapper.appendChild(productElement);
   };
 
-  private injectProductsAtPositions = (products: TFinalProductData[]) => {
-    const sortedProducts = [...products].sort(
-      (a, b) => a.targetPosition - b.targetPosition,
-    );
+  public injectProducts = (
+    products: TFinalProductData[],
+    hasDedicatedPositions = false,
+  ) => {
+    const currentPage = this.page;
+
+    const preparedProducts =
+      this.page === PRODUCT_PAGE ? validateProductsArray(products) : products;
+
+    if (hasDedicatedPositions) {
+      preparedProducts.sort((a, b) => a.targetPosition - b.targetPosition);
+    }
 
     const renderedProductIds = new Set<string>();
     const positionedProducts: {
@@ -436,68 +355,141 @@ class TemplateManager {
       productElement: HTMLElement;
     }[] = [];
 
-    for (const productData of sortedProducts) {
-      if (renderedProductIds.has(productData.offerId)) continue;
+    for (let i = 0; i < preparedProducts.length; i++) {
+      const productData = preparedProducts[i];
 
-      const productElement = this.createProductElement(productData);
+      const { offerId, dsaUrl, ...mappedProduct } = productData;
 
-      if (!productElement) return false;
+      if (hasDedicatedPositions && renderedProductIds.has(offerId)) continue;
 
-      renderedProductIds.add(productData.offerId);
-      positionedProducts.push({ productData, productElement });
-    }
+      let template;
 
-    for (const { productData } of positionedProducts) {
-      deleteProductFromDOM(+productData.offerId);
-    }
-
-    const productsWrapper = this.getProductsWrapper();
-
-    for (const { productData, productElement } of positionedProducts) {
-      if (productsWrapper) {
-        this.insertProductAtPosition(
-          productsWrapper,
-          productElement,
-          productData.targetPosition,
+      if (currentPage === PRODUCT_PAGE) {
+        template = this.getTemplate(ETemplates.LIST_RELATED_PRODUCTS);
+      } else {
+        template = this.getTemplate(
+          this.viewType === EViews.LIST_VIEW
+            ? ETemplates.LIST_VIEW
+            : ETemplates.GRID_VIEW,
         );
       }
 
+      if (template === NOT_VALID_TEMPLATE || template === null) return;
+
+      let modifiedTemplate = template;
+
+      const shouldRemoveDecimalFromProductPrice =
+        window.OnetAdsConfig.shouldRemoveDecimalFromProductPrice ?? false;
+
+      if (shouldRemoveDecimalFromProductPrice) {
+        mappedProduct[PRODUCT_PRICE_KEY] = removeDecimalFromPrice(
+          mappedProduct[PRODUCT_PRICE_KEY],
+        );
+      }
+
+      for (const key in mappedProduct) {
+        // mappedProduct contains more keys than the ones we should replace
+        // filter them to prevent accidentally replacing vital template parts
+        if (!key.match(/^\{\{.*}}$/i)) continue;
+
+        const objKey = key as keyof typeof mappedProduct;
+
+        const value = mappedProduct[objKey];
+
+        if (!value) continue;
+
+        modifiedTemplate = modifiedTemplate?.replaceAll(
+          new RegExp(key, 'g'),
+          value.toString(),
+        );
+      }
+      const productsWrapper = document.querySelector(
+        this.page === PRODUCT_PAGE
+          ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+          : PRODUCT_CONTAINER_SELECTOR,
+      );
+
+      const productWithEvents = this.getProductWithCustoms(modifiedTemplate);
+
+      updateIModulesAttributesIfExist(productWithEvents, mappedProduct);
+      updateIModulesImagesIfExist(productWithEvents, mappedProduct);
+
+      const markedProduct = markProductAsPromoted(
+        productWithEvents,
+        dsaUrl,
+        this.page,
+      );
+
+      markedProduct.id = ONET_SPONSORED_DIV;
+      markedProduct.classList.add(ONET_PRODUCT_CLASS);
+
+      // children[0] - sponsored text, children[1] product area with image
+      const productArea = markedProduct?.children?.[1] as HTMLElement;
+      applyStyles(productArea, LAYERS_STYLES);
+
+      if (hasDedicatedPositions) {
+        renderedProductIds.add(offerId);
+        positionedProducts.push({
+          productData,
+          productElement: overrideProductStyles(markedProduct),
+        });
+        continue;
+      }
+
+      deleteProductFromDOM(+offerId);
+      productsWrapper?.insertBefore(
+        overrideProductStyles(markedProduct),
+        productsWrapper.firstChild,
+      );
+
       productData.renderAd();
 
-      this.deleteListingElements();
+      const listingElementsToDelete =
+        window.OnetAdsConfig?.listingElementsToDelete;
+
+      if (listingElementsToDelete && listingElementsToDelete.length > 0) {
+        listingElementsToDelete.forEach((selector) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.remove();
+          }
+        });
+      }
     }
 
-    return true;
-  };
-
-  public injectProducts = (
-    products: TFinalProductData[],
-    hasDedicatedPositions = false,
-  ) => {
-    const preparedProducts =
-      this.page === PRODUCT_PAGE ? validateProductsArray(products) : products;
-
     if (hasDedicatedPositions) {
-      if (!this.injectProductsAtPositions(preparedProducts)) return;
-    } else {
-      for (let i = 0; i < preparedProducts.length; i++) {
-        const productData = preparedProducts[i];
-
-        const productElement = this.createProductElement(productData);
-
-        if (!productElement) return;
-
-        const productsWrapper = this.getProductsWrapper();
-
+      for (const { productData } of positionedProducts) {
         deleteProductFromDOM(+productData.offerId);
-        productsWrapper?.insertBefore(
-          productElement,
-          productsWrapper.firstChild,
-        );
+      }
+
+      const productsWrapper = document.querySelector(
+        this.page === PRODUCT_PAGE
+          ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+          : PRODUCT_CONTAINER_SELECTOR,
+      );
+
+      for (const { productData, productElement } of positionedProducts) {
+        if (productsWrapper) {
+          this.insertProductAtPosition(
+            productsWrapper,
+            productElement,
+            productData.targetPosition,
+          );
+        }
 
         productData.renderAd();
 
-        this.deleteListingElements();
+        const listingElementsToDelete =
+          window.OnetAdsConfig?.listingElementsToDelete;
+
+        if (listingElementsToDelete && listingElementsToDelete.length > 0) {
+          listingElementsToDelete.forEach((selector) => {
+            const element = document.querySelector(selector);
+            if (element) {
+              element.remove();
+            }
+          });
+        }
       }
     }
 
