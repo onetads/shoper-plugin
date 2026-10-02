@@ -13,7 +13,7 @@ window.OnetAdsConfig = window.OnetAdsConfig || {
   shouldShowLoader: true,
   shouldRemoveDecimalFromProductPrice: false,
   productsCount: 1,
-  itemNumbers: [],
+  itemPositionNumbers: [],
   selectors: [],
   listingElementsToDelete: [],
 };

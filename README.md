@@ -20,7 +20,7 @@ window.OnetAdsConfig = {
     shouldShowLoader: true, // boolean
     shouldRemoveDecimalFromProductPrice: false, // boolean - e.g. format price from '100,00 zł' to '100 zł'
     productsCount: 1, // number - max number of sponsored products
-    itemNumbers: [6, 2, 1], // Optional, number array (or comma separated string e.g. '6,2,1') - dedicated positions of sponsored products, see below
+    itemPositionNumbers: [6, 2, 1], // Optional, number array (or comma separated string e.g. '6,2,1') - item position numbers (dedicated positions) of sponsored products, taken in the written order and limited to productsCount; empty - products at the top
     selectors: [
         {
             changeFrom: '.dummy-selector',
