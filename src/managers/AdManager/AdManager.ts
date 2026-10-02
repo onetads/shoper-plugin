@@ -31,6 +31,7 @@ class AdManager {
   private productsIds: ReturnType<typeof getProductsIds> | [];
 
   public getPromotedProducts = async (
+    positions: number[],
     isTestingEnvironment: boolean,
   ): Promise<TFinalProductData[]> => {
     if (isTestingEnvironment) {
@@ -38,7 +39,7 @@ class AdManager {
         id: this.productsIds[this.productsIds.length - 1],
       });
 
-      return getTestData(product);
+      return getTestData(product, positions[0]);
     }
 
     if (!dlApi.fetchNativeAd)
@@ -50,8 +51,6 @@ class AdManager {
       }, MAX_TIMEOUT_MS);
     });
 
-    const productsCount = window.OnetAdsConfig.productsCount || 1;
-
     const fetchNativeAd = new Promise<TFinalProductData[]>(
       (resolve, reject) => {
         const finalProducts: TFinalProductData[] = [];
@@ -59,7 +58,8 @@ class AdManager {
 
         dlApi.cmd = dlApi.cmd || [];
         dlApi.cmd.push((dlApiObj) => {
-          for (let index = 1; index <= productsCount; index++) {
+          positions.forEach((targetPosition, slotIndex) => {
+            const index = slotIndex + 1;
             const div = ONET_SPONSORED_DIV + index;
 
             const fetchPromise = dlApiObj.fetchNativeAd!({
@@ -110,6 +110,7 @@ class AdManager {
                         isActive,
                         offerId: productId,
                         dsaUrl: dsaUrl,
+                        targetPosition,
                       });
                     } else {
                       adIndex++;
@@ -128,7 +129,7 @@ class AdManager {
             });
 
             fetchPromises.push(fetchPromise);
-          }
+          });
         });
 
         Promise.all(fetchPromises)

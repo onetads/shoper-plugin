@@ -7,6 +7,7 @@ type TOnetAdsConfig = {
   shouldShowLoader: boolean;
   shouldRemoveDecimalFromProductPrice: boolean;
   productsCount: number;
+  itemPositionNumbers?: number[];
   selectors?: TSelectorReplace[];
   listingElementsToDelete?: string[];
 };

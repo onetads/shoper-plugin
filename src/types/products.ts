@@ -82,6 +82,7 @@ type TFormatedProduct = {
 type TFinalProductData = {
   dsaUrl: string | undefined;
   offerId: string;
+  targetPosition: number;
   renderAd: () => void;
 } & ReturnType<typeof getProductMap>;
 
