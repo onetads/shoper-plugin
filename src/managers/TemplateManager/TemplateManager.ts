@@ -293,16 +293,74 @@ class TemplateManager {
     return productBox;
   };
 
-  public injectProducts = (products: TFinalProductData[]) => {
+  private getProductTiles = (productsWrapper: Element) => {
+    const productElements = Array.from(
+      productsWrapper.querySelectorAll(DATA_PRODUCT_SELECTOR),
+    );
+
+    const tiles = new Set<Element>();
+
+    for (const productElement of productElements) {
+      let tile: Element | null = productElement;
+
+      while (tile && tile.parentElement !== productsWrapper) {
+        tile = tile.parentElement;
+      }
+
+      if (tile) tiles.add(tile);
+    }
+
+    return Array.from(tiles);
+  };
+
+  private insertProductAtPosition = (
+    productsWrapper: Element,
+    productElement: HTMLElement,
+    targetPosition: number,
+  ) => {
+    const tiles = this.getProductTiles(productsWrapper);
+    const anchor = tiles[targetPosition - 1];
+
+    if (anchor) {
+      productsWrapper.insertBefore(productElement, anchor);
+      return;
+    }
+
+    const lastTile = tiles[tiles.length - 1];
+
+    if (lastTile) {
+      productsWrapper.insertBefore(productElement, lastTile.nextSibling);
+      return;
+    }
+
+    productsWrapper.appendChild(productElement);
+  };
+
+  public injectProducts = (
+    products: TFinalProductData[],
+    hasDedicatedPositions = false,
+  ) => {
     const currentPage = this.page;
 
     const preparedProducts =
       this.page === PRODUCT_PAGE ? validateProductsArray(products) : products;
 
+    if (hasDedicatedPositions) {
+      preparedProducts.sort((a, b) => a.targetPosition - b.targetPosition);
+    }
+
+    const renderedProductIds = new Set<string>();
+    const positionedProducts: {
+      productData: TFinalProductData;
+      productElement: HTMLElement;
+    }[] = [];
+
     for (let i = 0; i < preparedProducts.length; i++) {
       const productData = preparedProducts[i];
 
       const { offerId, dsaUrl, ...mappedProduct } = productData;
+
+      if (hasDedicatedPositions && renderedProductIds.has(offerId)) continue;
 
       let template;
 
@@ -369,6 +427,15 @@ class TemplateManager {
       const productArea = markedProduct?.children?.[1] as HTMLElement;
       applyStyles(productArea, LAYERS_STYLES);
 
+      if (hasDedicatedPositions) {
+        renderedProductIds.add(offerId);
+        positionedProducts.push({
+          productData,
+          productElement: overrideProductStyles(markedProduct),
+        });
+        continue;
+      }
+
       deleteProductFromDOM(+offerId);
       productsWrapper?.insertBefore(
         overrideProductStyles(markedProduct),
@@ -387,6 +454,42 @@ class TemplateManager {
             element.remove();
           }
         });
+      }
+    }
+
+    if (hasDedicatedPositions) {
+      for (const { productData } of positionedProducts) {
+        deleteProductFromDOM(+productData.offerId);
+      }
+
+      const productsWrapper = document.querySelector(
+        this.page === PRODUCT_PAGE
+          ? RELATED_PRODUCTS_CONTAINER_SELECTOR
+          : PRODUCT_CONTAINER_SELECTOR,
+      );
+
+      for (const { productData, productElement } of positionedProducts) {
+        if (productsWrapper) {
+          this.insertProductAtPosition(
+            productsWrapper,
+            productElement,
+            productData.targetPosition,
+          );
+        }
+
+        productData.renderAd();
+
+        const listingElementsToDelete =
+          window.OnetAdsConfig?.listingElementsToDelete;
+
+        if (listingElementsToDelete && listingElementsToDelete.length > 0) {
+          listingElementsToDelete.forEach((selector) => {
+            const element = document.querySelector(selector);
+            if (element) {
+              element.remove();
+            }
+          });
+        }
       }
     }
 

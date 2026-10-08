@@ -7,11 +7,13 @@ import {
   showLoadingSpinner,
 } from 'utils/components/loadingSpinner';
 import { NOT_VALID_TEMPLATE } from 'consts/templates';
+import resolveProductPositions from 'utils/helpers/resolveProductPositions';
 
 window.OnetAdsConfig = window.OnetAdsConfig || {
   shouldShowLoader: true,
   shouldRemoveDecimalFromProductPrice: false,
   productsCount: 1,
+  itemPositionNumbers: [],
   selectors: [],
   listingElementsToDelete: [],
 };
@@ -41,10 +43,19 @@ const runApp = async (isFromBFCache?: boolean) => {
           getTemplate(getMappedTemplate({ page })) === NOT_VALID_TEMPLATE;
 
         if (!isInvalidTemplate && doesContainerExists !== null) {
-          const promotedProducts =
-            await AdManager.getPromotedProducts(isTestingEnvironment);
+          const { hasDedicatedPositions, positions } = resolveProductPositions(
+            window.OnetAdsConfig,
+          );
 
-          TemplateManager.injectProducts(promotedProducts);
+          const promotedProducts = await AdManager.getPromotedProducts(
+            positions,
+            isTestingEnvironment,
+          );
+
+          TemplateManager.injectProducts(
+            promotedProducts,
+            hasDedicatedPositions,
+          );
         }
       });
     }
